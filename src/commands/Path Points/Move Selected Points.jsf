@@ -1,0 +1,12 @@
+var f = new Object();
+f.main = function(){
+	var dom = fw.getDocumentDOM();
+	var _xmove = prompt("Move horizontally by (in pixels)", 0);
+	var _ymove = prompt("Move vertically by (in pixels)", 0);
+	if (isNaN(_xmove) || isNaN(_ymove)) return false;
+	dom.moveSelectedBezierPointsBy({x:_xmove, y:_ymove});
+	return true;
+}
+f.main();
+f = undefined;
+delete f;

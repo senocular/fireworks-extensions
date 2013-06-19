@@ -1,0 +1,8 @@
+var dom = fw.getDocumentDOM();
+var path = fw.browseForFileURL();
+if (path){
+	var name = Files.getFilename(path);
+	dom.importFile(path, {left:0, top:0, right:0, bottom:0}, false);
+	dom.convertToSymbol("graphic", name);
+	dom.deleteSelection(false);
+}

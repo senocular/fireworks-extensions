@@ -1,0 +1,2 @@
+var dom = fw.getDocumentDOM();
+dom.addNewRectanglePrimitive({left:dom.left, top:dom.top, right:dom.left+dom.width, bottom: dom.top+dom.height}, 0);

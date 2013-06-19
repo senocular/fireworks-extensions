@@ -1,0 +1,22 @@
+TransformNodes = function(){
+	var n , cs, ns, ss = fw.selection.length;
+	var distp, dists, angp, angs, ang, ppt, spt;
+	while(ss--){
+		cs = fw.selection[ss].contours.length;
+		while (cs--){
+			ns = fw.selection[ss].contours[cs].nodes.length;
+			while (ns--){
+				if (fw.selection[ss].contours[cs].nodes[ns].isSelectedPoint){
+					n = fw.selection[ss].contours[cs].nodes[ns];
+					n.x = Math.floor(n.x)+.5;
+					n.y = Math.floor(n.y)+.5;
+					n.predX = Math.floor(n.predX)+.5;
+					n.predY = Math.floor(n.predY)+.5;
+					n.succX = Math.floor(n.succX)+.5;
+					n.succY = Math.floor(n.succY)+.5;
+				}
+			}
+		}
+	}
+}
+TransformNodes();

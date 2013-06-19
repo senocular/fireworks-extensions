@@ -1,0 +1,18 @@
+function ShowOnlySelected() {
+	var dom = fw.getDocumentDOM();
+	var len = fw.selection.length;
+	var unqName = "__SHOW_ONLY_SELECTED__";
+	var savedNames = [];
+	for (i=0;i<len;i++) {
+		savedNames[i] = fw.selection[i].name;
+		fw.selection[i].name = unqName+i;
+	}
+	dom.selectAll();
+	dom.hideSelection();
+	for (i=0;i<len;i++){
+		dom.setElementVisibleByName(unqName+i, true);
+		dom.setElementName(savedNames[i]);
+	}
+	dom.selectAll();
+}
+ShowOnlySelected();

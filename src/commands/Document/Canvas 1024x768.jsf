@@ -1,0 +1,2 @@
+if (!fw.documentList.length) fw.createDocument();
+fw.getDocumentDOM().setDocumentCanvasSize({left:0, top:0, right:1024, bottom:768});

@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension
+	 name="Selection Commands"
+	 version="0.8.5"
+	 type="command"
+	 locked="false"
+	 pkgtype="mxp">
+
+	<author name="senocular" />
+
+	<products>
+		<product name="Fireworks" primary="true" />
+	</products>
+
+	<update  />
+
+	<description>
+	<![CDATA[
+	Selection Commands<br>
+www.senocular.com<br>
+<br>
+<br>
+- Fit to Canvas: Resizes selection to fit the size of the document canvas<br>
+- Center: Positions all elements in a selection to the center of the document canvas<br>
+- Gather: Collects all elements in a selection and places them in the upper left of the document<br>
+- Match Greatest Height: Sets all elements in a selection to have the height of the greatest height in the selection<br>
+- Match Greatest Size: Sets all elements in a selection to have the width and height of the greatest width and height in the selection<br>
+- Match Greatest Width: Sets all elements in a selection to have the width of the greatest width in the selection<br>
+- Match Smallest Height: Sets all elements in a selection to have the height of the smallest height in the selection<br>
+- Match Smallest Size: Sets all elements in a selection to have the width and height of the smallest width and height in the selection<br>
+- Match Smallest Width: Sets all elements in a selection to have the width of the smallest width in the selection<br>
+- To New Document: Creates a new document out of the selection<br>
+- Break Apart: Enhanced version of the Break Apart that's used with Symbols. This one "breaks apart" a single element selection, symbol or not, performing the following based on what is selected:<br>
+-- Symbols: Breaks instance out of symbol into a group<br>
+-- Autoshapes: Ungroups shape removing autoshape properties<br>
+-- Groups: Ungroups to individual elements<br>
+-- Text: Converts to paths<br>
+-- Paths: Flattens to a bitmap<br>
+- Select Next/Previous: Selects the next and previous objects within the layers panel (next is the next one down, previous is the next one up)<br>
+- Select Available Next/Previous: Selects the next and previous available objects within the layers panel. Unlike Select Next/Previous, Select Available Next/Previous will only select visible and unlocked objects<br>
+- Reflect Left/Right/Above/Below: Copies the selection and mirrors it in the specified direction<br>
+- Name Selected Objects: Renames objects a selection<br>
+<br>
+<br>
+Note: To New Document uses the clipboard to copy and paste the selection into a new document.<br>
+<br>
+<br>
+Version History:<br>
+0.8.5: Added Name Selected Objects<br>
+0.8.4: Added Reflect commands<br>
+0.8.3: Added Select Next/Previous commands<br>
+0.8.2: Fix to Break Apart<br>
+0.8.1: Initial public release
+	]]>
+	</description>
+
+	<ui-access>
+	<![CDATA[
+	Run Selection Commands from your Commands > Selection menu.
+	]]>
+	</ui-access>
+
+	<license-agreement>
+	</license-agreement>
+
+	<files>
+		<file source="Break Apart.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Center.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Fit to Canvas.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Gather.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Match Greatest Height.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Match Greatest Size.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Match Greatest Width.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Match Smallest Height.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Match Smallest Size.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Match Smallest Width.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Name Selected Objects.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Reflect Above.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Reflect Below.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Reflect Left.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Reflect Right.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Select Available Next.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Select Available Previous.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Select Next.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="Select Previous.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+		<file source="To New Document.jsf" destination="$fireworks/Configuration/Commands/Selection" file-type="ordinary" />
+	</files>
+
+	<signatures />
+
+</macromedia-extension>

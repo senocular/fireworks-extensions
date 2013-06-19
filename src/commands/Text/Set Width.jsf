@@ -1,0 +1,17 @@
+﻿//--not for batch--
+
+	fw.runScript(Files.getLanguageDirectory() + "/JSFStrings/Set Width.jsf");
+	var t    = __tooltips;
+
+SetWidth = function(width){
+	var dom = fw.getDocumentDOM();
+	for (var s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ != Text.prototype) continue;
+		if (width){
+			fw.selection[s].autoExpand = false;
+			fw.selection[s].rawWidth = width;
+		}else fw.selection[s].autoExpand = true;
+	}
+}
+var w = prompt(t.alrtmsg,"0");
+if (!isNaN(w)) SetWidth(w);

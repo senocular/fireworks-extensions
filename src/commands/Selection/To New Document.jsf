@@ -1,0 +1,3 @@
+fw.getDocumentDOM().clipCopy();
+fw.createDocument()
+fw.clipPaste();

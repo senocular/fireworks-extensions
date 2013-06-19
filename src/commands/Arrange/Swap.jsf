@@ -1,0 +1,31 @@
+GetElementPosition = function(elem){
+	if (!dom) var dom = fw.getDocumentDOM();
+	var f = dom.frames[dom.currentFrameNum];
+	var l = f.layers.length-1;
+	var flint, e;
+	while (l--){
+		flint = f.layers[l];
+		e = flint.elements.length;
+		while (e--){
+			if (flint.elements[e].customData == elem.customData) return {layer:l, element:e};
+		}
+	}
+	return false;
+}
+Swap = function(){
+	if (!dom) var dom = fw.getDocumentDOM();
+	if (fw.selection.length < 2) return alert("Please select two objects to swap.");
+	var elem1 = fw.selection[0];
+	var elem2 = fw.selection[1];
+	var pos1 = GetElementPosition(elem1);
+	var pos2 = GetElementPosition(elem2);
+	if (pos1 && pos2){
+		fw.selection = [elem1];
+		dom.moveSelectionToLayer(pos2.layer, false, "none", pos2.element);
+		fw.selection = [elem2];
+		dom.moveSelectionToLayer(pos1.layer, false, "none", pos1.element);
+		fw.selection = [elem1, elem2];
+	}else return alert("Error: Could not locate objects to swap.");
+}
+var dom = fw.getDocumentDOM();
+Swap();

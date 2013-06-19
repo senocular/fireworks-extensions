@@ -1,0 +1,41 @@
+// ver 1.2
+
+function exportFullSlices(){
+	var dom = fw.getDocumentDOM();
+	
+	var webLayerNum = dom.layers.length-1;
+	var webLayer = dom.frames[dom.currentFrameNum].layers[webLayerNum];
+	
+	var slicesCount = webLayer.elements.length;
+	if (!slicesCount) return alert("Error: Document contains 0 slices.  No slices were exported.");
+	
+	var filepath = fw.browseForFileURL("save");
+	if (filepath == null) return false;
+	var defaultname = Files.getFilename(filepath);
+	filepath = Files.getDirectory(filepath);
+	
+	var sXO = dom.exportOptions;
+	var oldcrop = sXO.crop;
+	sXO.crop = true;
+	
+	var i, slice, name, filename, counter = 1;
+	for (i=0; i<slicesCount; i++){
+		slice = webLayer.elements[i];
+		if (!slice.visible) continue;
+		name = slice.baseName;
+		if (name == null) name = defaultname + counter++;
+		filename = filepath + "/" + name;
+		sXO = slice.exportOptions ? slice.exportOptions : dom.exportOptions;
+		sXO.crop = true;	
+		sXO.cropLeft = slice.left - dom.left;
+		sXO.cropRight = slice.left + slice.width - dom.left;
+		sXO.cropTop = slice.top - dom.top;
+		sXO.cropBottom = slice.top + slice.height - dom.top;
+		fw.exportDocumentAs(dom, filename, sXO);
+	}
+	
+	dom.lastExportDirectory = filepath;
+	sXO.crop = oldcrop;
+	return true;
+}
+exportFullSlices();

@@ -1,0 +1,61 @@
+f = new Object();
+f.Arrange = function(angle){
+	if (angle == null) return (0);
+	if (angle === "" || isNaN(angle)) return alert("Error: Invalid angle specified.");
+	angle *= Math.PI/180;
+	if (!dom) var dom = fw.getDocumentDOM();
+	var objs = new Array().concat(fw.selection), n = objs.length;
+	for (var s=0; s<n; s++){
+		objs[s].customData.__loc = f.GetElementPosition(objs[s]);
+		var pt = {x: objs[s].left + objs[s].width/2, y: objs[s].top + objs[s].height/2};
+		objs[s].customData.__cpt = f.RotatePoint(pt, angle);
+	}
+	f.Sort(objs);
+	fw.selection = objs;
+}
+f.GetElementPosition = function(elem){
+	if (!dom) var dom = fw.getDocumentDOM();
+	var f = dom.frames[dom.currentFrameNum], l = f.layers.length-1, flint, e;
+	while (l--){
+		flint = f.layers[l];
+		e = flint.elements.length;
+		while (e--) if (flint.elements[e].customData == elem.customData) return {element:e, layer:l};
+	}
+	return false;
+}
+f.Sort = function(objs){
+	var sel, i, ii, nn = objs.length, n = nn-1;
+	for (i=0; i<n; i++){
+		sel = i;
+		for (ii = i+1; ii<nn; ii++) if (objs[ii].customData.__cpt.x < objs[sel].customData.__cpt.x) sel = ii;
+		if (sel != i){
+			f.ElementSwap(objs[sel].customData.__loc, objs[i].customData.__loc);
+			f.ArraySwap(objs, sel, i);
+		}
+	}
+}
+f.ArraySwap = function(ary, index1, index2){
+	var temp = ary[index1];
+	ary[index1] = ary[index2];
+	ary[index2] = temp;
+}
+f.ElementSwap = function(pos1, pos2){
+	var elem1 = dom.frames[dom.currentFrameNum].layers[pos1.layer].elements[pos1.element];
+	var elem2 = dom.frames[dom.currentFrameNum].layers[pos2.layer].elements[pos2.element];
+	fw.selection = [elem2]; // move elem on top first
+	dom.moveSelectionToLayer(pos1.layer, false, "none", pos1.element);
+	fw.selection = [elem1];
+	dom.moveSelectionToLayer(pos2.layer, false, "none", pos2.element);
+	elem1.customData.__loc = pos2;
+	elem2.customData.__loc = pos1;
+}
+f.RotatePoint = function(pt,angle) {
+	var ca = Math.cos(angle), sa = Math.sin(angle);
+	return {x: pt.x*ca-pt.y*sa, y: pt.x*sa+pt.y*ca};
+}
+/******** END COMMON FUNCTIONS ********/
+
+var dom = fw.getDocumentDOM();
+f.Arrange(prompt("Arrange by angle (degrees):", "0"));
+f = undefined;
+delete f;

@@ -1,0 +1,8 @@
+var dom = fw.getDocumentDOM();
+var temp = Files.getTempFilePath(null)+".png";
+if (temp){
+	var result = fw.saveDocumentCopyAs(dom, temp);
+	if (result){
+		fw.openDocument(result, true);
+	}else alert("Duplicate could not be generated.");
+}else alert("Temporary file for duplicate invalid.");

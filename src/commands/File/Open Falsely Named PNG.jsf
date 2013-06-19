@@ -1,0 +1,27 @@
+function OpenAsPNG(){
+	var path = fw.browseForFileURL("open");
+	if (path){
+		var ext = Files.getExtension(path);
+		var origName = Files.getFilename(path);
+		var newPath = path;
+		if (ext != ".png"){
+			if (!ext){
+				var filename = Files.getFilename(path) + ".png";
+			}else{
+				var filename = Files.getFilename(path).replace(ext, ".png");
+			}
+			if (Files.exists(Files.getDirectory(path) +"/"+ filename)) return alert("Could not open as PNG because a PNG version of this file already exists.");
+			newPath = Files.rename(path, filename);
+		}
+		if (newPath){
+			fw.openDocument(newPath);
+			if (!Files.rename(newPath, origName)) return alert("Could not restore file's original name.");
+			else{
+				if (fw.documentList.length) fw.getDocumentDOM().filePathForSave = path;
+				else alert("Document failed to open.\nPlease select a PNG without a .png extension.");
+	
+			}
+		}else return alert("Save path couldn't be renamed.");
+	}
+}
+OpenAsPNG();

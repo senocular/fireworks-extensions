@@ -1,0 +1,4 @@
+var dom = fw.getDocumentDOM();
+dom.group("mask to image");
+dom.setElementMaskMode("mask to path");
+dom.setElementMaskShowAttrs(true);

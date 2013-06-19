@@ -1,0 +1,11 @@
+if (fw.selection.length == 1){
+	var dom = fw.getDocumentDOM();
+	var b = dom.getPixelMask().maskBounds;
+	dom.selectNone();
+	dom.exitPaintMode();
+	var w = b.right-b.left;
+	var h = b.bottom-b.top;
+	var o = {x:b.left+w/2, y:b.top+h/2};
+	w = h = Math.max(w/2,h/2);
+	if (fw.selection.length) dom.addNewRectanglePrimitive({left: o.x-w, top: o.y-h, right: o.x+w, bottom:o.y+h}, 0);
+}

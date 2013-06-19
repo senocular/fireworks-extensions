@@ -1,0 +1,5 @@
+CollapseOtherLayers = function(state){
+	var dom = fw.getDocumentDOM();
+	for (var i=0; i<dom.layers.length; i++) if (i != dom.currentLayerNum) dom.layers[i].disclosure = !state;
+}
+CollapseOtherLayers(true);

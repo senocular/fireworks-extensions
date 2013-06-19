@@ -1,0 +1,12 @@
+function ToggleOpenOrClosed(){
+	if (!fw.selection.length) return false;
+	var s, c;
+	for (s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ == Path.prototype){
+			for (c=0; c<fw.selection[s].contours.length; c++){
+				fw.selection[s].contours[c].isClosed = !fw.selection[s].contours[c].isClosed;
+			}
+		}
+	}
+}
+ToggleOpenOrClosed();

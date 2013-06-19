@@ -1,0 +1,10 @@
+//--not for batch--
+ChangeCase = function(txt_case){
+	for (var s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ != Text.prototype) continue;
+		var text = fw.selection[s].textRuns, runs = text.textRuns;
+		for (var r=0; r<runs.length; r++) runs[r].characters = runs[r].characters[txt_case]();
+		fw.selection[s].textRuns = text;
+	}
+}
+ChangeCase("toUpperCase");

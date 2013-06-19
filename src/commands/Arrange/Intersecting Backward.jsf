@@ -1,0 +1,42 @@
+var dom = fw.getDocumentDOM();
+Intersects = function(elem1, elem2){
+	var r1 = elem1.pixelRect, r2 = elem2.pixelRect;
+	return (r2.right>r1.left && r2.left<r1.right && r2.bottom>r1.top && r2.top<r1.bottom);
+}
+GetElementPosition = function(elem){
+	var frame = dom.frames[dom.currentFrameNum];
+	var len = frame.layers.length-1;
+	for (var l=0; l<len; l++){
+		var lyr = frame.layers[l];
+		var e = lyr.elements.length;
+		while (e--){
+			if (lyr.elements[e].customData == elem.customData){
+				return {layer:l, element:e};
+			}
+		}
+	}
+	return false;
+}
+FindBelow = function(elem){
+	var loc = GetElementPosition(elem);
+	var frame = dom.frames[dom.currentFrameNum];
+	var l = loc.layer+1;
+	var lyr, len, e, s;
+	while (l--){
+		lyr = frame.layers[l];
+		len = lyr.elements.length;
+		s = (l == loc.layer) ? loc.element + 1 : 0;
+		for (e=s; e<len; e++){
+			if (Intersects(lyr.elements[e], elem)){
+				return {layer:l, element:e};
+			}
+		}
+	}
+	return false;
+}
+dom.group();
+var below = FindBelow(fw.selection[0]);
+if (below){
+	dom.moveSelectionToLayer(below.layer, false, "none", below.element+1);
+}
+dom.ungroup();

@@ -1,0 +1,46 @@
+﻿handleMultiplier = 0.2761425;
+NPoint = function(node){
+	return {x: node.x, y:node.y};
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x, dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+AngleBetween = function(p1, p2){
+	return Math.atan2(p2.y-p1.y, p2.x-p1.x);
+}
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}
+}
+
+function Smooth(){
+	if (!fw.selection.length) return false;
+	var s, c, n, ns, pp, sp, dist, ang, reach, predPt, succPt
+	for (s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ == Path.prototype){
+			for (c=0; c<fw.selection[s].contours.length; c++){
+				ns = fw.selection[s].contours[c].nodes;
+				for (n=0; n<ns.length; n++){
+					if (ns[n].isSelectedPoint){
+						pp = (n == 0)  ? ns[ns.length-1] : ns[n-1];
+						sp = (n == ns.length-1)  ? ns[0] : ns[n+1];
+						dist = DistanceBetween(sp, pp);
+						ang = AngleBetween(sp, pp);
+						reach = dist*handleMultiplier;
+						predPt = PointFromVector(NPoint(ns[n]), ang, reach);
+						succPt = PointFromVector(NPoint(ns[n]), ang+Math.PI, reach);
+						ns[n].predX = predPt.x;
+						ns[n].predY = predPt.y;
+						ns[n].succX = succPt.x;
+						ns[n].succY = succPt.y;
+					}
+				}
+			}
+		}
+	}
+}
+
+Smooth();

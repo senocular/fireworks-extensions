@@ -1,0 +1,9 @@
+if (fw.selection.length){
+	var dom = fw.getDocumentDOM();
+	var b = dom.getSelectionBounds();
+	var w = b.right-b.left;
+	var h = b.bottom-b.top;
+	var o = {x:b.left+w/2, y:b.top+h/2};
+	w = h = Math.sqrt(w*w + h*h)/2;
+	dom.addNewOval({left: o.x-w, top: o.y-h, right: o.x+w, bottom:o.y+h});
+}

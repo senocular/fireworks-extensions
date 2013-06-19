@@ -1,0 +1,45 @@
+NPoint = function(node){
+	return {x:node.x, y:node.y};
+}
+NPointP = function(node){
+	return {x:node.predX, y:node.predY};
+}
+NPointS = function(node){
+	return {x:node.succX, y:node.succY};
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x, dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+AngleBetween = function(p1, p2){
+	return Math.atan2(p2.y-p1.y, p2.x-p1.x);
+}
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}
+}
+
+TransformNodes = function(){
+	var n , cs, ns, ss = fw.selection.length;
+	var dist, ang, ppt;
+	while(ss--){
+		cs = fw.selection[ss].contours.length;
+		while (cs--){
+			ns = fw.selection[ss].contours[cs].nodes.length;
+			while (ns--){
+				if (fw.selection[ss].contours[cs].nodes[ns].isSelectedPoint){
+					n = fw.selection[ss].contours[cs].nodes[ns];
+					dist = DistanceBetween(NPoint(n), NPointS(n));
+					ang = AngleBetween(NPoint(n), NPointP(n));
+					ppt = PointFromVector(NPoint(n), ang, dist);
+					n.predX = ppt.x;
+					n.predY = ppt.y;
+				}
+			}
+		}
+	}
+}
+
+TransformNodes();

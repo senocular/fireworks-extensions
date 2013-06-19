@@ -1,0 +1,23 @@
+var dom = fw.getDocumentDOM();
+function SelectElement(name){
+	dom.setElementVisibleByName(name, false);
+	dom.setElementVisibleByName(name, true);
+}
+function SelectMaskOwner(){
+	if (fw.selectedMask){
+		var oname = fw.selectedMask.owner.name;
+		fw.selectedMask.owner.name = "__SWAP_MASK_OWNER__";
+		SelectElement("__SWAP_MASK_OWNER__");
+		fw.selection[0].name = oname;
+	}
+	if (!fw.selection[0].mask) return false;
+	return true;
+}
+if (fw.selection.length == 1 && SelectMaskOwner()){
+	if (fw.selection[0].mask.mode == "mask to path" && fw.selection[0].mask.showAttrs){
+		dom.setElementMaskShowAttrs(false);
+	}else{
+		dom.setElementMaskMode("mask to path");
+		dom.setElementMaskShowAttrs(true);
+	}
+}

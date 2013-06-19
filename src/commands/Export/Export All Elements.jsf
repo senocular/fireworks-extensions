@@ -1,0 +1,66 @@
+// ver 1.7
+
+function exportAllElements(){
+	var dom = fw.getDocumentDOM();
+	var filepath = fw.browseForFileURL("save");
+	if (filepath == null) return false;
+	var defaultname = Files.getFilename(filepath);
+	filepath = Files.getDirectory(filepath);
+
+	var elems = new Array().concat(fw.selection);
+	dom.selectNone();
+
+	var sXO = dom.exportOptions;
+	var oldcrop = sXO.crop;
+	sXO.crop = true;
+  
+	var f = dom.currentFrameNum;
+	var n = dom.layers.length;
+	var i, j, m, elem;
+	
+	var visArr = new Array();
+	
+	for (i=0; i<n; i++){
+		if (dom.layers[i].layerType == "web" || dom.layers[i].frames[f].visible == false) continue;
+		m = dom.layers[i].frames[f].elements.length;
+		for (j=0; j<m; j++){
+			elem = dom.layers[i].frames[f].elements[j];
+			if (elem.visible) {
+				elem.visible = false;
+				visArr.push(elem);
+			}else{
+				visArr["_"+i+"_"+j] = true;
+			}
+		}
+	}
+	
+	var rect, name, filename, counter = 1;
+	for (i=0; i<n; i++){
+		if (dom.layers[i].layerType == "web" || dom.layers[i].frames[f].visible == false) continue;
+		m = dom.layers[i].frames[f].elements.length;
+		for (j=0; j<m; j++){
+			if (visArr["_"+i+"_"+j]) continue;
+			elem = dom.layers[i].frames[f].elements[j];
+			rect = elem.pixelRect;
+			elem.visible = true;
+			name = elem.name;
+			if (name == null) name = defaultname + counter++;
+			filename = filepath + "/" + name;
+			sXO.cropLeft = rect.left;
+			sXO.cropRight = rect.right;
+			sXO.cropTop = rect.top;
+			sXO.cropBottom = rect.bottom;
+			fw.exportDocumentAs(dom, filename, sXO);
+			elem.visible = false;
+		}
+	}
+	
+	i = visArr.length;
+	while (i--) visArr[i].visible = true;
+	
+	sXO.crop = oldcrop;
+	dom.lastExportDirectory = filepath;
+	fw.selection = elems;
+	return true;
+}
+exportAllElements();

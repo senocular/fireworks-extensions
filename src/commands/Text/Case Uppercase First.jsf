@@ -1,0 +1,28 @@
+//--not for batch--
+ChangeCase = function(txt_case){
+	var up = true;
+	var isWhite = /^\s+$/;
+	var s, r, c, txt, runs, chars, cchar;
+	var len = fw.selection.length;
+	for (s=0; s<len; s++){
+		up = true;
+		if (fw.selection[s].__proto__ != Text.prototype) continue;
+		txt = fw.selection[s].textRuns;
+		runs = txt.textRuns;
+		for (r=0; r<runs.length; r++){
+			var chars = runs[r].characters;
+			for (c=0; c<chars.length; c++){
+				cchar = chars.charAt(c);
+				if (isWhite.test(cchar)){
+					up = true;			
+				}else if (up){
+					up = false;
+					chars = chars.slice(0,c) + cchar[txt_case]() + chars.slice(c+1);
+				}
+			}
+			runs[r].characters = chars;
+		}
+		fw.selection[s].textRuns = txt;
+	}
+}
+ChangeCase("toUpperCase");

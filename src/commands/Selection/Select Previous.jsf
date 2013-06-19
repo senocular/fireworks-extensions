@@ -1,0 +1,31 @@
+f = new Object();
+f.GetElementPosition = function(elem){
+	if (!dom) var dom = fw.getDocumentDOM();
+	var f = dom.frames[dom.currentFrameNum], l = f.layers.length, flint, e;
+	while (l--){
+		flint = f.layers[l];
+		e = flint.elements.length;
+		while (e--) if (flint.elements[e].customData == elem.customData) return {element:e, layer:l};
+	}
+	return false;
+}
+f.SelectNext = function(){
+	if (!fw.selection.length) return (0);
+	if (!dom) var dom = fw.getDocumentDOM();
+	var pos = f.GetElementPosition(fw.selection[0]);
+	if (!pos) return (0);
+	var frm = dom.frames[dom.currentFrameNum];
+	if (pos.element > 0){
+		return fw.selection = [frm.layers[pos.layer].elements[pos.element-1]];
+	}
+	var lyr, len = frm.layers.length;
+	for (lyr = pos.layer+1; lyr<len; lyr++){
+		if (frm.layers[lyr].elements.length){
+			return fw.selection = [frm.layers[lyr].elements[frm.layers[lyr].elements.length-1]];
+		}
+	}
+}
+var dom = fw.getDocumentDOM();
+f.SelectNext();
+f = undefined;
+delete f;

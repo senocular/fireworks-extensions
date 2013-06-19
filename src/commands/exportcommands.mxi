@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension
+	 name="Export Commands"
+	 version="0.6.0"
+	 type="command"
+	 locked="false"
+	 pkgtype="mxp">
+
+	<author name="senocular" />
+
+	<products>
+		<product name="Fireworks" primary="true" />
+	</products>
+
+	<update  />
+
+	<description>
+	<![CDATA[
+	Export Commands<br>
+www.senocular.com<br>
+<br>
+Export Selection: Takes a group of selected objects (or just one) and crops a single image from the extents of those objects and exports it based on the export settings of the document under the name you specify in a save dialog.<br>
+Export Selected Elements: Exports a elements in your selection individually based on the document's export options and their own bounding rectangle.<br>
+Export All Elements: Exports all elements in all layers individually and separately, hiding all other layers for each individual export. Each export is based on the document's export options and cropped to each individual element's bounding rectangle.<br>
+Export Full Slices: Exports all of the document's slices individually despite overlap as if each slice were the only slice.<br>
+<br>
+Version History:<br>
+- 0.6.0: Using pixelRect instead of object rect for exporting (to capture effects); also based many commands off of visible objects<br>
+- 0.5.1: Updated some naming options in various commands<br>
+- 0.4.0: Removed crop settings from document export options after commands used<br>
+- 0.3.0: Initial release to the public
+	]]>
+	</description>
+
+	<ui-access>
+	<![CDATA[
+	Run Export Commands from your Commands > Export menu.
+	]]>
+	</ui-access>
+
+	<license-agreement>
+	</license-agreement>
+
+	<files>
+		<file source="Export All Elements.jsf" destination="$fireworks/Configuration/Commands/Export" file-type="ordinary" />
+		<file source="Export Full Slices.jsf" destination="$fireworks/Configuration/Commands/Export" file-type="ordinary" />
+		<file source="Export Selected Elements.jsf" destination="$fireworks/Configuration/Commands/Export" file-type="ordinary" />
+		<file source="Export Selection.jsf" destination="$fireworks/Configuration/Commands/Export" file-type="ordinary" />
+	</files>
+
+	<signatures />
+
+</macromedia-extension>

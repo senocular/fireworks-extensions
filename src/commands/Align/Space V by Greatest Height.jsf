@@ -1,0 +1,23 @@
+function SpaceGreatestHeight(){
+	var dom = fw.getDocumentDOM();
+	var origsel = fw.selection;
+	var sel = (new Array()).concat(origsel);
+	if (sel.length < 2) return;
+	
+	var spacing = prompt("Spacing in pixels:", "0");
+	spacing = parseFloat(spacing, 10);
+	if (isNaN(spacing)) return;
+	
+	var dir = 1; // reverse dir(ection) to reverse order of sort
+	sel.sort(function(a, b){ return (a.top > b.top) ? dir : -dir; });
+	var i, ref, n = sel.length;
+	var h = 0;
+	for (i=0; i<n;i++){
+		if (h < sel[i].height) h = sel[i].height;
+	}
+	for (i=1; i<n;i++){
+		ref = sel[i-1];
+		sel[i].top = ref.top + h + spacing;
+	}
+}
+SpaceGreatestHeight();

@@ -1,0 +1,42 @@
+var dom = fw.getDocumentDOM();
+isInverted = function(pth){
+	if (pth.contours.length < 2) return false;
+	var last = pth.contours[pth.contours.length-1];
+	if (last.nodes.length != 4) return false;
+	if (last.nodes[0].x != dom.left || last.nodes[3].x != dom.left
+	|| last.nodes[0].y != dom.top || last.nodes[1].y != dom.top) return false;
+	if (last.nodes[1].x != dom.left+dom.width || last.nodes[2].x != dom.left+dom.width
+	|| last.nodes[2].y != dom.top+dom.height || last.nodes[3].y != dom.top+dom.height) return false;
+	return true;
+}
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+function InvertPaths(){
+	if (!fw.selection.length) return false;
+	var s, c;
+	for (s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ == Path.prototype){
+			var pth = fw.selection[s];
+			if (isInverted(pth)){
+				pth.contours.length = pth.contours.length-1;
+			}else{
+				var c = pth.contours.length;
+				pth.contours[c] = new Contour();
+				pth.contours[c].isClosed = true;
+				var n = pth.contours[c].nodes
+				n.length = 4;
+				SetNodePosition(n[0], {x:dom.left, y:dom.top});
+				SetNodePosition(n[1], {x:dom.left+dom.width, y:dom.top});
+				SetNodePosition(n[2], {x:dom.left+dom.width, y:dom.top+dom.height});
+				SetNodePosition(n[3], {x:dom.left, y:dom.top+dom.height});
+			}
+		}
+	}
+}
+InvertPaths();

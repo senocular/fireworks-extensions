@@ -1,0 +1,9 @@
+if (fw.documentList.length){
+	var docs = fw.locateDocDialog(100,[]);
+	var dom = fw.getDocumentDOM();
+	if (docs != null && docs.length && dom){
+		for (var i=0; i<docs.length; i++){
+			dom.importFile(docs[i], {left:0, top:0, right:0, bottom:0}, false);
+		}
+	}
+}

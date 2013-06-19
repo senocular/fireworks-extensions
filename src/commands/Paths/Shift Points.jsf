@@ -1,0 +1,34 @@
+MatchBezierNodePosition = function(n, match){
+	n.predX	= match.predX;	n.predY	= match.predY;
+	n.x		= match.x;		n.y		= match.y;
+	n.succX	= match.succX;	n.succY	= match.succY;
+}
+BezierNodeObject = function(n){
+	return {	predX: n.predX,	predY: n.predY,
+			x: n.x,		y: n.y,
+			succX: n.succX,	succY: n.succY
+	};
+}
+function RotatePoints(){
+	if (!fw.selection.length) return false;
+	var locs = new Array();
+	for (var s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ == Path.prototype){
+			var ns = fw.selection[s].contours[0].nodes;
+			for (var n=0; n<ns.length; n++){
+				locs.push(BezierNodeObject(ns[n]));
+			}
+		}
+	}
+	locs.push(locs.shift());
+	var li= 0;
+	for (var s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ == Path.prototype){
+			var ns = fw.selection[s].contours[0].nodes;
+			for (var n=0; n<ns.length; n++){
+				MatchBezierNodePosition(ns[n], locs[li++]);
+			}
+		}
+	}
+}
+RotatePoints();

@@ -1,0 +1,4 @@
+if (fw.selection.length){
+	var dom = fw.getDocumentDOM();
+	dom.addNewRectanglePrimitive(dom.getSelectionBounds(), 0);
+}

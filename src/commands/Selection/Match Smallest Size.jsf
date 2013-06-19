@@ -1,0 +1,26 @@
+function Match() {
+	var dom = fw.getDocumentDOM();
+	var sel = fw.selection;
+	var len = sel.length;
+	var gwidth = sel[0].width;
+	var gheight = sel[0].height;
+	var unqName = "__MATCH_OPERATION__";
+	var savedNames = [];
+	for (i=0;i<len;i++) {
+		if (sel[i].__proto__ != Hotspot && sel[i].__proto__ != SliceHotspot){
+			if (gwidth > sel[i].width) gwidth = sel[i].width;
+			if (gheight > sel[i].height) gheight = sel[i].height;
+			savedNames[i] = sel[i].name;
+			sel[i].name = unqName+i;
+		}
+	}
+	for (i=0;i<len;i++){
+		if (sel[i].__proto__ != Hotspot && sel[i].__proto__ != SliceHotspot){
+			dom.setElementVisibleByName(unqName+i, false);
+			dom.setElementVisibleByName(unqName+i, true);
+			dom.resizeSelection(gwidth, gheight);
+			dom.setElementName(savedNames[i]);
+		}
+	}
+}
+Match();

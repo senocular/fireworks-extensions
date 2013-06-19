@@ -1,0 +1,31 @@
+// ver 1.3
+
+function NameSelectedObjects(){
+	var i = fw.selection.length;
+	if (!i) return alert("You must select at least one object to name.");
+	if (String(fw.selection[0]) == "[object SliceHotspot]"){
+		var firstname = fw.selection[0].baseName;
+	}else{
+		var firstname = fw.selection[0].name;
+	}
+	var newname = prompt("Name Selected Objects\n(%n = original name)", firstname);
+	if (!newname) return false;
+	var dom = fw.getDocumentDOM();
+	var origSelection = fw.selection;
+	var currname, givenname;
+	while(i--){
+		fw.selection = [origSelection[i]];
+		var currname = fw.selection[0].name;
+		var givenname = newname;
+		if (String(fw.selection[i]) == "[object SliceHotspot]"){
+			if (currname) givenname = givenname.replace(/%n/g, currname);
+			dom.setSliceFilename(givenname);
+		}else{
+			if (currname) givenname = givenname.replace(/%n/g, currname);
+			dom.setElementName(givenname);
+		}
+	}
+	fw.selection = origSelection;
+	return true;
+}
+NameSelectedObjects();

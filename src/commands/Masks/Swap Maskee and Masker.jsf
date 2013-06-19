@@ -1,0 +1,37 @@
+var dom = fw.getDocumentDOM();
+function SelectElement(name){
+	dom.setElementVisibleByName(name, false);
+	dom.setElementVisibleByName(name, true);
+}
+function SelectMaskOwner(){
+	if (fw.selectedMask){
+		var oname = fw.selectedMask.owner.name;
+		fw.selectedMask.owner.name = "__SWAP_MASK_OWNER__";
+		SelectElement("__SWAP_MASK_OWNER__");
+		fw.selection[0].name = oname;
+	}
+	if (!fw.selection[0].mask) return false;
+	return true;
+}
+if (fw.selection.length == 1 && SelectMaskOwner()){
+	var groupType = fw.selection[0].mask.mode;
+	var showAttrs = fw.selection[0].mask.showAttrs;
+	if(!groupType) groupType = "mask to path";
+	dom.ungroup();
+	var oldName0 = fw.selection[0].name;
+	var oldName1 = fw.selection[1].name;
+	fw.selection[0].name = "__SWAP_MASKING__";
+	fw.selection[1].name = "__SWAP_MASKING2__";
+	var flint = dom.frames[dom.currentFrameNum].layers[dom.currentLayerNum]
+	var i = flint.elements.length;
+	while (i--) if (flint.elements[i].name == "__SWAP_MASKING__") break;
+	SelectElement("__SWAP_MASKING__");
+	dom.moveSelectionToLayer(-1, false, "none", i+2);
+	SelectElement("__SWAP_MASKING2__");
+	fw.selection[0].name = "__SWAP_MASKING__";
+	SelectElement("__SWAP_MASKING__");
+	fw.selection[0].name = oldName1;
+	fw.selection[1].name = oldName0;
+	dom.group(groupType);
+	if (showAttrs) dom.setElementMaskShowAttrs(true);
+}

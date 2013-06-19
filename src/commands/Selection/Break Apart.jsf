@@ -1,0 +1,9 @@
+﻿if (fw.selection.length == 1){
+	if (fw.selection[0].instanceType){
+		fw.getDocumentDOM().detachInstanceFromSymbol();
+	}else if (fw.selection[0].isSmartShape || fw.selection[0].__proto__ == Group.prototype || fw.selection[0].__proto__ == RectanglePrimitive){
+		fw.getDocumentDOM().ungroup();
+	}else if (fw.selection[0].__proto__ == Text.prototype){
+		fw.getDocumentDOM().convertToPaths();
+	}else fw.getDocumentDOM().flattenSelection();
+}

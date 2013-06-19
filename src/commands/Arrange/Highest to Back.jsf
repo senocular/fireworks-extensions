@@ -1,0 +1,52 @@
+f = new Object();
+f.Arrange = function(compare){
+	if (!dom) var dom = fw.getDocumentDOM();
+	var objs = new Array().concat(fw.selection), n = objs.length;
+	for (var s=0; s<n; s++) objs[s].customData.__loc = f.GetElementPosition(objs[s]);
+	f.Sort(objs, compare);
+	fw.selection = objs;
+}
+f.GetElementPosition = function(elem){
+	if (!dom) var dom = fw.getDocumentDOM();
+	var f = dom.frames[dom.currentFrameNum], l = f.layers.length-1, flint, e;
+	while (l--){
+		flint = f.layers[l];
+		e = flint.elements.length;
+		while (e--) if (flint.elements[e].customData == elem.customData) return {element:e, layer:l};
+	}
+	return false;
+}
+f.Sort = function(objs, compare){
+	var sel, i, ii, nn = objs.length, n = nn-1;
+	for (i=0; i<n; i++){
+		sel = i;
+		for (ii = i+1; ii<nn; ii++) if (compare(objs[ii], objs[sel])) sel = ii;
+		if (sel != i){
+			f.ElementSwap(objs[sel].customData.__loc, objs[i].customData.__loc);
+			f.ArraySwap(objs, i, sel);
+		}
+	}
+}
+f.ArraySwap = function(ary, index1, index2){
+	var temp = ary[index1];
+	ary[index1] = ary[index2];
+	ary[index2] = temp;
+}
+f.ElementSwap = function(pos1, pos2){
+	var elem1 = dom.frames[dom.currentFrameNum].layers[pos1.layer].elements[pos1.element];
+	var elem2 = dom.frames[dom.currentFrameNum].layers[pos2.layer].elements[pos2.element];
+	fw.selection = [elem2]; // move elem on top first
+	dom.moveSelectionToLayer(pos1.layer, false, "none", pos1.element);
+	fw.selection = [elem1];
+	dom.moveSelectionToLayer(pos2.layer, false, "none", pos2.element);
+	elem1.customData.__loc = pos2;
+	elem2.customData.__loc = pos1;
+}
+/******** END COMMON FUNCTIONS ********/
+f.HighestToBackCompare = function(newobj, currobj){
+	return (newobj.top > currobj.top);
+}
+var dom = fw.getDocumentDOM();
+f.Arrange(f.HighestToBackCompare);
+f = undefined;
+delete f;

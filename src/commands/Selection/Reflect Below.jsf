@@ -1,0 +1,7 @@
+dom = fw.getDocumentDOM()
+dom.cloneSelection();
+dom.group("normal");
+dom.reflectSelection(false, true, "autoTrimImages transformAttributes");
+dom.moveSelectionBy({x:0, y:fw.selection[0].pixelRect.bottom - fw.selection[0].pixelRect.top}, false, false);
+dom.ungroup();
+delete dom;

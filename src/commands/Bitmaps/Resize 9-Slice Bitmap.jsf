@@ -1,0 +1,313 @@
+﻿// basic vars
+var dom = fw.getDocumentDOM();
+var sel;
+var userTransform;
+var _scaleRect;
+var _selRect;
+var _isInBoundsV;
+var _isInBoundsH;
+var _usingPaintMode;
+
+// command
+function transformBitmap() {
+	// acquire and validate selection	
+	if (!validate()) return;
+	
+	// override stupid faster but less accurate resampling
+	var OSBasedResample = fw.getPref("OSBasedResample");
+	fw.setPref("OSBasedResample","false");
+	
+	// depending on direction perform sides
+	// or center first to prevent overlap
+	dom.enterPaintMode(null);
+	if (userTransform.x > 0) {
+		offsetH();
+	}
+	if (userTransform.y > 0) {
+		offsetV();
+	}
+	
+	scaleCenter({x:userTransform.x, y:0});
+	scaleCenter({x:0, y:userTransform.y});
+
+	if (userTransform.x <= 0) {
+		offsetH();
+	}
+	if (userTransform.y <= 0) {
+		offsetV();
+	}
+	
+	// restore resampling
+	fw.setPref("OSBasedResample",OSBasedResample);
+	
+	// apply new transformed selection if started in paint mode
+	var rect = getScaleRect();
+	if (_usingPaintMode) {
+		rect.right += userTransform.x;
+		rect.bottom += userTransform.y;
+		dom.setSelectionMask({maskBounds:rect,
+							maskKind:"rectangle",
+							maskEdgeMode:"hard edge",
+							featherAmount:0,
+							maskData:null},
+							"replace");
+	}else{
+		// otherwise exit to restore selection
+		dom.exitPaintMode();
+	}
+	
+	// save rect information in bitmap
+	fw.selection[0].customData.scale9GridMarquee = rect.left+","+rect.top+","+rect.right+","+rect.bottom;
+}
+function validate() {
+	// check selection
+	if (!fw.selection.length || String(fw.selection[0]) != "[object Image]") {
+		alert("Error: Selected bitmap required");
+		return false;
+	}
+	
+	// selection shortcut
+	sel = fw.selection[0];
+	
+	
+	// remember using paint mode
+	_usingPaintMode = dom.isPaintMode;
+		
+	if (!_usingPaintMode) {
+		// if not in paint mode, check for pre-existing 9-slice in customData
+		if (!setSavedScaleRect()) {
+			alert("Error: Operation requires a bitmap marquee selection");
+			return false;
+		}
+	}else{
+		
+		// use current marquee selection bounds
+		_scaleRect = dom.getSelectionBounds();
+		
+		// if marquee size matches document size
+		// there is no user selection
+		if ((_scaleRect.right - _scaleRect.left == dom.width)
+		&&  (_scaleRect.bottom - _scaleRect.top == dom.height)) {
+		
+			// check for pre-existing 9-slice in customData
+			if (!setSavedScaleRect()) {
+				alert("Error: Operation requires a bitmap marquee selection");
+				return false;
+			}
+		}
+		
+		// exit paint mode for _selRect
+		dom.exitPaintMode();
+	}
+	
+	var width = sel.width;
+	var height = sel.height;
+	// dont use pixelRect for _selRect since it includes live filters
+	_selRect = {left:sel.left, top:sel.top, right:sel.left + width, bottom:sel.top + height};
+	if (_usingPaintMode) {
+		dom.enterPaintMode(null);
+	}
+	
+	// make sure selection is valid within element
+	_isInBoundsV = Boolean(_selRect.top < _scaleRect.top && _selRect.bottom > _scaleRect.bottom);
+	_isInBoundsH = Boolean(_selRect.left < _scaleRect.left && _selRect.right > _scaleRect.right);
+	if ((!_isInBoundsV && !_isInBoundsH)
+	||  _scaleRect.left == _scaleRect.right
+	||  _scaleRect.top == _scaleRect.bottom) {
+		alert("Error: Invalid selection");
+		return false;
+	}
+
+	// user input
+	var userinput;
+	var allowed;
+	var offset;
+	userTransform = {x:0, y:0};
+	
+	if (_isInBoundsH) {
+		while(true) {
+			userinput = prompt("New width (use +/- prefixes for relative):", width);
+			if (userinput == undefined) {
+				// canceled, exit silently
+				return false;
+			}
+			offset = String(userinput).charAt(0);
+			offset = (offset == "+" || offset == "-") ? 0 : width;
+			userTransform.x = parseInt(userinput, 10) - offset;
+			
+			if (isNaN(userTransform.x)) {
+				// input not a valid number
+				alert("Error: Invalid input value");
+				continue;
+			}
+			if (userTransform.x < 0) {
+				// make sure input not less than available size
+				allowed = (_scaleRect.right - _scaleRect.left);
+				userTransform.x = Math.max(userTransform.x, -allowed);
+			}
+			break;
+		}
+	}
+	if (_isInBoundsV) {
+		while(true) {
+			userinput = prompt("New height (use +/- prefixes for relative):", height);
+			if (userinput == undefined) {
+				// canceled, exit silently
+				return false;
+			}
+			offset = String(userinput).charAt(0);
+			offset = (offset == "+" || offset == "-") ? 0 : height;
+			userTransform.y = parseInt(userinput, 10) - offset;
+			
+			if (isNaN(userTransform.y)) {
+				// input not a valid number
+				alert("Error: Invalid input value");
+				continue;
+			}
+			if (userTransform.y < 0) {
+				// make sure input not less than available size
+				allowed = (_scaleRect.bottom - _scaleRect.top);
+				userTransform.y = Math.max(userTransform.y, -allowed);
+			}
+			break;
+		}
+	}
+	
+	// assure validity of userTransform
+	if (userTransform.x == 0 && userTransform.y == 0) {
+	
+		alert("Input results in no change");
+		
+		// restore scale rect if in paint mode
+		if (_usingPaintMode) {
+			dom.setSelectionMask({maskBounds:_scaleRect,
+								maskKind:"rectangle",
+								maskEdgeMode:"hard edge",
+								featherAmount:0,
+								maskData:null},
+								"replace");
+		}
+		return false;
+	}
+	
+	// make sure transform is within canvas
+	if (_selRect.right + userTransform.x > dom.left + dom.width
+	||  _selRect.bottom + userTransform.y > dom.top + dom.height) {
+		return fw.yesNoDialog("Resizing past the area of the canvas can cause unexpected results. Continue?");
+	}
+	
+	// valid
+	return true;
+}
+function getSelRect() {
+	// return selection rect copy
+	return {left:_selRect.left, top:_selRect.top, right:_selRect.right, bottom:_selRect.bottom};
+}
+function getScaleRect() {
+	// return scale rect copy
+	return {left:_scaleRect.left, top:_scaleRect.top, right:_scaleRect.right, bottom:_scaleRect.bottom};
+}
+function setSavedScaleRect() {
+	// scale rect from customData
+	if (sel.customData.scale9GridMarquee) {
+		var values = sel.customData.scale9GridMarquee.split(",");
+		_scaleRect = {
+			left:parseInt(values[0], 10),
+			top:parseInt(values[1], 10),
+			right:parseInt(values[2], 10),
+			bottom:parseInt(values[3], 10)
+		};
+		return true;
+	}
+	return false;
+}
+function offsetH() {
+	if (_isInBoundsH) {
+		// right
+		var sliceRect = getScaleRect();
+		var rect = getSelRect();
+		rect.left = sliceRect.right;
+		if (userTransform.y > 0) {
+			rect.bottom += userTransform.y;
+		}
+		offsetRect(rect, {x:userTransform.x, y:0});
+	}
+}
+function offsetV() {
+	if (_isInBoundsV) {
+		// bottom
+		var sliceRect = getScaleRect();
+		var rect = getSelRect();
+		rect.top = sliceRect.bottom;
+		if (userTransform.x > 0) {
+			rect.right += userTransform.x;
+		}
+		offsetRect(rect, {x:0, y:userTransform.y});
+	}
+}
+function offsetRect(rect, pt) {
+	// select
+	dom.setSelectionMask({maskBounds:rect,
+						maskKind:"rectangle",
+						maskEdgeMode:"hard edge",
+						featherAmount:0,
+						maskData:null},
+						"replace");
+	// offset
+	dom.moveSelectionBy(pt, false, true);
+}
+function scaleCenter(pt) {
+	if (pt.x == 0 && pt.y == 0) {
+		// no scale
+		return;
+	}
+	var sliceRect = getScaleRect();
+	var rect = getSelRect();
+
+	// offsets depending on scale 
+	if (pt.x) {
+		rect.left = sliceRect.left;
+		rect.right = sliceRect.right;
+		if (userTransform.y > 0) {
+			rect.bottom += userTransform.y;
+		}
+	}else if (pt.y) {
+		rect.top = sliceRect.top;
+		rect.bottom = sliceRect.bottom;
+		if (userTransform.x > 0) {
+			rect.right += userTransform.x;
+		}
+	}
+	// select
+	dom.setSelectionMask({maskBounds:rect,
+						maskKind:"rectangle",
+						maskEdgeMode:"hard edge",
+						featherAmount:0,
+						maskData:null},
+						"replace");
+	
+	// quad sizing
+	var width = rect.right - rect.left;
+	var height = rect.bottom - rect.top;
+	var boxsize = Math.max(width, height);
+	var boxsize2 = boxsize/2;
+	
+	var locX = (boxsize2 - width/2)/boxsize;
+	var locY = (boxsize2 - height/2)/boxsize;
+	var offX = (width + pt.x)/boxsize;
+	var offY = (height + pt.y)/boxsize;
+	
+	if (offX <= 0 || offY <= 0) {
+		// scale into nothingness, just delete
+		dom.deleteSelection(false);
+	}else{
+		dom.setQuadrangle(
+			{x:locX,		y:locY},
+			{x:locX + offX,	y:locY},
+			{x:locX + offX,	y:locY + offY},
+			{x:locX,		y:locY + offY},
+			"transformAttributes");
+	}
+}
+// run command
+transformBitmap();

@@ -1,0 +1,2 @@
+dom = fw.getDocumentDOM();
+dom.moveSelectionToLayer(dom.layers.length-2, false, "none", -1);

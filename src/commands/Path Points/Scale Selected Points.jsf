@@ -1,0 +1,48 @@
+var f = new Object();
+f.main = function(){
+	var _xscale = prompt("Scale Width (in percent)", 100);
+	var _yscale = prompt("Scale Height (in percent)", 100);
+	if (isNaN(_xscale) || isNaN(_yscale)) return false;
+	_xscale /= 100;
+	_yscale /= 100;
+	var si, ci, ni;
+	var sn, cn, nn;
+	var n, _x, _y;
+	var selNodes = new Array();
+	sn = fw.selection.length;
+	for (si=0; si<sn; si++){
+		if (!fw.selection[si].contours) continue;
+		cn = fw.selection[si].contours.length;
+		for (ci=0; ci<cn; ci++){
+			nn = fw.selection[si].contours[ci].nodes.length;
+			for (ni=0; ni<nn; ni++){
+				n = fw.selection[si].contours[ci].nodes[ni];
+				if (n.isSelectedPoint) selNodes.push({r:n, si:si, ci:ci, ni:ni});
+			}
+		}
+	}
+	nn = selNodes.length;
+	var avg = {x: 0, y: 0};
+	for (var i=0; i<nn; i++){
+		avg.x += selNodes[i].r.x;
+		avg.y += selNodes[i].r.y;
+	}
+	avg.x /= nn;
+	avg.y /= nn;
+	for (var i=0; i<nn; i++){
+		n = selNodes[i];
+		_x = n.r.x - avg.x; _y = n.r.y - avg.y;
+		fw.selection[n.si].contours[n.ci].nodes[n.ni].x = avg.x + _x*_xscale;
+		fw.selection[n.si].contours[n.ci].nodes[n.ni].y = avg.y + _y*_yscale;
+		_x = n.r.predX - avg.x; _y = n.r.predY - avg.y;
+		fw.selection[n.si].contours[n.ci].nodes[n.ni].predX = avg.x + _x*_xscale;
+		fw.selection[n.si].contours[n.ci].nodes[n.ni].predY = avg.y + _y*_yscale;
+		_x = n.r.succX - avg.x; _y = n.r.succY - avg.y;
+		fw.selection[n.si].contours[n.ci].nodes[n.ni].succX = avg.x + _x*_xscale;
+		fw.selection[n.si].contours[n.ci].nodes[n.ni].succY = avg.y + _y*_yscale;
+	}
+	return true;
+}
+f.main();
+f = undefined;
+delete f;

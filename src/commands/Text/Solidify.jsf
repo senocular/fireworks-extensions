@@ -1,0 +1,41 @@
+﻿//--not for batch--
+
+GetElementPosition = function(elem){
+	if (!dom) var dom = fw.getDocumentDOM();
+	var f = dom.frames[dom.currentFrameNum];
+	var l = f.layers.length-1;
+	var flint, e
+	while (l--){
+		flint = f.layers[l];
+		e = flint.elements.length;
+		while (e--){
+			if (flint.elements[e].customData == elem.customData) return {layer:l, element:e, frame:f};
+		}
+	}
+	return false;
+}
+
+Solidify = function(elem){
+
+	fw.runScript(Files.getLanguageDirectory() + "/JSFStrings/Solidify.jsf");
+	var t    = __tooltips;
+
+if(elem == null)
+      return alert(t.alrtmsg1);
+	if (!dom) var dom = fw.getDocumentDOM();
+	if (elem.__proto__ != Text.prototype) return alert(t.alrtmsg1);
+	var pos = GetElementPosition(elem);
+	if (!pos) return alert(t.alrtmsg2);
+	dom.addNewLayer(null, false);
+	var newLayer = dom.currentLayerNum;
+	dom.moveSelectionToLayer(-1, false, "none", -1);
+	dom.convertToPaths();
+	dom.ungroup();
+	dom.splitPaths();
+	dom.selectAllOnLayer(newLayer);
+	dom.pathUnion();
+	dom.moveSelectionToLayer(pos.layer, false, "none", pos.element);
+	dom.deleteLayer(newLayer);
+}
+
+Solidify(fw.selection[0]);

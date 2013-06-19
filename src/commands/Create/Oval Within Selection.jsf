@@ -1,0 +1,4 @@
+if (fw.selection.length){
+	var dom = fw.getDocumentDOM();
+	if (fw.selection.length) dom.addNewOval(dom.getSelectionBounds());
+}

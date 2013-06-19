@@ -1,0 +1,16 @@
+function StraightenEnds(){
+	if (!fw.selection.length) return false;
+	for (var s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ == Path.prototype){
+			for (var c=0; c<fw.selection[s].contours.length; c++){
+				var ns = fw.selection[s].contours[c].nodes;
+				var end = ns.length-1;
+				ns[0].predX = ns[0].x;
+				ns[0].predY = ns[0].y;
+				ns[end].succX = ns[end].x;
+				ns[end].succY = ns[end].y;
+			}
+		}
+	}
+}
+StraightenEnds();

@@ -1,0 +1,5 @@
+var docs = (new Array()).concat(fw.documentList);
+for (var i=0; i<docs.length; i++){
+	if (docs[i].lastExportFile == null) fw.exportDocumentAs(docs[i], null, null);
+	else fw.exportDocumentAs(docs[i], docs[i].lastExportDirectory+"/"+docs[i].lastExportFile, null);
+}

@@ -1,0 +1,45 @@
+// ver 1.2
+
+function exportSelectedElements(){
+	if (!fw.selection.length) return false;
+	var dom = fw.getDocumentDOM();
+	var filepath = fw.browseForFileURL("save");
+	if (filepath == null) return false;
+	var defaultname = Files.getFilename(filepath);
+	filepath = Files.getDirectory(filepath);
+	if (filepath == null) return false;
+
+	var elems = new Array().concat(fw.selection);
+	dom.selectNone();
+
+	var sXO = dom.exportOptions;
+	var oldcrop = sXO.crop;
+	sXO.crop = true;
+  
+	var n = elems.length;
+	for (i=0; i<n; i++) elems[i].visible = false;
+
+	var elem, rect, name, filename, counter = 1;
+	for (i=0; i<n; i++) {
+		elem = elems[i];
+		rect = elem.pixelRect;
+		elem.visible = true;
+		name = elem.name;
+		if (name == null) name = defaultname + counter++;
+		filename = filepath + "/" + name;
+		sXO.cropLeft = rect.left;
+		sXO.cropRight = rect.right;
+		sXO.cropTop = rect.top;
+		sXO.cropBottom = rect.bottom;
+		fw.exportDocumentAs(dom, filename, sXO);
+		elem.visible = false;
+	}
+	
+	for (i=0; i<n; i++) elems[i].visible = true;
+	
+	sXO.crop = oldcrop;
+	dom.lastExportDirectory = filepath;
+	fw.selection = elems;
+	return true;
+}
+exportSelectedElements();

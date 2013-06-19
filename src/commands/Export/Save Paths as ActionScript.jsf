@@ -1,0 +1,511 @@
+/**
+ * Converts a cubic bezier curve into one or many
+ * quadratic curves depending on the tolerance.
+ * x1, y1, ... x4, y4 - the locations of the points
+ * in the cubic bezier curve in the order of start
+ * point, first control point, second control point,
+ * and end point.
+ * tol - Tolerance for accuracy of the conversion.
+ * The smaller the tolerance, the more accurate the
+ * conversion will be, but also the more likely many
+ * quadratic curves will be used to represent one
+ * cubic curve.
+ * rec - Recursion limit.  In the case that an infinite
+ * loop occurs, the recursion limit will provide a
+ * maximum number of recursive calls allowed before the
+ * command aborts.  This will prevent a lock up in the
+ * application should something go wrong.
+ * rnd - The number of decimal points to round the 
+ * coordinates derived. The more you round, the fewer
+ * the characters used to represent the shape.
+ */
+function cubicToQuadratic(x1, y1, x2, y2, x3, y3, x4, y4, tol, rec, rnd) {
+	// bezier control intersection
+	var cx = x1, cy = y1;
+	var d1 = x2 - x1, d2 = x3 - x4;
+	if (d1 || d2){
+		var m1 = d1 ? (y2 - y1)/d1 : 0;
+		var m2 = d2 ? (y3 - y4)/d2 : 0;
+		if (!d1){
+			cy = m2*(x1 - x4) + y4;
+		}else if (!d2){
+			cx = x4;
+			cy = m1*(x4 - x1) + y1;
+		}else{
+			var dm = m1 - m2;
+			if (dm) {
+				cx = (m1*x1 - m2*x4 + y4 - y1)/dm;
+				cy = m1*(cx - x1) + y1;
+			}
+		}
+	}
+	// subdivide if not within tolerance
+	// don't go beyond recursive limit
+	d1 = (x1 + x4 + 4*cx - 3*(x2 + x3))/8;
+	d2 = (y1 + y4 + 4*cy - 3*(y2 + y3))/8;
+	if (d1*d1 + d2*d2 > tol && rec > 0) {
+		rec--;
+		var ax2 = (x1 + x2)/2, ay2 = (y1 + y2)/2;
+		var bx3 = (x3 + x4)/2, by3 = (y3 + y4)/2;
+		cx = (x2 + x3)/2;
+		cy = (y2 + y3)/2;
+		var ax3 = (ax2 + cx)/2, ay3 = (ay2 + cy)/2;
+		var bx2 = (cx + bx3)/2, by2 = (cy + by3)/2;
+		cx = (ax3 + bx2)/2;
+		cy = (ay3 + by2)/2;
+		
+		// recursively call the command until
+		// the tolerance is reached
+		return cubicToQuadratic(x1,y1, ax2,ay2, ax3,ay3, cx,cy, tol, rec, rnd).concat(
+			   cubicToQuadratic(cx,cy, bx2,by2, bx3,by3, x4,y4, tol, rec, rnd));
+	}else{
+		
+		// if the tolerance has been reached
+		// return the points
+		return [Math.floor(cx*rnd)/rnd, Math.floor(cy*rnd)/rnd,
+			Math.floor(x4*rnd)/rnd, Math.floor(y4*rnd)/rnd];
+	}
+}
+
+/**
+ * Retutns source code of an ActionScript
+ * GraphicsPath object based on the path element
+ * passed.
+ */
+function getGraphicsData(elem, rnd){
+	
+	// type of object
+	var type = String(elem);
+	var dataObject = {element:elem};
+	switch(type){
+		
+		case "[object RectanglePrimitive]":
+			setGraphicsLineStyle(dataObject);
+			setGraphicsFillStyle(dataObject);
+			setGraphicsPathDataRect(dataObject, rnd);
+			return dataObject;
+			break;
+		
+		case "[object Path]":
+			setGraphicsLineStyle(dataObject);
+			setGraphicsFillStyle(dataObject);
+			setGraphicsPathDataPath(dataObject, rnd);
+			return dataObject;
+			break;
+	}
+	
+	// unknown element
+	return null;
+}
+/**
+ * Sets line style for the dataObject.
+ */
+function setGraphicsLineStyle(dataObject){
+	if (dataObject.element.pathAttributes.brush == null){
+		return;
+	}
+	
+	dataObject.brush = "solid";
+	dataObject.brushColor = dataObject.element.pathAttributes.brushColor;
+	dataObject.brushThickness = dataObject.element.pathAttributes.brush.diameter;
+}
+/**
+ * Sets fill style for the dataObject.
+ */
+function setGraphicsFillStyle(dataObject){
+	if (dataObject.element.pathAttributes.fill == null){
+		return;
+	}
+	
+	dataObject.fill = "solid";
+	dataObject.fillColor = dataObject.element.pathAttributes.fillColor;
+}
+
+/**
+ * Generates path data for the rectangle element
+ * stored in the passed data object
+ */
+function setGraphicsPathDataRect(dataObject, rnd){
+	
+	// need to transform the affine transformation
+	// matrix of the rectangle against the points
+	// of its original sides
+	var box = dataObject.element.originalSides;
+	var matrix = dataObject.element.transform.matrix;
+	var a = matrix[0],	b = matrix[1];
+	var c = matrix[3],	d = matrix[4];
+	var tx = matrix[6],	ty = matrix[7];
+
+	// start x/y represent the start and
+	// end point of the data
+	var startX = Math.floor((box.left*a + box.top*c + tx)*rnd)/rnd;
+	var startY = Math.floor((box.left*b + box.top*d + ty)*rnd)/rnd;
+	
+	// rects will always use even-odd fill
+	var winding = "GraphicsPathWinding.EVEN_ODD";
+	
+	// commands draw a box
+	var commands = [1,2,2,2,2];
+	
+	// data of transformed points
+	var data = [
+		startX,
+		startY,
+		Math.floor((box.right*a + box.top*c    + tx)*rnd)/rnd,
+		Math.floor((box.right*b + box.top*d    + ty)*rnd)/rnd,
+		Math.floor((box.right*a + box.bottom*c + tx)*rnd)/rnd,
+		Math.floor((box.right*b + box.bottom*d + ty)*rnd)/rnd,
+		Math.floor((box.left*a  + box.bottom*c + tx)*rnd)/rnd,
+		Math.floor((box.left*b  + box.bottom*d + ty)*rnd)/rnd,
+		startX,
+		startY
+	];
+	
+	// update data
+	dataObject.commands	= commands;
+	dataObject.data		= data;
+	dataObject.winding	= winding;
+}
+
+/**
+ * Generates path data for the path element
+ * stored in the passed data object
+ */
+function setGraphicsPathDataPath(dataObject, rnd){
+	
+	// variable
+	var tol = 5; // curve tolerance
+	var rec = 10; // curve recusion cutoff
+	
+	// path.isEvenOddFill is a new property in CS4
+	var winding = (dataObject.element.isEvenOddFill == true || dataObject.element.isEvenOddFill == undefined)
+		? "GraphicsPathWinding.EVEN_ODD"
+		: "GraphicsPathWinding.NON_ZERO";
+	
+	var MOVE_TO = 1;
+	var LINE_TO = 2;
+	var CURVE_TO = 3;
+	
+	var commands = [], data = [];
+	var curves, numCmd;
+	var nod, last, ni, nn;
+	var con, ci, cn = dataObject.element.contours.length;
+	
+	// loop through all path contours
+	for (ci=0; ci<cn; ci++){
+	
+		con = dataObject.element.contours[ci];
+		nn = con.nodes.length;
+		
+		if (nn){
+			
+			// loop through all path nodes
+			for (ni=0; ni<=nn; ni++){
+				
+				if (ni < nn) nod = con.nodes[ni];
+				else{
+					// last node to first
+					if (con.isClosed) nod = con.nodes[0];
+					else break;
+				}
+				
+				// first node, move to
+				if (ni == 0){
+				
+					commands.push(MOVE_TO);
+					data.push(Math.floor(nod.x*rnd)/rnd, Math.floor(nod.y*rnd)/rnd);
+					
+				// straight line
+				}else if (nod.succX == nod.x && nod.x == nod.predX
+				&& nod.succY == nod.y && nod.y == nod.predY){
+					
+					commands.push(LINE_TO);
+					data.push(Math.floor(nod.x*rnd)/rnd, Math.floor(nod.y*rnd)/rnd);
+					
+				// curve
+				}else{
+				
+					curves = cubicToQuadratic(
+						last.x, last.y, last.succX, last.succY,
+						nod.predX, nod.predY, nod.x, nod.y,
+						tol, rec, rnd);
+					
+					numCmd = Math.floor(curves.length/4);
+					while(numCmd--) commands.push(CURVE_TO);
+					data = data.concat(curves);
+				}
+				
+				last = nod;
+			}
+		}
+	}
+	
+	// update data
+	dataObject.commands	= commands;
+	dataObject.data		= data;
+	dataObject.winding	= winding;
+}
+
+/**
+ * Converts data objects into source code
+ */
+function getSourceCode(className, dataObjects, rnd){
+	
+	// class header
+	var code = "package {\n\n"
+		+ "\timport flash.display.*;\n\n"
+		+ "\t// Requires Flash Player 10+\n"
+		+ "\tpublic class " + className + " extends Sprite {\n\n"
+		+ "\t\t// Graphics objects\n";
+	
+	// variable for keeping track of names
+	// defined by getName; prevents duplicates
+	var nameIndex = {};
+	var name;
+	var callCode = "";
+		
+	var dataObject;
+	var i, n = dataObjects.length;
+	for (i=0; i<n; i++){
+		
+		dataObject = dataObjects[i];
+		name = getObjectName(dataObject, nameIndex);
+		
+		// calling drawings in constructor
+		if (!callCode) callCode = "\t\t\twith(graphics) {\n";
+		callCode += "\t\t\t\tdrawGraphicsData("+name+");\n"
+			+ "\t\t\t\tlineStyle(NaN);\n"
+			+ "\t\t\t\tendFill();\n";
+		
+		// define IGraphicsData
+		code += "\t\tpublic static var " + name
+			+ ":Vector.<IGraphicsData> = Vector.<IGraphicsData>([\n";
+		
+		if (dataObject.fill){
+			code += "\t\t\t" + getGraphicsFillSource(dataObject, rnd) + ",\n"
+		}
+		
+		if (dataObject.brush){
+			code += "\t\t\t" + getGraphicsStrokeSource(dataObject, rnd) + ",\n"
+		}
+		
+		// path + ending IGraphicsData
+		code += "\t\t\t" + getGraphicsPathSource(dataObject) + "\n"
+			+ "\t\t]);\n\n";
+	}
+	
+	code += "\t\t// Constructor\n"
+		+ "\t\tpublic function " + className + "() {\n"
+		+ callCode + "\t\t\t}\n\t\t}\n";
+	
+	// class closing brackets
+	code += "\t}\n"
+		+ "}";
+	
+	return code;
+}
+
+/**
+ * Get a name for an dataObject
+ */
+function getObjectName(dataObject, nameIndex){
+	
+	// get name from path element
+	var name = dataObject.element.name;
+	
+	if (!name){
+		// no object name, create default name
+		name = getUniqueObjectName(nameIndex);
+	}else{
+		// clean name of invalid characters
+		name = name.replace(/[^a-zA-Z0-9_$]/g, "_");
+		
+		// if name exists, uniquify it
+		if (nameIndex[name]){
+			name = getUniqueObjectName(nameIndex, name);
+		}else{
+			nameIndex[name] = true;
+		}
+	}
+	
+	return name;
+}
+
+/**
+ * Get a unique name from a nameIndex
+ */
+function getUniqueObjectName(nameIndex, base){
+	
+	// base for name defaults to "drawing"
+	if (base == undefined) {
+		base = "drawing";
+	}
+	
+	// count is used to see how many times
+	// a base has been used in the name index
+	var count = "%"+base+"%";
+	if (nameIndex[count] == undefined){
+		// drawing starts at 1
+		nameIndex[count] = (count == "%drawing%") ? 1 : 2;
+	}
+	
+	// check the name index for each instance
+	// of count, incrementing by one, until
+	// no match is found
+	while(nameIndex[base + nameIndex[count]]){
+		nameIndex[count]++;
+	}
+	
+	// the new name is based on the new count
+	var name = base + nameIndex[count];
+	
+	// update name index
+	nameIndex[name] = true;
+	nameIndex[count]++;
+	
+	return name;
+}
+
+// get source code for a GraphicsFill
+function getGraphicsFillSource(dataObject, rnd){
+	return "new GraphicsSolidFill("+convertHashHex(dataObject.fillColor) + ","
+		+ convertAlpha(dataObject.element.opacity, rnd) + ")";
+}	
+
+// get source code for a GraphicsStroke
+function getGraphicsStrokeSource(dataObject, rnd){
+	return "new GraphicsStroke(" + dataObject.brushThickness + ",false,\"normal\",\"none\",\"round\",3.0,"
+		+ "new GraphicsSolidFill(" + convertHashHex(dataObject.brushColor) + ","
+		+ convertAlpha(dataObject.element.opacity, rnd) + "))";
+}	
+
+// get source code for a GraphicsPath
+function getGraphicsPathSource(dataObject){
+	return "new GraphicsPath("
+			+ "Vector.<int>(["+dataObject.commands+"]),"
+			+ "Vector.<Number>(["+dataObject.data+"]),"
+			+ dataObject.winding +")";
+}	
+
+// converts a #NNNNNN color value into 0xNNNNNN
+function convertHashHex(hex){
+	return "0x" + hex.substring(1);
+}
+
+// converts FW opacity to FL alpha
+function convertAlpha(opacity, rnd){
+	return Math.floor((opacity/100)*rnd)/rnd;
+}
+/**
+ * Saves text to a text file at the location specified
+ * by filePath.
+ * text - Text to save to a text file.
+ * filePath - The location to save the text.
+ * Returns true if the file was successfully saved,
+ * false if not.
+ */
+function saveTextFile(text, filePath) {
+	// if user canceled save dialog
+	// exit operation with no success
+	if (!filePath){
+		return false;
+	}
+	
+	// delete any existing file
+	Files.deleteFileIfExisting(filePath);
+	
+	// create new file
+	var ext = Files.getExtension(filePath);
+	if (!Files.createFile(filePath, ext, "TEXT")) {
+		return false;
+	}
+	
+	// open file
+	var file = Files.open(filePath, true);
+	if (!file){
+		return false;
+	}
+	
+	// write to file
+	var result = file.write(text);
+	// close when complete
+	file.close();
+	if (!result){
+		return false;
+	}
+	
+	return true;
+}
+
+// MAIN: saves a selection of paths to 
+// an ActionScript file
+function savePathsAsActionScript(){
+	if (!fw.selection) return null;
+	
+	var rnd = 100; // rounding
+	var code;
+	var data, dataObjects = [];
+	var i = fw.selection.length;
+	
+	// find all selected paths and get
+	// their path data
+	while (i--){
+		data = getGraphicsData(fw.selection[i], rnd);
+		if (data){
+			dataObjects.push(data);
+		}
+	}
+	
+	if (dataObjects.length){
+		
+		// location to save file.  This also
+		// serves as the class name used.
+		var filePath = fw.browseForFileURL("save", "", "");
+		
+		// user canceled operation
+		if (!filePath){
+			return null;
+		}
+		
+		// class name from file path
+		var className = removeExtension(Files.getFilename(filePath));
+		
+		// get the code and save it to a file
+		code = getSourceCode(className, dataObjects, rnd);
+		
+		// error if no code is generated
+		if (!code){
+			throw new Error("Could not generate source code");
+		}
+		
+		if (!saveTextFile(code, filePath)){
+			throw new Error("Could not save source code.");
+		}
+		
+	}else{
+		
+		// no graphics data generated
+		throw new Error("Please select one or more path objects.");
+	}
+	
+	return code;
+}
+
+// removes the extension from a file name
+function removeExtension(fileName){
+	var index = fileName.indexOf(".");
+	if (index > 0){
+		return fileName.substring(0, index);
+	}
+	return fileName;
+}
+
+// =======================
+// ==   Run the command ==
+// =======================
+try{
+	savePathsAsActionScript();
+}catch(err){
+	alert(err);
+	err;
+}

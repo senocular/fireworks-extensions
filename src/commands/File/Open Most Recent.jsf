@@ -1,0 +1,1 @@
+fw.openDocument(fw.mruRecentFileList[0]);

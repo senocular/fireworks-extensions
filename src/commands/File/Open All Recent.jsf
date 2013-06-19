@@ -1,0 +1,4 @@
+var docs = (new Array()).concat(fw.mruRecentFileList);
+for (var i=0; i<docs.length; i++){
+	fw.openDocument(docs[i]);
+}

@@ -1,0 +1,2 @@
+var dom = fw.getDocumentDOM()
+dom.setDocumentImageSize({left:0, top:0, right:320, bottom:240}, {pixelsPerUnit:dom.resolution, units:dom.resolutionUnits});

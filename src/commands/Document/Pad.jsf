@@ -1,0 +1,12 @@
+var pad = prompt("Pad document by (px):", "0");
+if (!isNaN(pad)){
+	var dom = fw.getDocumentDOM();
+	dom.setDocumentCanvasSize(
+		{
+			left:		dom.left-pad,
+			top:		dom.top-pad,
+			right:		dom.left+dom.width+pad,
+			bottom:	dom.top+dom.height+pad
+		}
+	);
+}

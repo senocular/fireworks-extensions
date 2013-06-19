@@ -1,0 +1,5 @@
+var dom = fw.getDocumentDOM();
+for (var i=0; i<fw.selection.length; i++){
+	fw.selection[i].left = dom.left;
+	fw.selection[i].top = dom.top;
+}

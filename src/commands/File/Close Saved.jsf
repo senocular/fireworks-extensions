@@ -1,0 +1,4 @@
+var docs = (new Array()).concat(fw.documentList);
+for (var i=0; i<docs.length; i++){
+	if (!docs[i].isDirty) fw.closeDocument(docs[i], false);
+}

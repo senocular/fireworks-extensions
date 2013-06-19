@@ -1,0 +1,3 @@
+var dom = fw.getDocumentDOM();
+dom.moveSelectionTo({x:dom.left,y:dom.top},false,false);
+dom.resizeSelection(dom.width,dom.height);
