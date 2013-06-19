@@ -1,0 +1,376 @@
+﻿// shortening variables:
+// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a short variable name to represent the Auto Shape's customData
+// property. This provides an object to store information and other variables
+// that will be retained even after the script has been completed
+var data = smartShape.elem.customData;
+
+// shape variables:
+// radius represents the approximate size of the shape from the center 
+// (more specifically refers to node position from center)
+var radius = 30;
+
+// min and maxCount determine the range for the slider determining how many "arms"
+// the asterisk is allowed to have.  At the bottom, the slider provides minCount
+// arms for the shape while at the top, it provides maxCount.
+var minCount = 3;
+var maxCount = 10;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define both a BeginDragInsert event handler and an InsertSmartShapeAt event
+// handler that will create the shape for either of the events depending on how
+// the user adds the shape to the document (click and release or drag as tool)
+operation.BeginDragInsert = operation.InsertSmartShapeAt = function(){	
+	
+	// create 2 new control points in the control points array
+	// control points are created before the shape here because the shape needs the
+	// control points to draw with in the Draw function
+	cps.length = 3;
+	
+	// set the first control point to a position of the mouse (center of shape)
+	// with the name "Center."  Tool tips are handled with UpdateToolTips
+	SetControlPoint(cps[0], mouse, "Center");
+	
+	// set the second control point, the slider, to a position to the left of the center that's
+	// a litlte less than twice the length of the radius with the name "Count"
+	SetControlPoint(cps[1], AddPoints(mouse, {x:-radius*1.75, y:radius}), "Count");
+	
+	// set the third control point, for rotation,, to a position to the right  of the center that's
+	// represents the starting point for the asterisk drawing using the rotation for positioning
+	// It has the name "Rotate"
+	SetControlPoint(cps[2], AddPoints(mouse, {x:radius, y:0}), "Rotate");
+	
+	// call the draw function that will draw out the shape based on the control points
+	Draw();
+
+	// update the dynamic tool tips
+	UpdateToolTips(GetArmCount());
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+
+	// assign a short variable to represent the currently clicked control point
+	var cp = smartShape.currentControlPoint;
+	
+	// save the current arm count in a customData variable called lastCount
+	data.lastCount = GetArmCount();
+	
+	// set getsDragEvents to be true so that the DragControlPoint event will
+	// run for the Auto Shape
+	smartShape.getsDragEvents = true;
+	
+	// if the current control point name is "Count" (slider)
+	if (cp.name == "Count"){
+	
+		// min/max properties for RegisterLinearMove that restrict movement
+		// along the line to not move past radius distance above the center point
+		// and not move radius distance below the center point
+		parms.minLinear = (cps[0].y - radius) - cp.y;
+		parms.maxLinear = (cps[0].y + radius) - cp.y;
+		
+		// create a reference point for RegisterLinearMove that's directly
+		// below the current control point so movement is up and down
+		var vert = AddPoints(cp, {x:0, y:100});
+		
+		// set the current control point to move linearly in a vertical
+		// manner as specified in the area within the min/max parms
+		cp.RegisterLinearMove(vert, parms);
+		
+	// otherwise of the control point name is "Rotate" (rotate handle)
+	}else if (cp.name == "Rotate"){
+	
+		// create a reference point for RegisterCircularMove that
+		// represents the center of rotation (the center of the shape)
+		var origin = {x:cps[0].x, y:cps[0].y};
+		
+		// set the current control point to move around the previously
+		// defined origin location using RegisterCircularMove
+		cp.RegisterCircularMove(origin, parms);
+		
+		// call DrawRotatePreview which will create a preview element for rotation
+		DrawRotatePreview();
+		
+
+		// assign a short variable to represent a nodes in the preview shape's contour
+		var previewNode = smartShape.elem.elements[1].contours[0].nodes[1];
+		
+		// set the node in the preview to move with the control point (they share the
+		// same location)
+		previewNode.RegisterCircularMove(origin, parms);
+	}
+}
+
+// define an DragControlPoint event handler that will be called
+// everytime the mouse moves when dragging a control point
+operation.DragControlPoint = function(){
+
+	// get the current arm count for the shape
+	var currCount = GetArmCount();
+	
+	// if the arm count has changed from the saved value
+	if (data.lastCount != currCount){
+		// redraw the shape
+		Draw();
+	}
+	
+	// update the dynamic tool tips
+	UpdateToolTips(currCount);
+	
+	// save the current arm count in the lastCount variable so it
+	// can be checked next time around
+	data.lastCount = currCount;
+}
+
+// define an EndDragControlPoint event handler that will be called
+// as a result of releasing the mouse after clicking a control point
+operation.EndDragControlPoint = function(){
+
+	// remove the preview element by reducing elements length to 1 (only main)
+	smartShape.elem.elements.length = 1;
+		
+	// call draw to draw the asterisk shape when the mouse released
+	Draw();
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * Draw creates the asterisk shape based on the locations of the shape's control points
+ * Requires: GetArmCount, DrawArm
+*/
+Draw = function(){
+
+	// get the number of arms the asterisk has based on the slider control point
+	var arms = GetArmCount();
+	
+	// find the angle between control points 0 and 2 representing the user-set
+	// angle for the shape
+	var startAngle = AngleBetween(cps[0], cps[2]);
+	
+	// angleOffset represents the distance between each arm.  This is from
+	// the full rotation of a circle in radians (2*Math.PI) divided by the number of arms
+	var angleOffset = 2*Math.PI/arms;
+
+	// if there are currently no elements in the Auto Shape
+	if (!smartShape.elem.elements.length){
+		
+		// create an element in the Auto Shape.  This should happen only
+		// for an InsertSmartShapeAt event
+		smartShape.elem.elements[0] = new Path();
+	}
+	
+	// set the number of contours for the shape path to equal the number of arms
+	smartShape.elem.elements[0].contours.length = arms;
+	
+	// using a loop, cycle from 0 to the number of arms
+	// this will process the loop block for each contour in the shape
+	for (var i=0; i<arms; i++){
+	
+		// create or replace the contour in the current position of the contours array
+		// as specified in the loop variable
+		smartShape.elem.elements[0].contours[i] = new Contour();
+		
+		// call DrawArm  for the contour created. Two angles are passed for each angle
+		// making up the thickness of the arm; these are based off of the startAngle and
+		// a fraction of the angle offset
+		DrawArm(smartShape.elem.elements[0].contours[i], startAngle-angleOffset/4, startAngle+angleOffset/4);
+		
+		// increment the startAngle by the angleOffset so that the next arm
+		// created will be rotated by the angleOffset.  Since the angleOffset is 
+		// based on a full rotation around a circle, this will create arms in a circle
+		startAngle += angleOffset;
+	}
+}
+
+/**
+ * DrawPoint creates a single arm in the pointContour based on the angles angle1 and angle2 passed
+ * Requires: PointFromVector, SetNodePosition. SetBezierNodePosition
+*/
+DrawArm = function(pointContour, angle1, angle2){
+
+	// make sure the contour passed is closed
+	pointContour.isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	var nods = pointContour.nodes;
+	
+	// create 3 nodes in the contour by altering the nodes array (nods) length
+	nods.length = 3;
+	
+	// create variables for point locations for the 2 outer nodes that make up the
+	// curve of the arm.  The first node has a predecessor point that extends outward
+	// while the second does so with its successor.  Main points are based on the 
+	// radius variable defined at the top of the script.  Control points are based on
+	// twice the radius (allowing for the curved end)
+	var pt1 = PointFromVector(cps[0], angle1, radius);
+	var pt1Succ = PointFromVector(cps[0], angle1, radius*2);
+	var pt2 = PointFromVector(cps[0], angle2, radius);
+	var pt2Pred = PointFromVector(cps[0], angle2, radius*2);
+	
+	// set the first node of the path to the center of the shape
+	SetNodePosition(nods[0], cps[0]);
+	
+	// set the second node to be based on the first point pt1 from angle1 with its successor
+	// based on the the point extended from that point at radius*2
+	SetBezierNodePosition(nods[1], pt1, pt1, pt1Succ);
+	
+	// set the third node to be based on the second point pt2 from angle2 with its predecessor
+	// based on the the point extended from that point at radius*2
+	SetBezierNodePosition(nods[2], pt2Pred, pt2, pt2);
+}
+
+/**
+ * DrawRotatePreview creates an element to act as a preview for quickly drawing the
+ * Auto Shape during interaction
+ * Requires: SetNodePosition
+*/
+DrawRotatePreview = function(){
+
+	// create a new element for the preview
+	smartShape.elem.elements[1] = new Path();
+	
+	// add a new contour for the preview
+	smartShape.elem.elements[1].contours[0] = new Contour();
+	
+	// assign a short variable to represent the preview's nodes array
+	var nods = smartShape.elem.elements[1].contours[0].nodes;
+	
+	
+	// create 3 nodes in the contour by altering the nodes array (nods) length
+	nods.length = 2;
+	
+	// set the two nodes to be positioned at the Center and Rotate control points
+	// This makes a single line extending from the center to the Rotate control point
+	SetNodePosition(nods[0], cps[0]);
+	SetNodePosition(nods[1], cps[2]);
+}
+
+/**
+ * UpdateToolTips updates all tool tips for control points based on count and control point position
+ * Requires: AngleBetween
+*/
+UpdateToolTips = function(count){
+
+	// assign tool tip for control point 1 to show "Arms: " plus the number of arms
+	cps[1].toolTip = "Arms: " + count;
+	
+	// find a rotation value between the Center control point and the Rotation
+	// control point in degrees
+	var rotation = -Math.round(AngleBetween(cps[0], cps[2])*180/Math.PI);
+	
+	// if the rotation found is less than 0
+	if (rotation < 0){
+	
+		// add 360 degrees to it to make it a positive number
+		rotation += 360;
+	}
+	
+	// assign tool tip for control point 2 to show "Rotation: " plus the calculated rotation
+	cps[2].toolTip = "Rotation: " + rotation + "°";
+}
+
+/**
+ * GetArmCount determines the number of arms the asterisk shape should have based on the vertical
+ * position of control point 1 in respect to the center of the shape (and radius distance above and below)
+*/
+GetArmCount = function(){
+
+	// the top of the slider range is the center control point's y position - radius
+	var top = cps[0].y - radius;
+	
+	// the bottom of the slider range is the center control point's y position + radius
+	var bottom = cps[0].y + radius;
+	
+	// the current position of control point 1 in respect to the top location
+	var current = cps[1].y - top;
+	
+	// a ratio can be developed from the current location by finding how far between the
+	// top and bottom it sits.  At the top, the ratio is 1 (100%).  At the bottom the ratio is 0 (0%)
+	var ratio = 1 - current/(bottom - top);
+	
+	// using the ratio, return the arm count based on minCount and maxCount that
+	// are defined at the top of this script
+	return minCount + Math.round(ratio*(maxCount - minCount));
+}
+
+// (common functions)
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name
+*/
+SetControlPoint = function(cp, pt, name){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTipTracksDrag = true; // have tool tips follow mouse during drag
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+
+/**
+ * AngleBetween returns the angle between two points pt1 and pt2 in radians
+*/
+AngleBetween = function(pt1, pt2){
+	return Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x); // use arc tangent 2 to get angle
+}
+
+/**
+ * PointFromVector returns a point extending outward from the point origin at the
+ * angle angle (radians) with a distance of power
+*/
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}; // use sine and cosine to determine new point locations
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

@@ -1,0 +1,144 @@
+﻿// shortening variables:
+// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a short variable name to represent the Auto Shape's customData
+// property. This provides an object to store information and other variables
+// that will be retained even after the script has been completed
+var data = smartShape.elem.customData;
+
+// shape variables:
+// variable specifying default text for the shape's text
+var defaultText = "Edit this text using the control point";
+
+// variable for smallest text pt size in the wave
+var minTextSize = 8;
+
+// variable for largest text pt size in the wave
+var maxTextSize = 24;
+
+// variable for how wavy the text is (the higher the more waves per letter)
+var frequency = .4;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+
+	// create a new text element as the first (and only) element in this Auto Shape
+	smartShape.elem.elements[0] = new Text();
+	
+	// set the autoExpand property of the text element to true so that the size of
+	// the text box will size to match the size of the text within it
+	smartShape.elem.elements[0].autoExpand = true;
+	
+	// position the text element to be slightly offset from the mouse position
+	// rawLeft and rawTop are used to position text elements
+	smartShape.elem.elements[0].rawLeft = mouse.x+5;
+	smartShape.elem.elements[0].rawTop = mouse.y+5;
+	
+	// store the default starting text in the customData object as text so it
+	// can be referenced later
+	data.text = defaultText;
+	
+	// update the shape's text with the defaultText using UpdateText
+	UpdateText(defaultText);
+	
+	// create a new control point in the control points array
+	cps[0] = new ControlPoint();
+	
+	// set the  control point to the position of the mouse
+	// with the name "Edit" and tool tip "Edit Text"
+	SetControlPoint(cps[0], mouse, "Edit", "Edit Text");
+}
+
+// define an BeginDragControlPoint event handler that will indicate
+// when the control point has been clicked
+operation.BeginDragControlPoint = function(){
+
+	// create a prompt dialog that asks for and returns text from the user
+	// provide default text to be based on the text stored in the customData object
+	var input = prompt("Add Text for Wave:", data.text);
+	
+	// if text was given and input has a value, call UpdateText with the input text 
+	if (input) UpdateText(input);
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * UpdateText updates the characters in the text of the Auto Shape to match the input
+*/
+UpdateText = function(input){
+	
+	// store the input text in the customData object as text so it
+	// can be referenced later
+	data.text = input;
+	
+	// define power as half the range provided by maxTextSize and minTextSize
+	// this will be used to create text sizes between those values using a sine wave
+	// (since a sine wave goes from -1 to 1, taking half will allow an offset for that)
+	var power = (maxTextSize-minTextSize)/2;
+	
+	// start sine wave position at 0
+	var sinewave = 0;
+	
+	// create a new textRuns array that will be used to store textRuns for each character
+	// and its new size from wave. This will be assigned to the text element when done
+	var runsArray = new Array();
+	
+	// loop through all the characters in the input text 
+	for (var i=0; i<input.length; i++){
+	
+		// get sine wave value from sinewave position 
+		var sin = Math.sin(sinewave);
+		
+		// set a variable for the current letter's point size based on sin and power
+		var ptsize = minTextSize + Math.round((1+sin)*power);
+		
+		// assign a new run to the runsArray array with the new point size and the
+		// current input character in the loop
+		runsArray[i] = {
+			changedAttrs: { size: ptsize+"pt" },
+			characters: input.charAt(i)
+		};
+		
+		//increase sinewave position by previously defined requency variable
+		sinewave += frequency;
+	}
+	
+	// temporarily store the text elements textRuns object in a runs variable (as copy)
+	var runs = smartShape.elem.elements[0].textRuns;
+	
+	// assign runsArray to runs textRuns property
+	runs.textRuns = runsArray;
+	
+	// re-assign runs back to the text elements textRuns property this time
+	// with the wavy characters in the textRuns array
+	smartShape.elem.elements[0].textRuns = runs;
+}
+
+// (common functions)
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

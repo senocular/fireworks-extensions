@@ -1,0 +1,48 @@
+function getTextElements(){
+	var dom = fw.getDocumentDOM();
+	var textelems = new Array();
+	var layercount, framecount, elemcount;
+	var i, j, k;
+	var flint;
+	layercount = dom.layers.length;
+	for (i=0; i<layercount; i++){
+		if (dom.layers[i].layerType == "normal"){
+			framecount = dom.layers[i].frames.length;
+			for (j=0; j<framecount; j++){
+				flint = dom.layers[i].frames[j];
+				elemcount = flint.elements.length;
+				for (k=0; k<elemcount; k++){
+					if (flint.elements[k].__proto__ == Text.prototype){
+						textelems.push(flint.elements[k]);
+					}
+				}
+			}
+		}
+	}
+	return textelems;
+}
+function retrieveFonts(textlist){
+	var refObj = new Object();
+	var textindex, textelem;
+	var runindex, trun;
+	for (textindex in textlist){
+		textelem = textlist[textindex];
+		refObj[textelem.textRuns.initialAttrs.face] = true;
+		for (runindex in textelem.textRuns.textRuns){
+			trun = textelem.textRuns.textRuns[runindex];
+			if (trun.changedAttrs.face){
+				refObj[trun.changedAttrs.face] = true;
+			}
+		}
+	}
+	return refObj;
+}
+function outputFonts(refObj){
+	var output = new Array();
+	var fontname;
+	for (fontname in refObj){
+		output.push(fontname);
+	}
+	return output.join(",");
+}
+outputFonts(retrieveFonts(getTextElements()));

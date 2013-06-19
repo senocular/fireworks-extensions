@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Arrange Commands" version="0.8" type="command" requires-restart ="false">
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<description>
+		<![CDATA[Arrange Commands<br>
+		www.senocular.com<br><br>
+		
+		A collection of arrange commands for Fireworks.<br><br>
+		
+		- Swap: Swaps the arrangement of two selected objects
+		- Reverse: Reverses the arrangement of a collection of selected objects
+		- Absolute Front/Back: Raises the selection to the absolute top or bottom of the document (top of all objects in the highest layer or bottom of all objects in the lowest layer)
+		- Intersecting Forward/Backward: Raises the selectied object above or below any other objects whose bounding box intersects the selection's bounding box (not constrained to layers)
+		- Intersecting Front/Back: Raises the selectied object above or below all other objects whose bounding box intersects the selection's bounding box (not constrained to layers)
+		- Highest, Lowest, Leftmost, Rightmost, Widest, Tallest, Largest to Front/Back: Arranges a collection of selected objects based on location or size
+		- By Angle: Arranges a collection of selected objects based on an angle.<br><br>
+		
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run Text commands from the Commands > Arrange  menu]]>
+	</ui-access>
+	<files>
+		<file source="Absolute Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Absolute Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="By Angle.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Highest to Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Highest to Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Intersecting Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Intersecting Backward.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Intersecting Forward.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Intersecting Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Largest to Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Largest to Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Leftmost to Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Leftmost to Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Lowest to Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Lowest to Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Reverse.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Rightmost to Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Rightmost to Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Swap.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Tallest to Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Tallest to Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Widest to Back.jsf" destination="$fireworks/configuration/commands/Arrange" />
+		<file source="Widest to Front.jsf" destination="$fireworks/configuration/commands/Arrange" />
+	</files>
+</macromedia-extension>

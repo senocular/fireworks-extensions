@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Inspire: Random Shape" version="0.9.8" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Inspire: Random Shape<br>
+		www.senocular.com<br><br>
+		
+		Creates a random shape.  Click the control point to generate a new random shape.
+
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Inspire Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Inspire.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Inspire.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

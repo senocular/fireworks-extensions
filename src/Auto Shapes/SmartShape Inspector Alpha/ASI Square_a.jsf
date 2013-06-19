@@ -1,0 +1,96 @@
+﻿var mouse = smartShape.currentMousePos;
+var cps = smartShape.elem.controlPoints;
+var elems = smartShape.elem.elements;
+
+// OPERATIONS
+var operation = new Object();
+operation.InsertSmartShapeAt = function(){
+	SetInspectorElement();
+	SetInspectorData(100);
+	SetControlPoint(0, mouse);
+	
+	elems[1] = new Path();
+	elems[1].contours[0] = new Contour();
+	elems[1].contours[0].isClosed = true;
+	elems[1].contours[0].nodes.length = 4;
+	
+	Render();
+	InspectorEditComplete();
+}
+operation.SmartShapeEdited = function(){
+	DetectInspectorEdit(InspectorEdit, NormalEdit);
+}
+
+
+// SMARTSHAPE FUNCTIONS
+InspectorEdit = function(){
+	Render();
+}
+NormalEdit = function(){
+	alert("Please don't edit me!");
+	Render();
+}
+Render = function(){
+	var x = cps[0].x;
+	var y = cps[0].y;
+	var n = elems[1].contours[0].nodes;
+	var p = GetInspectorData()/2;
+	
+	SetNodePosition(n[0], {x:x+p, y:y-50});
+	SetNodePosition(n[1], {x:x+p, y:y+50});
+	SetNodePosition(n[2], {x:x-p, y:y+50});
+	SetNodePosition(n[3], {x:x-p, y:y-50});
+}
+
+
+// NODE/CP POSITIONING
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+SetControlPoint = function(index, pt){
+	if (index >= cps.length) cps.length = index+1;
+	cps[index].x = pt.x;	cps[index].y = pt.y;
+}
+
+
+// INSPECTOR METHODS
+SetInspectorElement = function(){
+	var elems = smartShape.elem.elements;
+	var cps = smartShape.elem.controlPoints;
+	if (!cps.length) cps.length++;
+	elems[0] = new Path();
+	elems[0].contours[0] = new Contour();
+	elems[0].contours[0].nodes.length = 1;
+	elems[0].customData.InspectorData = 0;
+	InspectorEditComplete();
+}
+DetectInspectorEdit = function(InspectorEditFunc, NormalEditFunc){
+	var elems = smartShape.elem.elements;
+	if(elems[0].customData.InspectorEdit){
+		InspectorEditFunc();
+		InspectorEditComplete();
+	}else if (NormalEditFunc) NormalEditFunc();
+}
+SetInspectorData = function(data){
+	smartShape.elem.elements[0].customData.InspectorData = data;
+}
+GetInspectorData = function(){
+	return smartShape.elem.elements[0].customData.InspectorData;
+}
+InspectorEditComplete = function(){
+	var elems = smartShape.elem.elements;
+	SetNodePosition(elems[0].contours[0].nodes[0], cps[0]);
+	elems[0].pathAttributes.brush=new Brush();
+	elems[0].opacity = 0;
+	elems[0].customData.InspectorEdit = false;
+}
+
+
+// INVOKE OPERATION
+if (operation[smartShape.operation])
+	operation[smartShape.operation]();

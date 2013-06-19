@@ -1,0 +1,451 @@
+﻿// shortening variables:
+// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// shape variables:
+// variable for starting angle of polygon drawing
+var startAngle = -Math.PI/2;
+
+// variable for radius of polygon
+var radius = 50;
+
+// min/max variables for min and max number of sides for the shape
+var minCount = 3;
+var maxCount = 12;
+
+// siderOffset represents how far the slider should move up for its
+// minimum value.  The reason it's moved up is because shapes with
+// smaller number of sides tend to have bottoms that are higher than
+// those shapes with more sides.  This prevents the slider from
+// seeming too far away from the actual shape
+var sliderOffset = -15;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+
+	// create 3 control points
+	cps.length = 3;
+	
+	// create control point for the center at the mouse position
+	SetControlPoint(cps[0], mouse, "Center", "Center");
+	
+	// create a control point away from the mouse at the startAngle and 
+	// radius to represent the slider controling polygon roundness
+	SetControlPoint(cps[1], PointFromVector(mouse, startAngle, radius), "Curve Radius", "Curve Radius");
+	
+	// create a control point in the lower left, a slider for polygon sides
+	SetControlPoint(cps[2], AddPoints(mouse, {x:-radius-5, y:radius+sliderOffset}), "Sides", "Sides");
+
+	// create new path as first element in elements array
+	smartShape.elem.elements[0] = new Path();
+	
+	// create new contour as first contour in contours array
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	
+	// set the contour to be a closed contour
+	smartShape.elem.elements[0].contours[0].isClosed = true;
+	
+	// call Draw to draw the shape 
+	Draw();
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+
+	// assign a short variable to represent the currently clicked control point
+	var cp = smartShape.currentControlPoint;
+	
+	// set getsDragEvents to be true so that the DragControlPoint event will
+	// run for the Auto Shape
+	smartShape.getsDragEvents = true;
+	
+	// if the current control point is the Sides control point
+	if (cp.name == "Sides"){
+	
+		// disable x movement
+		parms.deltaXtoX = 0;
+		
+		// set min/max values for the slider based on the center
+		parms.minY = cps[0].y - radius;
+		parms.maxY = sliderOffset + cps[0].y + radius;
+		
+		// move the Sides control point 
+		cp.RegisterMove(parms);
+		
+	// otherwise if the current control point is the Curve Radius or Center control point
+	}else if (cp.name == "Curve Radius" || cp.name == "Center"){
+	
+		// disable x movement
+		parms.deltaXtoX = 0;
+		
+		// set min/max values for the slider based on the center
+		parms.minY = cps[0].y - radius;
+		parms.maxY = cps[0].y;
+		
+		// move the Curve Radius control point 
+		cps[1].RegisterMove(parms);
+		
+		// The center control point is used too in case the Center point hides
+		// the Curve Radius point
+	}
+}
+
+// define an DragControlPoint event handler that will be called
+// everytime the mouse moves when dragging a control point
+operation.DragControlPoint = function(){
+
+	// redraw the shape
+	Draw();
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * Draw creates the asterisk shape based on the locations of the shape's control points
+ * Requires: GetSideCount, GetCurveRadius, SetNodePosition, RotatePointAroundPoint,
+ * AddCircleSegment
+*/
+Draw = function(){
+
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// get the number of sides based on Slides control point 
+	var count = GetSideCount();
+	
+	// get angle offset based on count used to determine the angle at which 
+	// each corner sets offset from the next
+	var angleOffset = 2*Math.PI/count;
+	
+	// define origin as the center control point 
+	var origin = cps[0];
+	
+	// get the curve radius based on the current polgon side count
+	var curve = GetCurveRadius(count);
+
+	// if the curve radius is low (below 2) make it a hard corner polygon
+	if (curve < 2){
+	
+		// set nodes length to the sides count, one for each corner
+		nods.length = count;
+		
+		// loop through all nodes/sides
+		for (var i=0; i<count; i++){
+		
+			// find point from center at current startAngle
+			var pt = PointFromVector(origin, startAngle, radius);
+			
+			// set current node position at previously calculater point 
+			SetNodePosition(nods[i], pt);
+			
+			// update startAngle for next point in loop
+			startAngle += angleOffset;
+		}
+		
+	// otherwise if the curve radius is noticable
+	}else{
+	
+		// start with no nodes (they will be created with AddCircleSegment)
+		nods.length = 0;
+		
+		// loop through all sides
+		for (var i=0; i<count; i++){
+		
+			// determine the current offset angle for the current corner
+			var offset = angleOffset*i;
+			
+			// find start and end angles for the curve being created for the corner
+			var sAngle = startAngle + offset - angleOffset/2;
+			var eAngle = startAngle + offset + angleOffset/2;
+			
+			// find the origin for the corner curve based on the control point location 
+			var corigin = RotatePointAroundPoint(cps[1], origin, offset);
+			
+			// add the circle segment for the rounded corner
+			AddCircleSegment(smartShape.elem.elements[0].contours[0], corigin, curve, sAngle, eAngle);
+			
+			// since each corner is given a rounded corner with full nodes, the sides
+			// are automatically created with lines are drawn from each of the curves'
+			// ends to the next curve's beginning
+		}
+	}
+}
+
+/**
+ * GetSideCount determines the number of sides the polygon should have based on the vertical
+ * position of control point 2 in respect to the center of the shape
+*/
+GetSideCount = function(){
+
+	// the top of the slider range is the center control point's y position - radius
+	var top = cps[0].y - radius;
+	
+	// the bottom of the slider range is the center control point's y position + radius
+	// including the previously defined sliderOffset
+	var bottom = sliderOffset + cps[0].y + radius;
+	
+	
+	// the current position of control point 2 in respect to the top location
+	var current = cps[2].y - top;
+	
+	// a ratio can be developed from the current location by finding how far between the
+	// top and bottom it sits.  At the top, the ratio is 1 (100%).  At the bottom the ratio is 0 (0%)
+	var ratio = 1 - current/(bottom - top);
+	
+	// using the ratio, return the arm count based on minCount and maxCount that
+	// are defined at the top of this script
+	return minCount + Math.round(ratio*(maxCount - minCount));
+}
+
+/**
+ * GetCurveRadius returns the radius for polygon curvature based on the 
+ * Curve Radius control point and the count number of sides for the polygon
+*/ 
+GetCurveRadius = function(count){
+
+	// the top of the slider range is the center control point's y position - radius
+	var top = cps[0].y - radius;
+	
+	// the bottom of the slider range is the center control point
+	var bottom = cps[0].y;
+	
+	// the current position of control point 1 in respect to the top location
+	var current = cps[1].y - top;	
+	
+	// a ratio can be developed from the current location by finding how far between the
+	// top and bottom it sits.  At the top, the ratio is 1 (100%).  At the bottom the ratio is 0 (0%)
+	var ratio = current/(bottom - top);
+
+	// the curve radius is calculated with cosine and the number or sides in the shape
+	// in combination with the defined radius and ratio specified with the slider
+	return Math.abs(Math.cos(Math.PI/count)*radius*ratio);
+}
+
+// (common functions)
+/**
+ * AddCircleSegment adds a circular segment in the passed contour with a center
+ * of origin and a radius of radius starting at startAngle and ending at endAngle
+ * Requires: SetBezierNodePosition
+*/
+AddCircleSegment = function(contour, origin, radius, startAngle, endAngle){
+
+	// find the difference of the angles representing the arc
+	var arc = endAngle - startAngle;
+	
+	// if there is no difference between the angles, exit false
+	if (!arc) return false;
+	else if (arc < 0){ // if the arc is negative;
+	
+		// make the arc positive
+		arc = -arc;
+		
+		// switch the end angle value with start angle
+		var stored = endAngle;
+		endAngle = startAngle;
+		startAngle = stored;
+	}
+	
+	// assign pos representing the node position to start the 
+	// segment within the contour 
+	var pos = contour.nodes.length;
+	
+	// if the pos is 1, start the position at position 0
+	if (pos == 1) pos = 0;
+	
+	// create a variable to represent 90 degrees in radians
+	var rad90 = Math.PI/2;
+	
+	// div represents the division of the arc by 90 degrees
+	// 90 is used since 90 degrees is the difference in angle for
+	// the 4 nodes used to make a full circle
+	var div = arc/rad90;
+	
+	// steps is the number of nodes in the current segment
+	var steps = Math.floor(div);
+	
+	// rem is the remaining angle from the 90 degree steps that
+	// should be making up most of the segment (if larger)
+	var rem = arc - steps*rad90;
+	
+	// cRadius is the length of the control points for the current radius
+	var cRadius = radius*fw.ellipseBCPConst;
+	
+	// declare variables used within the loop
+	var angle, cAngle, x, cx, y, cy, pt, pred, succ;
+	
+	// loop through all the steps in the segment + 1
+	for (var i=0; i<=steps; i++){
+	
+		// create a new node for the current position in the contour
+		contour.nodes[pos+i] = new ContourNode();
+		
+		// define angles for the current angle along the arc (control
+		// angle is the node angle plus 90 degrees)
+		angle = startAngle + i*rad90;	cAngle = angle + rad90;
+		
+		// use cosine to get x values for node and node control point
+		x = Math.cos(angle)*radius;	cx = Math.cos(cAngle)*cRadius;
+		
+		// use sine to get y values for node and node control point
+		y = Math.sin(angle)*radius;	cy = Math.sin(cAngle)*cRadius;
+		
+		// create a point based on the origin and the x and y values calculated
+		pt = {x:origin.x + x, y:origin.y + y};
+		
+		// devise predecessor and successor points from main point position pt
+		// and the previously calculated control x and y 
+		pred = {x:pt.x - cx, y:pt.y - cy};
+		succ = {x:pt.x + cx, y:pt.y + cy};
+		
+		// if the segment has at least one step and the current
+		// loop is for the first node (i==0) set the node position 
+		// omitting predecessor point
+		if (steps && !i){ SetBezierNodePosition(contour.nodes[pos+i], pt, pt, succ);
+		
+		// if there are steps and the loop is less than the steps
+		// (i.e. not the last loop iteration) set the next node with 
+		// predecessor and successor
+		}else if (steps && i < steps){ SetBezierNodePosition(contour.nodes[pos+i], pred, pt, succ);
+		
+		// otherwise, if there are no steps or in the last iteration of the loop
+		}else{
+		
+			// if there is a remainder arc from those of 90 degrees
+			if (rem){
+			
+				// get length for control points for remainder
+				// (this will be smaller than 90 degree segments)
+				var remRadius = cRadius*rem/rad90;
+				
+				// get the x and y values for remainder control points
+				cx = Math.cos(cAngle)*remRadius;
+				cy = Math.sin(cAngle)*remRadius;
+				
+				// get successor point from previus calculations
+				succ = {x:pt.x + cx, y:pt.y + cy};
+				
+				// if there are steps in segment, create node with the predecessor
+				if (steps){ SetBezierNodePosition(contour.nodes[pos+i], pred, pt, succ);
+				
+				// if there are no steps, the segment is smaller than 90 degrees
+				// making this the first point so don't include predecessor
+				}else SetBezierNodePosition(contour.nodes[pos+i], pt, pt, succ);
+				
+				// automatically increment i to make it seem like the 
+				// next position in the loop
+				i++;
+				
+				// create a new node for the last point in the segment
+				contour.nodes[pos+i] = new ContourNode();
+				
+				// define angles for the current angle along the arc
+				angle += rem;				cAngle = angle + rad90;
+				
+				// use cosine to get x values for node and node control point
+				x = Math.cos(angle)*radius;	cx = Math.cos(cAngle)*remRadius;
+				
+				// use sine to get y values for node and node control point
+				y = Math.sin(angle)*radius;	cy = Math.sin(cAngle)*remRadius;
+				
+				// create a point based on the origin and the x and y values calculated
+				pt = {x:origin.x + x, y:origin.y + y};
+				
+				// get predecessor point from previus calculations
+				pred = {x:pt.x - cx, y:pt.y - cy};
+			}
+			
+			// set the last node with no successor
+			SetBezierNodePosition(contour.nodes[pos+i], pred, pt, pt);
+		}
+	}
+	
+	// return true to signify the successful completion of the function
+	return true;
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+
+/**
+ * AngleBetween returns the angle between two points pt1 and pt2 in radians
+*/
+AngleBetween = function(pt1, pt2){
+	return Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x); // use arc tangent 2 to get angle
+}
+
+/**
+ * PointFromVector returns a point extending outward from the point origin at the
+ * angle angle (radians) with a distance of power
+*/
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}; // use sine and cosine to determine new point locations
+}
+
+/**
+ * RotatePointAroundPoint returns the location (point) of a point pt which has
+ * been rotated around the point origin at an angle of angle (radians)
+*/
+RotatePointAroundPoint = function(pt, origin, angle){
+	var ca = Math.cos(angle),	sa = Math.sin(angle); // get sine and cosine values for the angle
+	var dx = pt.x - origin.x,	dy = pt.y - origin.y; // get the differences in x and y locations
+	return {x:origin.x + dx*ca - dy*sa, y:origin.y + dx*sa + dy*ca}; // return rotated point
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Background Rectangle" version="0.9.8" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Background Rectangle (BG Rect)<br>
+		by senocular<br><br>
+		
+		Background Rectangle quickly creates a rectangle that fills the entire space of your document when added.
+
+There is only one control handle for Background Rectangle.  When clicking this, it simply resets the rectangle to fill the space of your Fireworks document's background should you resize or in other way change it.  In holding the CTRL or COMMAND key while pressing this handle, the background will also reassign itself to the currently selected document line and fill options (what you have with no objects selected). Otherwise, it will retain the style it currently holds. ]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Background Rectangle Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="BG Rect.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="BG Rect.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

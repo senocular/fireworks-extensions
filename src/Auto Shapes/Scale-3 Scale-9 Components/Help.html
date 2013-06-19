@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+<title>Fireworks Scale-3 and Scale-9 Component Auto Shape Help</title>
+<style type="text/css">
+<!--
+html, body {
+	margin:0;
+	padding:0;
+}
+body {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:0.9em;
+	background-color:#A0AAB0;
+}
+em {
+	font-style:normal;
+	font-weight:bold;
+}
+li {
+	margin-bottom:.25em;
+}
+#page {
+	margin:2em;
+	padding:3em;
+	background-color:white;
+	border:5px solid black;
+}
+a {
+	color:#226586;
+}
+ol#menu a {
+	color:#D60;
+}
+h1 {
+	margin:0 .5em .5em .5em;
+	padding:0;
+}
+h1 a {
+	color:#226586;
+}
+h2 {
+	border-bottom:1px solid #D60;
+}
+h2 a{
+	color:#226586;
+}
+hr {
+	margin:2em 0;
+	border:2px solid black;
+	height:8px;
+	background-color:#A0AAB0;
+}
+div.note {
+	margin:1em;
+	width:80%;
+	border:1px solid #A0AAB0;
+}
+div.note h4 {
+	margin:0;
+	padding:.25em;
+	background-color:#FFD;
+	border-bottom:1px solid #CCC;
+	font-size:1em;
+}
+div.note p {
+	margin:.5em;
+	padding:0;
+}
+-->
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<div id="page">
+<h1><a name="index">Fireworks Scale-3 and Scale-9 Component Auto Shapes Documentation</a></h1>
+<hr>
+<h3>Version 0.9.7</h3>
+<ol id="menu" type="I">
+	<li><a href="#what">What Are the Scale-3 and Scale-9 Component Auto Shapes?</a></li>
+	<li><a href="#differences">Differences Between the Scale-3 and Scale-9 Component Auto Shapes</a></li>
+	<li><a href="#using">Using the Auto Shapes</a>		
+		<ol type="A">
+			<li><a href="#shapeoptions">Setting Shape Options</a></li>
+			<li><a href="#states">Working With States </a></li>
+			<li><a href="#text">Working With Text</a></li>
+			<li><a href="#creatingskins">Creating Your Own Skins</a>
+				<ol type="1">
+					<li><a href="#defineslice">Working With the Define Slice Dialog</a></li>
+					<li><a href="#managingpatterns">Managing Skin Patterns</a></li>
+				</ol>
+			</li>
+			<li><a href="#reusingshapes">Reusing Skinned Shapes</a></li>
+		</ol>
+	</li>
+	<li><a href="#issues">Precautions and Known Issues</a></li>
+	<li><a href="#about">About</a></li>
+</ol>
+<hr>
+<h2><a name="what">What Are the Scale-3 and Scale-9 Component Auto Shapes?</a></h2>
+<p>The Scale-3 and Scale-9 Component Auto Shapes are two Auto Shapes created for Macromedia Fireworks 8 that allow developers and designers to create and use scalable components for Fireworks designs. They can consist of solid colors or use bitmap imagery (utilizing patterns) to mimic existing or represent new interface elements which can be scaled by the user without resulting in distortion.</p>
+<p><a href="#index">Index</a></p>
+<h2><a name="differences">Differences Between the Scale-3 and Scale-9 Component Auto Shapes</a></h2>
+<p>Two Component Auto Shapes were created to facilitate three variations of scalable components.</p>
+<h3>Scale-3 </h3>
+<p>The Scale-3 Component Auto Shape consists of three &quot;slices&quot; (not to be confused with Fireworks slices used in exporting) which can be arranged vertically or horizontally and can scale either left and right or up and down depending on its orientation. This (3-slice) Auto Shape would be used for objects which can scale in one direction such as a form button or a scroll bar.</p>
+<h3>Scale-9 </h3>
+<p>The Scale-9 Component Auto Shape consists of nine slices which are arranged in a grid pattern and can be scaled in either a vertical or horizontal direction. This (9-slice) Auto Shape would be used for objects which can also scale in any direction such as text areas or application windows.</p>
+<p><img src="Help Files/examples.gif" alt="Examples" width="441" height="185" /></p>
+<p><a href="#index">Index</a></p>
+<h2><a name="using" id="using">Using the Auto Shapes</a></h2>
+<p>To initially create a Scale-3 or Scale-9 Component Auto Shape, you need to drag an instance of either Auto Shape from the Shapes panel in to the current Fireworks document. By default, a Scale-3 Component Auto Shape is created with a horizontal orientation. If you are holding CTRL (or CMD) while inserting a Scale-3 shape, it will be created with a vertical orientation. The shape's top-left corner will be positioned at the location of the mouse (it will not be centered). Presumably you would only be inserting these shapes from the Shapes panel when you wanted to create a new skin for a component (see <a href="#creatingskins">Creating Your Own Skins</a>). Otherwise, you would be adding a pre-existing component from another source such as importing one from another Fireworks document (see <a href="#managingpatterns">Managing Skin Patterns</a>).</p>
+<p>Each of the Scale-3 and Scale-9 Component Auto Shapes have a control point for each slice and an additional control point at the top left corner of the shape for opening the options dialog (see <a href="#shapeoptions">Setting Shape Options</a>). Clicking on the options control point while holding the CTRL (or CMD) key will force the shape to redraw itself.</p>
+<p> An additional 4 control points may also be available representing 4 different states for the shape. These states correspond with the 4 states found in buttons, Up, Over, Down, and Over (while) Down (see <a href="#states">Working with States</a>). These are made available through the Options dialog. </p>
+<p>When working with the Scale-3 and Scale-9 Component Auto Shapes, all shape manipulation should be handled through the slice control points. Corner and edge slice control points allow you to scale the shape as needed. Center (Middle-Center) slices do not provide scaling. As you scale, the shape's overall size will be seen in a tool tip. This size does not include text (see <a href="#text">Working With Text</a>). The Auto Shapes should not be scaled or rotated using the transform tool as it can cause the shape to react inappropriately.</p>
+<div class="note">
+	<h4>Note: Rotating and Scaling Shapes </h4>
+	<p>If you need to rotate or scale a component Auto Shape, to avoid complications you should first convert the shape into a symbol. Then, as a symbol you can transform the shape without worrying about the consequences of the transformations on the shape's operation. </p>
+</div>
+<p>The graphics and size of each slice is determined by its definition. You define a slice using the Define Slice dialog (see <a href="#defineslice">Working With the Define Slice Dialog</a>).</p>
+<p><a href="#index">Index</a></p>
+<h2><a name="shapeoptions" id="shapeoptions">Setting Shape Options</a></h2>
+<p>Clicking once on the Options control point opens the Options dialog for both the Scale-3 and Scale-9 Component Auto Shapes. The Options dialog provides information about the shape and access to the shape's options. </p>
+<p><img src="Help Files/options.gif" alt="Options" width="283" height="192" /></p>
+<p>Shape options are as follows: </p>
+<ul>
+	<li><em>Version</em>: Indicates the version of the shape. There are two versions listed. The first version represents the installed version of the extension and mostly references the version of the dialogs. The second version indicated by &quot;shape&quot; represents the version of the Auto Shape used to initiate this dialog. Since older versions of the Auto Shape use the currently installed version of the dialogs, these versions may be different. If they are, you may need to use the Copy Component Skin command up date your component skin to the newest version of the Auto Shape. The  Copy Component Skin command is installed with the Scale-3 or Scale-9 Component Auto Shapes and is accessible from <kbd>Commands &gt; Auto Shapes &gt; Copy Component Skin</kbd>.</li>
+	<li><em>Orientation</em> (Scale-3 only): Represents the orientation of the shape. Selecting Horizontal will position slices in a Scale-3 shape in a horizontal fashion allowing scaling left and right along the x axis. This is the default orientation. Selecting Vertical will position slices  in a vertical fashion allowing scaling up and down along the y axis. If you drag a Scale-3 Component Auto Shape from the Shapes panel while holding the CTRL (or CMD) button, it will be created with a vertical orientation as opposed to horizontal.</li>
+	<li><em>Text</em>: Lets you add or remove text objects within the shape. See <a href="#text">Working With Text</a> to learn more about dealing with text in a shape. </li>
+	<li><em>States</em>: Lets you show or hide the control points used to toggle between shape states. See <a href="#states">Working with States</a> for more about dealing with states. </li>
+	<li><em>Help</em> (?): The question mark icon in the upper right of the panel will open the help documentation for the shape. </li>
+</ul>
+<p>Clicking OK on the dialog will confirm any changes made. Clicking Cancel will ignore them.</p>
+<p><a href="#index">Index</a></p>
+<h2><a name="states" id="states">Working with States</a></h2>
+<p>Each instance of a Scale-3 or Scale-9 Component Auto Shape includes 4 different states, Up, Over, Down, and Over (while) Down. You can access each state by clicking on their respective control points at the top of the shape. When a control point in the states group is blue, it means that is the current state for the shape. If you do not see the state control points for your shape, you can show them using the Options dialog. </p>
+<p>Each state provides the shape with new values for slice contents (color or pattern), pattern offset, pattern rotation, and whether or not the slice pattern stretches to fit the size of the slice (see <a href="#defineslice">Working With the Define Slice Dialog</a>). States do not affect slice size nor do they affect text (see <a href="#text">Working With Text</a>).</p>
+<p>If you hold CTRL (or CMD) while clicking on a state control point, you will be given the option of copying the current state into the selected state. </p>
+<p><a href="#index">Index</a></p>
+<h2><a name="text" id="text">Working With Text </a></h2>
+<p>When you select the option to include text within a Scale-3 or Scale-9 Component Auto Shape from the Options dialog, a new text object is created within the Auto Shape. Neither the Scale-3 or Scale-9 Component Auto Shape provides a means to edit this text; it is expected that you select the text using the Subselection tool in Fireworks and edit it yourself. The Text Editor within Fireworks (<kbd>Text &gt; Editor</kbd>) can be a useful tool for easily modifying this text after it is selected. </p>
+<p>Additional text objects can be added within the shape using Clone (<kbd>Edit &gt; Clone</kbd>) or Duplicate (<kbd>Edit &gt; Duplicate</kbd>) while an existing text object in the shape is selected. Each can be placed at your discretion. Their horizontal position within the shape as it is scaled is dependant on the text's alignment. Text that is aligned left or justified will retain its relation to the left edge of the shape. Text which is centered will remain centered in the shape, while right aligned text will retain its relation to the right edge of the shape.</p>
+<p>If Include Text is unchecked from the Options dialog, all text objects within the shape will be removed. If re-checked, only the default text is added back into the shape.</p>
+<p>Text objects in a Scale-3 or Scale-9 Component Auto Shape are unaffected by states. Text objects also have no affect on the shape size displayed for tool tips while scaling a shape. </p>
+<p><a href="#index">Index</a></p>
+<h2><a name="creatingskins" id="creatingskins">Creating Your Own Skins </a></h2>
+<p>The primary usefulness of the Scale-3 and Scale-9 Component Auto Shapes comes in how they can be skinned to match almost any scalable, visual object--in particular, UI (User Interface) elements. To skin a component shape, you would use the Define Slice dialog for each of the slices within the shape (see <a href="#defineslice">Working With the Define Slice Dialog</a>). </p>
+<p>Skins for the   Scale-3 and Scale-9 Component Auto Shapes consist of solid colors or Fireworks patterns. Because patterns are used you can create your entire skin directly within Fireworks. Just export your image(s) and use the Define Slice dialog to apply them to the shape. </p>
+<p><a href="#index">Index</a></p>
+<h2><a name="defineslice" id="defineslice">Working With the Define Slice Dialog</a></h2>
+<p>The visual properties for each slice in either a Scale-3 or Scale-9 Component Auto Shape are set using the Define Slice dialog. To open this dialog for any slice, click on the slice's control point without dragging the point. If you hold down CTRL (or CMD) when selecting the slice's control point, an additional dialog will appear after the Define Slice dialog asking if you wish to apply your changes to all slices within the shape. If yes is selected, the settings defined in the Define Slice dialog will be applied to all slices. If no is selected, only the selected slice is affected. </p>
+<div class="note">
+	<h4>Note: Copying Settings </h4>
+	<p>Only settings you changed will be copied over to other states.</p>
+</div>
+<p><img src="Help Files/defineslice.gif" alt="Define Slice" width="308" height="227" /></p>
+<p>A preview is also provided showing what your slice will essentially look like. Changes made in the Define Slice dialog will be reflected in the preview area though the preview area only shows 100 square pixels of preview. A slice, though usually not, can be larger than the area provided in the preview. Slice options are as follows: </p>
+<ul>
+	<li><em>Color </em>(ink well): Sets  slice color.  If no color is selected, the slice will become empty and not visible within the Auto Shape (it's control point will remain visible). If a pattern is selected, no color will be used and the color picker will display a preview of the pattern instead. </li>
+	<li><em>Select Contents </em>(drop down): Lets you select a pattern to be used for the slice or specify that a solid color is to be used. All patterns within the Patterns folder within your Fireworks installation directory are listed. Two other options are also available, one for selecting a solid color and another &quot;(No Change)&quot; which uses the contents for that particular slice as they existed before the dialog was opened. If a Scale-3 or Scale-9 Component Auto Shape is using a pattern which you do not have installed with your version of Fireworks, this option can be used to assure that pattern remains with the shape and does not change to anything else. </li>
+	<li><em>Obtain Pattern Preview</em> (tree button): Provides a means to load a preview image for the slice into the preview area. The Define Slice dialog is only able to provide automatic previews for GIF, JPEG, and PNG patterns  installed for Fireworks located in Fireworks's  patterns directory. If you are using a different pattern image, such as one added to the document manually (using the Other... option in the patterns list), clicking on this button will let you specify the source image of that pattern as it exists on your hard drive (must be GIF, JPEG, or PNG). That image will then appropriately be used in the pattern preview. Note that pattern sizing is based on the preview image. It is recommended you provide an accurate preview image if one is not available. </li>
+	<li><em>Auto Fit</em>: If checked when a pattern is selected, the slice's size will be adjusted to fit the size of the pattern file (though still not exceeding 9999 pixels).</li>
+	<li><em>W and H</em>: Adjusts slice size. You can also use your mouse to drag the size of the slice from within the preview area on the left. You must click either off of the slice preview (in the checkered area) or on its border to resize it. A slice cannot be greater than 9999 pixels in either width or height. When adjusting width or height in the preview area, you can only adjust it to be a maximum of 100 pixels. You can obtain larger values using the numeric steppers. Slices in a Scale-3 shape always scale down or to the right. Slices in a Scale-9 shape scale towards the center. The size of a shape cannot be smaller than the combined sizes of its non-scaling slices. </li>
+	<li><em>X and Y</em>: Allow you to change the pattern offset for the slice assuming a pattern is used. If no pattern is used, these values are irrelevant. Like the size, you can alter the offset from within the preview area by clicking and dragging directly within the slice preview but away from it's border.</li>
+	<li><em>Rotation</em>: Changes pattern rotation. Rotation is limited to increments of 90 degrees. Rotation cannot be changed from within the pattern preview area.</li>
+	<li><em>StretchX and StretchY</em>: Allows for pattern stretching along either or both x and y axes. This stretches the image as seen in the preview area to match the size of the slice in the actual shape as seen in Fireworks. This only applies to slices which have variable heights or widths (Center/Middle for Scale-3; Top-Center, Middle-Left, Middle-Center, Middle-Right, and Bottom-Center for Scale-9). </li>
+</ul>
+<p>Clicking OK on the dialog will confirm any changes made. Clicking Cancel will ignore them.</p>
+<div class="note">
+	<h4>Note: Slice Definitions and Undo </h4>
+	<p>It is important to understand that settings applied to a Scale-3 or Scale-9 Component Auto Shape using the Define Slice dialog <b>cannot</b> be undone. Though the appearance of the shape may revert back to its original as the result of an undo operation, the shape will continue to use the new, undone settings the next time its redrawn.</p>
+</div>
+<p><a href="#index">Index</a></p>
+<h2><a name="managingpatterns" id="managingpatterns">Managing Skin Patterns</a></h2>
+<p>Skins for Scale-3 and Scale-9 Component Auto Shapes are made with images used as Fireworks patterns. These patterns are set for an individual slice of a shape using the Define Slice dialog (see <a href="#defineslice">Working With the Define Slice Dialog</a>). When skinning a shape, consider the following. </p>
+<h3>Minimizing the Number of Images for a Skin </h3>
+<p>Most Scale-3 and Scale-9 Component Auto Shapes can be skinned using a single bitmap pattern instead of using separate patterns for each slice. The only exceptions are Scale-9 shapes that require a pattern to be used for its center slice, in which case 2 are needed. Usually, however, you can get away with using a solid color for the center of Scale-9 shapes.</p>
+<p>Because the Define Slice dialog allows you to crop and rotate pattern images, you can use the same image for all graphics used in the Scale-3 Component Auto Shape and all but the center image of the Scale-9 Component Auto Shape. This can easily be done using a column format with each slice graphic  used in one image. Just place each consecutive graphic  below the one before it making one long column of the graphics required and save it as a pattern (GIF, JPEG, or PNG). Then, in the Define Slice dialog, load the pattern and crop each section of the image as needed for each slice using rotation where necessary for vertical slices like Middle-Left and Middle-Right on a Scale-9 shape. Because a Middle-Center graphic needs to stretch in all directions, it would have to require a separate image if not a solid color. Below is an example of the pattern image used for the Scale-9 dialog window example.</p>
+<p><img src="Help Files/windialogpattern.gif" alt="Windows Dialog Pattern" width="27" height="209" /></p>
+<p>The magenta here is not required and simply acts as a guide to help when applying the skin; it will ultimately not be seen in the component shape. The Middle-Left and Middle-Right slices would use rotated patterns while the Middle-Center slice would be given a solid color of #D4D0C8.</p>
+<div class="note">
+	<h4>Note: Scaling Slice Patterns</h4>
+	<p>For slices that scale, if a slice is not set to stretch its pattern, the pattern will be repeated. If that is the case, you will need to make sure the graphics for the slice span the entire width of the pattern image so when the pattern does repeat, it will be seamless. </p>
+</div>
+<p>Though this method of stacking graphics minimizes the number of images used, it can also make skinning a little more difficult. When using separate images, skinning usually only requires that you select the image in the Define dialog's combo box and select OK. Assuming the pattern is recognized by Fireworks (installed in the patterns directory) and the Auto Fit option is selected, the slice will automatically size itself to the size of the pattern image and no more adjusting is required. The only problem with using separate images is that it would require that your Fireworks document have patterns installed for each slice of each separate component shape used in that file.</p>
+<div class="note">
+	<h4>Note: Pattern Naming</h4>
+	<p>If you use a tilde (~) at the beginning of your component pattern names, they will be placed a little more unobtrusively at the bottom of your patterns list in Fireworks. </p>
+</div>
+<h3>Patterns Selection</h3>
+<p>Any pattern available to the current Fireworks document can be used to skin a Scale-3 or Scale-9 Component Auto Shape. Only GIF, JPEG, and PNG patterns (with correct file extension; .gif, .jpg, .jpeg, or .png) installed in the patterns folder of the Fireworks install directory (and were there when Fireworks was launched) will be recognized by the Define Slice dialog and will be automatically   given a preview when selected. Ideally these are the patterns you'd want most to be working with. They make skinning your slices  much easier  providing a faster way to add graphics to your shape. When adding images to the patterns directory, you will need to restart Fireworks to make sure they are recognized by Fireworks as being patterns.</p>
+<p> <strong>(Windows)</strong> C:\Program Files\Macromedia\Fireworks 8\Configuration\Patterns<br>
+	<strong>(Mac OS)</strong> Macintosh Hard Drive:Applications:Macromedia:Fireworks 8:Configuration:Patterns</p>
+<p>After you are through skinning your components using your skin patterns, you may want to remove them from the patterns directory so that your default pattern selection is not cluttered with component shape skins. Don't worry, this will not affect the appearance of the shapes (see <a href="#reusingshapes">Reusing Skinned Shapes</a>). </p>
+<p>If you do not use an installed pattern, a preview cannot be immediately generated and size information about the pattern cannot be determined. For these patterns, you will need to explicitly specify a preview image for the Define Slice dialog using the obtain pattern preview button attached to the top left of the preview box. You would want to load the same pattern used for the slice. Note that only GIF, JPEG, and PNG patterns can be used for the preview. If you do not specify a preview pattern when a pattern has no preview, the pattern could be rendered incorrectly for the shape using a size that does not fit the pattern applied. </p>
+<div class="note">
+	<h4>Note: Pattern Sizing</h4>
+	<p>If you have a slice that is incorrectly scaling a pattern (because, for example, you did not provide nor have a pattern preview for the pattern), you can fix it by first selecting the slice shape using the subselection tool in Fireworks, then use the arrow tool to get its pattern handles and double click on them. This will reset the size of the pattern to its regular, unaltered size. After having done that, you can update the new pattern size for the slice and redraw the shape by clicking on the options control point while holding the CTRL (or CMD) key. </p>
+	</div>
+<p><a href="#index">Index</a></p>
+<h2><a name="reusingshapes" id="reusingshapes">Reusing Skinned Shapes</a></h2>
+<p>Once you have skinned a Scale-3 or Scale-9 Component Auto Shape, it cannot be re-added to the Shapes panel for future use. Only un-skinned component shapes can be created from the Shapes panel. To reuse your skinned components, you have two options:</p>
+<ol>
+	<li><em>Create a library</em>: If you keep your components in a single Fireworks document and convert them into symbols, you will be able to open that file in Fireworks as a library (<kbd>Edit &gt; Libraries &gt; Other...</kbd>) and be able to insert into any document any of the symbols within the file. Keeping your file saved in Fireworks's Library folder will make the library directly accessible from the Libraries menu. Be aware that, as a symbol, you will need to break apart your component  (<kbd>Modify &gt; Symbol &gt; Break Apart</kbd>) if you wish to resize it. </li>
+	<li><em>Import</em>: Keeping components in individual files and importing those files (<kbd>File &gt; Import</kbd>) when a component is needed is probably the easiest thing to do. It can be even easier when importing by drag and drop from a folder set to view files as image previews. Unlike using library symbols, component shapes are provided in their natural form and would not require breaking apart for resizing. </li>
+	</ol>
+<p>If you add a component shape to a document while running an installation of Fireworks that does not have access to the patterns the shape uses, the shape will still be able to retain its patterns and keep its appearance because of how Fireworks maintains pattern information at the document level. Even if your system might not have a pattern, a Fireworks document will. Transferring an object from one document to another will also transfer all patterns associated with that object. This lets component shapes that have been added as a library item or imported retain their exact graphics. However, in doing this, you may experience difficulties attempting to adjust the skin of a component shape provided you do not have access to the patterns that make it up. </p>
+<p><a href="#index">Index</a></p>
+<h2><a name="issues" id="issues">Precautions and Known Issues</a></h2>
+<p>The Scale-3 and Scale-9 Component Auto Shapes, as with all things, may not function entirely correctly. If any bugs are found, let me know at <a href="http://www.senocular.com">www.senocular.com</a>. Known issues include: </p>
+<ul><li>On rare occasions, a stretched pattern may not render itself correctly after resizing a component Auto Shape. By using the Subselect tool and ever-so-slightly moving the fill handles of a slice, you should be able to make it render correctly. As far as I know, this is not a problem with the shape as it is a problem with Fireworks.</li>
+	<li>On other rare occasions, I have also experienced some error messages from Fireworks after some intense skinning. You should save frequently and restart Fireworks every time you complete skinning a component to try to prevent these errors from occurring. You would probably do this anyway if restoring your pattern selection. </li>
+</ul>
+<p><a href="#index">Index</a></p>
+<h2><a name="about" id="about">About </a></h2>
+<p>The Scale-3 and Scale-9 Component Auto Shapes were created by Trevor McCauley. For the most up-to-date versions of the Auto Shapes and to find more Auto Shapes and Fireworks extensions, go to <a href="http://www.senocular.com">www.senocular.com</a>. </p>
+<p><a href="#index">Index</a></p>
+<hr>
+<p>Last Updated October 18, 2005</p>
+</div>
+</body>
+</html>

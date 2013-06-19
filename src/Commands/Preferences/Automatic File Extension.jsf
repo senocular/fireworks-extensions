@@ -1,0 +1,1 @@
+﻿fw.setPref("AlwaysAppendFileExtensions", Number(fw.yesNoDialog("Automatically apply file extensions?")));

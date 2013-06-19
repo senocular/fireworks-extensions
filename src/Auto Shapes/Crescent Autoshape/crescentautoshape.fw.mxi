@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Crescent" version="0.9.0" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Crescent Auto Shape<br>
+		by senocular<br><br>
+		
+		The Crescent Auto Shape allows you to create a crescent or moon shape in Fireworks.<br><br>
+		There are 2 handles used in shaping the Crescent Auto Shape.<br>
+		The handle on the outer edge of the Crescent shape controls the arch and size.  Dragging normally will allow you change the arch of the Crescent to have a smaller or wider opening.  Holder the Command or Control Key while draging this handle will allow you to increase the size of the Crescent.<br><br>
+		The innermost handle lets you control the thickness of the Crescent shape or how hollow it is.  This is moved left and right to control how full or empty the Crescent is.<br><br>
+		Though the default direction of the Crescent Auto Shape is "facing" to the left, it can be rotated or flipped manually without losing its Auto Shape functionality.]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Crescent Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Crescent.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Crescent.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

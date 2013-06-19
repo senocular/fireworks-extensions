@@ -1,0 +1,139 @@
+movie 'C:\DOCUME~1\pixel\Desktop\FROMHO~1\BATCHC~1\Source\dialog.swf' {
+// flash 6, total frames: 1, frame rate: 24 fps, 300x200 px, compressed
+
+  frame 1 {
+    function SaveSettings() {
+      var type = 'alert';
+      if (rb1._currentframe == 2) {
+        type = (cb0._currentframe == 2) ? 'file' : 'app';
+      }
+      var message = escape(alert_txt.text);
+      var app = (app_path.text == NO_BROWSE_FILE) ? '' : escape(app_path.text);
+      var file = (file_path.text == NO_BROWSE_FILE) ? '' : escape(file_path.text);
+      var variableValue = '=\\"' + type + ',' + message + ',' + app + ',' + file + '\\";';
+      MMExecute('fw.saveJsCommand("' + settingsVariable + variableValue + '",fw.appDir+"' + settingsPath + '");');
+    }
+
+    function OpenSettings() {
+      var settings = MMExecute('fw.runScript(fw.appDir+"' + settingsPath + '");');
+      settings = settings.split(',');
+      switch (settings[0]) {
+        case 'alert':
+          rb0.onPress();
+          break;
+        case 'app':
+          rb1.onPress();
+          break;
+        case 'file':
+          rb1.onPress();
+          cb0.gotoAndStop(2);
+      }
+      alert_txt.text = unescape(settings[1]);
+      app_path.text = pathDisplay(settings[2]);
+      file_path.text = pathDisplay(settings[3]);
+    }
+
+    stop();
+    Stage.scaleMode = 'noScale';
+    var settingsVariable = 'BatchCompleteAlert_settings';
+    var settingsPath = '/Configuration/Shared/senocular/Batch Complete Alert/config.jsf';
+    var NO_BROWSE_FILE = '[none]';
+    radioGroup = [rb0, rb1];
+    radio_press = function () {
+      this.gotoAndStop(2);
+      var i = 0;
+      while (i < radioGroup.length) {
+        if (radioGroup[i] != this) {
+          radioGroup[i].gotoAndStop(1);
+        }
+        ++i;
+      }
+    };
+
+    check_press = function () {
+      this.play();
+      rb1.onPress();
+    };
+
+    AssignRadiosAndCheckBoxes = function () {
+      var hit;
+      var i = 0;
+      while (i < radioGroup.length) {
+        radioGroup[i].onPress = radio_press;
+        hit = radioGroup[i]._parent[radioGroup[i]._name + '_hit'];
+        radioGroup[i].hitArea = hit;
+        hit._visible = false;
+        radioGroup[i].useHandCursor = false;
+        ++i;
+      }
+      cb0.hitArea = cb0_hit;
+      cb0_hit._visible = false;
+      cb0.onPress = check_press;
+    };
+
+    alert_txt.onChanged = function () {
+      rb0.onPress();
+    };
+
+    pathDisplay = function (path) {
+      return (path == undefined || path == '') ? NO_BROWSE_FILE : unescape(path);
+    };
+
+    browseapp_btn.onRelease = function () {
+      var dir = pathDisplay(MMExecute('fw.browseForFileURL("open","", "");'));
+      if (dir != NO_BROWSE_FILE) {
+        rb1.onPress();
+        app_path.text = dir;
+      }
+    };
+
+    browsefile_btn.onRelease = function () {
+      var dir = pathDisplay(MMExecute('fw.browseForFileURL("open","", "");'));
+      if (dir != NO_BROWSE_FILE) {
+        rb1.onPress();
+        file_path.text = dir;
+      }
+    };
+
+    ok_btn.onRelease = function () {
+      SaveSettings();
+      MMEndCommand(true, '');
+    };
+
+    cancel_btn.onRelease = function () {
+      MMEndCommand(false, '');
+    };
+
+    init = function () {
+      AssignRadiosAndCheckBoxes();
+      OpenSettings();
+    };
+
+    init();
+  }
+
+  movieClip 14  {
+
+    frame 1 {
+      stop();
+    }
+
+    frame 2 {
+      stop();
+    }
+  }
+
+  movieClip 16  {
+  }
+
+  movieClip 24  {
+
+    frame 1 {
+      stop();
+    }
+
+    frame 2 {
+      stop();
+    }
+  }
+}

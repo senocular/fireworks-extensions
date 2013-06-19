@@ -1,0 +1,1 @@
+﻿fw.setPref("WriteDWNotes", Number(fw.yesNoDialog("Should Dreamweaver notes be included with export?")));

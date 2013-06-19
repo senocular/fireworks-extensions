@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Align Commands" version="0.8.1" type="command" requires-restart="false">
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Align Commands
+		www.senocular.com
+		<br><br>
+		- Space Horizontal/Vertical: Stacks selected objects end to end veritcally or horizontally with a user-defined amount of space between them
+		- Space H by Greatest Width/Space V by Greatest Height: Like Space Horizontal/Vertical but spaces the selected objects as though they were the width/height of the largest of those selected
+		<br><br>
+		Version History:
+		0.8.1: Initial public release
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run Selection Commands from your Commands > Align menu.]]>
+	</ui-access>
+	<files>
+		<file source="Space H by Greatest Width.jsf" destination="$fireworks/Configuration/Commands/Align" />
+		<file source="Space Horizontal.jsf" destination="$fireworks/Configuration/Commands/Align" />
+		<file source="Space V by Greatest Height.jsf" destination="$fireworks/Configuration/Commands/Align" />
+		<file source="Space Vertical.jsf" destination="$fireworks/Configuration/Commands/Align" />
+	</files>
+</macromedia-extension>

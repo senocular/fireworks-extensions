@@ -1,0 +1,125 @@
+var f = {};
+f.BezierInflections = function(v){	
+	var a = -v[0].x+3*v[1].x-3*v[2].x+v[3].x;
+	var b = v[0].x-2*v[1].x+v[2].x;
+	var c = -v[0].x+v[1].x;
+	
+	var sq = b*b-a*c;
+	if (sq < 0) return false; // not real values
+	
+	var n= []; // inflections
+	var n0= (-b-Math.sqrt(sq))/a;
+	var n1 = (-b+Math.sqrt(sq))/a;
+	if (n0 > 0 && n0 < 1 && a*n0 + b) n.push(n0);
+	if (n1 > 0 && n1 < 1 && a*n1 + b) n.push(n1);
+	if (n.length == 2) n.sort();
+	return (n.length) ? n : false;
+}
+f.BezierPoint = function(v, t){
+	var ts = t*t, i = 1-t, is = i*i;
+	var a = is*i, b = 3*is*t, c = 3*i*ts, d = t*ts;
+	return {
+		x: a*v[0].x+b*v[1].x+c*v[2].x+d*v[3].x,
+		y: a*v[0].y+b*v[1].y+c*v[2].y+d*v[3].y
+	}
+}
+f.BezierDivide = function(v, t){
+	var p01 = f.PointBetween(v[0], v[1], t);
+	var p12 = f.PointBetween(v[1], v[2], t);
+	var p23 = f.PointBetween(v[2], v[3], t);
+	var p0112 = f.PointBetween(p01, p12, t);
+	var p1223 = f.PointBetween(p12, p23, t);
+	var pt = f.PointBetween(p0112, p1223, t);
+	return [
+		[v[0], p01, p0112, pt],
+		[pt, p1223, p23, v[3]]
+	];
+}
+f.PointBetween = function(p1, p2, t){
+	return {x:p1.x + (p2.x-p1.x)*t, y:p1.y + (p2.y-p1.y)*t};
+}
+f.GetElemPos = function(){
+	var dom = fw.getDocumentDOM();
+	var elems = dom.frames[dom.currentFrameNum].layers[dom.currentLayerNum].elements;
+	var i = elems.length;
+	while (i--){
+		if (fw.selection[0].customData == elems[i].customData) return i;
+	}
+	return -1;
+}
+f._sortTops = function(a, b){
+	return (a.top+a.height) - (b.top+b.height);
+}
+f.Sort = function(elems){
+	var dom = fw.getDocumentDOM();
+	var order = (new Array()).concat(elems);
+	var orderb = (new Array()).concat(elems);
+	order.sort(f._sortTops);
+	var i = order.length;
+	while (i--) {
+		fw.selection = [order[i]];
+		dom.arrange("back");
+	}
+}
+f.MainExtrude = function(){
+	if (fw.selection.length != 1 || !fw.selection[0].contours) return alert("Please select a single Path to extrude");
+	var offset = prompt("Extrude Height", "10");
+	if (!offset) return false;
+	else offset = Number(offset);
+	var dom = fw.getDocumentDOM();
+	var orig = fw.selection[0];
+	var pos = f.GetElemPos();
+	dom.moveSelectionBy({x:0, y:-offset}, true, false);
+	var basename = (orig.name) ? orig.name : "Path";
+	fw.selection[0].name = basename + " Cap";
+	var extrudes = [];
+
+	var cs = fw.selection[0].contours;
+	var clen = cs.length;
+	for (var ci=0; ci<clen; ci++){
+	
+		var ns = cs[ci].nodes;
+		var nlen = ns.length;
+		var nl = (cs[ci].isClosed) ? nlen : nlen-1;
+		for (var ni=0; ni<nl; ni++){
+		
+			var nni = ni+1;
+			if (nni == nlen) nni = 0;
+			var bez = [
+				{x:ns[ni].x, y:ns[ni].y}, {x:ns[ni].succX, y:ns[ni].succY},
+				{x:ns[nni].predX, y:ns[nni].predY}, {x:ns[nni].x, y:ns[nni].y}
+			];
+			
+			var infs = f.BezierInflections(bez);
+			
+			if (infs){
+				var bs = f.BezierDivide(bez, infs[0]);
+				if (infs.length == 2){
+					var inf2 = f.BezierInflections(bs[1]);
+					bs = ([bs[0]]).concat( f.BezierDivide(bs[1], inf2[0]) );
+				}
+			}else{
+				var bs = [bez];
+			}
+			var i = bs.length;
+			while(i--){
+				dom.addNewSinglePointPath(bs[i][0], bs[i][0], bs[i][1], true);
+				dom.appendPointToPath(0, 1, bs[i][2], bs[i][3], bs[i][3]);
+				dom.appendPointToPath(0, 2, {x:bs[i][3].x, y:bs[i][3].y+offset}, {x:bs[i][3].x, y:bs[i][3].y+offset}, {x:bs[i][2].x, y:bs[i][2].y+offset});
+				dom.appendPointToPath(0, 3, {x:bs[i][1].x, y:bs[i][1].y+offset}, {x:bs[i][0].x, y:bs[i][0].y+offset}, {x:bs[i][0].x, y:bs[i][0].y+offset});
+				dom.modifyPointOnPath(0, 0, bs[i][0], bs[i][0], bs[i][1], true, true);
+				extrudes.push(fw.selection[0]);
+			}
+			
+		} // end for ns
+	} // end for cs
+	
+	fw.selection = extrudes;
+	dom.group("normal");
+	fw.selection[0].name = basename + " Extrusion: "+fw.selection[0].elements.length+" objects";
+	if (pos != -1) dom.moveSelectionToLayer(0, false, "none", pos+2);
+	f.Sort(fw.selection[0].elements);
+	fw.selection = [orig];
+}
+f.MainExtrude();
+f = undefined;

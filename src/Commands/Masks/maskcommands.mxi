@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Mask Commands" version="0.9.2" type="command" requires-restart ="false">
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Mask Commands<br>
+		www.senocular.com<br><br>
+		
+		A Collection of basic masking commands.<br><br>
+		
+		- Group as Mask Inside: Similar to group as mask but sets mask to be visible (like paste inside)
+		- Multiple Paste Inside: Lets you perform a paste inside action on more than one item at a time.  Normally, paste inside is only optional when one item is selected.  Using Multiple Paste Inside, you can have multiple items selected and a paste inside operation will be performed on each
+		- Set Mask by Color: Changes mask in selection to mask its owner by color (or grayscale as see in the properties panel when the mask is selected)
+		- Set Mask by Shape: Changes mask in selection to mask its owner by shape (or alpha as see in the properties panel when the mask is selected)
+		- Swap Maskee and Masker: Changes a mask to be instead masked by the element it's currently masking
+		- Toggle Mask as Inside: changes a mask type between a normal mask and a mask given with a paste inside mask (where the mask as well as the element being masked is visible)
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run Mask Commands from your Commands > Masks menu.]]>
+	</ui-access>
+	<files>
+		<file source="Group as Mask Inside.jsf" destination="$fireworks/Configuration/Commands/Masks" />
+		<file source="Multiple Paste Inside.jsf" destination="$fireworks/Configuration/Commands/Masks" />
+		<file source="Set Mask by Color.jsf" destination="$fireworks/Configuration/Commands/Masks" />
+		<file source="Set Mask by Shape.jsf" destination="$fireworks/Configuration/Commands/Masks" />
+		<file source="Swap Maskee and Masker.jsf" destination="$fireworks/Configuration/Commands/Masks" />
+		<file source="Toggle Mask as Inside.jsf" destination="$fireworks/Configuration/Commands/Masks" />
+	</files>
+</macromedia-extension>

@@ -1,0 +1,241 @@
+﻿var MouseLoc = smartShape.currentMousePos;
+var MouseX = MouseLoc.x;
+var MouseY = MouseLoc.y;
+var rad90 = Math.PI/2;
+var rad180 = Math.PI;
+var rad270 = 3*Math.PI/2;
+var rad360 = 2*Math.PI;
+var maxSegs = 25;
+var minSegs = 2;
+
+op = function(operation){
+	this.cp  = smartShape.elem.controlPoints;
+	this.elems  = smartShape.elem.elements;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function(){
+	this.elems[0] = new Path(); // preview & data container
+	this.elems[1] = new Path(); // image
+	this.elems[1].contours[0] = new Contour();
+	var ns =this.elems[1].contours[0].nodes;
+	ns.length = 2;
+	var cd = this.elems[0].customData;
+	cd.segments = 6;
+	var radius = 30;
+	var origin = {x:MouseX,y:MouseY}
+	this.setControlPoint(0, "origin", "crossHair", origin);
+	var span = rad360/cd.segments;
+	this.setControlPoint(1, "pt", "defaultInverted", this.pointFrom(span/2, radius));
+	this.setControlPoint(2, "pt", "default", this.pointFrom(0, radius*2)); // shape forming node(s)
+	SetNodePosition(ns[0], this.cp[1])
+	SetNodePosition(ns[1], this.cp[2])
+	this.Render();
+	cd.lastEvent = "insert";
+}
+op.prototype.BeginDragControlPoint = function (){
+	var cd = this.elems[0].customData;
+	var index = smartShape.currentControlPointIndex;
+	var params = smartShape.GetDefaultMoveParms();
+	smartShape.getsDragEvents = true;
+	if (index){
+		 if (smartShape.altOptKeyDown){
+			var nindex = this.insertNode(this.elems[1].contours[0].nodes, index, 1);
+			SetNodePosition(this.elems[1].contours[0].nodes[nindex], this.cp[index]);
+			this.Populatecps();
+			this.Render();
+			this.cp[nindex+1].RegisterMove(params);
+			this.elems[1].contours[0].nodes[nindex].RegisterMove(params);
+		}else if (index == 1){
+			if (smartShape.ctrlCmdKeyDown){
+				cd.modifier = "divisions";
+				cd.origin = { angle: this.angleTo(this.cp[index]) };
+				MatchNodePosition(cd.origin, this.elems[1].contours[0].nodes[0]);
+				this.cp[index].RegisterCircularMove({x:this.cp[0].x, y:this.cp[0].y}, params);
+			}else{
+				cd.modifier = "radius";
+				params.maxLinear = this.radiusOf(this.cp[index])-1;
+				this.cp[index].RegisterLinearMove({x:this.cp[0].x, y:this.cp[0].y}, params);
+				this.elems[1].contours[0].nodes[0].RegisterLinearMove({x:this.cp[0].x, y:this.cp[0].y}, params);
+			}
+		}else if (index > 1){
+			this.cp[index].RegisterMove(params);
+			this.elems[1].contours[0].nodes[index-1].RegisterMove(params);
+		}
+	}
+	cd.lastEvent = "setdrag";
+}
+op.prototype.DragControlPoint = function(){
+	var cd = this.elems[0].customData;
+	var index = smartShape.currentControlPointIndex;
+	if (index == 1){	
+		if (cd.modifier == "divisions"){
+			var a = Math.abs(rad90+this.angleTo(this.cp[index]));
+			if (a > rad180) a = rad360-a;
+			var currSeg = rad360/a;
+			currSeg = Math.round(Math.min(Math.max(minSegs,currSeg),maxSegs));
+			// need to manually keep trak of dragging cp/node since registermove is lost in line alteration
+			//OffsetNodePosition(this.elems[1].contours[0].nodes[0], SubtractPoints(this.cp[index], this.elems[1].contours[0].nodes[0]));
+			var ang = this.angleTo(this.cp[index]) - cd.origin.angle;
+			SetBezierNodePosition(
+				this.elems[1].contours[0].nodes[0], 
+				RotatePointAroundPoint(Point(cd.origin.predX, cd.origin.predY),	this.cp[0],	ang),
+				RotatePointAroundPoint(cd.origin,						this.cp[0],	ang),
+				RotatePointAroundPoint(Point(cd.origin.succX, cd.origin.succY),	this.cp[0],	ang)
+			);
+			if (currSeg != cd.segments){
+				cd.segments = currSeg;
+				this.Render();
+			}
+		}
+	}
+	this.updateToolTips();
+	cd.lastEvent = "drag";
+}
+op.prototype.EndDragControlPoint = function(){
+	var cd = this.elems[0].customData;
+	var index = smartShape.currentControlPointIndex;
+	if (index == 1){
+		this.Populatecps();
+		this.Render();
+	}else if (index > 1 && cd.lastEvent == "setdrag"){
+		if (smartShape.shiftKeyDown && smartShape.ctrlCmdKeyDown && this.cp.length > 3){
+			this.cp.length--;
+			this.elems[1].contours[0].nodes.length = this.cp.length;
+			this.deleteNode(this.elems[1].contours[0].nodes, index-1, 1);
+			this.Render();
+			this.Populatecps();
+		}
+	}else this.Render();
+	cd.lastEvent = "enddrag";
+	
+}
+op.prototype.SmartShapeEdited = function(){
+	this.Populatecps();
+	this.Render();
+}
+op.prototype.Render = function(){
+	var cd = this.elems[0].customData;
+	var e = this.elems[1];
+	var ns = e.contours[0].nodes;
+	
+	ns.length = this.cp.length-1;
+	var pos = []; 
+	for (var i=0;i<ns.length;i++) pos[i] = ns[i];
+	var span = rad360/cd.segments;
+	var inc = 0;
+	for (var s=1; s<cd.segments; s++){
+		var ang = span*s;
+		for (i=0; i<pos.length;i++){
+			SetBezierNodePosition(
+				SetNewNode(ns), 
+				RotatePointAroundPoint(Point(pos[i].predX, pos[i].predY),	this.cp[0],	ang),
+				RotatePointAroundPoint(pos[i],						this.cp[0],	ang),
+				RotatePointAroundPoint(Point(pos[i].succX, pos[i].succY),	this.cp[0],	ang)
+			);
+		}
+	}
+	e.contours[0].isClosed = true;
+	this.updateToolTips();
+}
+op.prototype.Populatecps = function(){
+	var cd = this.elems[0].customData;
+	this.cp.length = 1;
+	var max = Math.ceil(this.elems[1].contours[0].nodes.length/cd.segments)+1;
+	this.setControlPoint(1, "pt", "defaultInverted", this.elems[1].contours[0].nodes[0]);
+	for (i=2; i<max; i++) this.setControlPoint(i, "pt", "default", this.elems[1].contours[0].nodes[i-1]);
+}
+op.prototype.updateToolTips = function(){
+	var cd = this.elems[0].customData;
+	var cen = ["Horizontal","Vertical","Horizontal & Vertical"];
+	this.cp[0].toolTip = "Center Point";
+	if (cd.lastEvent == "drag"){
+		if (cd.modifier == "radius"){
+			this.cp[1].toolTip = "Radius: "+Math.round(this.radiusOf(this.cp[1]));
+		}else{
+			this.cp[1].toolTip = "Divisions: "+cd.segments;
+		}
+	}else{
+		this.cp[1].toolTip = "Radius: "+Math.round(this.radiusOf(this.cp[1])) +", Divisions: "+cd.segments;
+	}
+	for (var i=2;i<this.cp.length;i++){
+		this.cp[i].toolTip ="Point "+(i-1)+": ("+Math.round(this.cp[i].x-this.cp[0].x)+","+Math.round(this.cp[i].y-this.cp[0].y)+")";
+	}
+}
+op.prototype.setControlPoint = function(index, name, type, pt){
+	if (index >= this.cp.length) this.cp.length = index+1;
+	this.cp[index].name = name;
+	this.cp[index].type = type;
+	this.cp[index].x = pt.x; this.cp[index].y = pt.y;
+	this.cp[index].toolTipTracksDrag = true;
+}
+op.prototype.insertNode = function(ns, from, count){
+	ns.length += count;
+	var end = from+count;
+	for (var i=ns.length-1; i>=end; i--) MatchObjToObj(ns[i], ns[i-count]);
+	return from; // old index's new index
+}
+op.prototype.deleteNode = function(ns, from, count){
+	var end = ns.length-count;
+	for (var i=from; i<end; i++) MatchObjToObj(ns[i], ns[i+count]);
+	ns.length = end;
+}
+
+op.prototype.pointFrom = function(angle, radius){
+	angle = -angle-rad90;
+	var cd = this.elems[0].customData;
+	return {x: this.cp[0].x+Math.cos(angle)*radius, y: this.cp[0].y+Math.sin(angle)*radius};
+}
+op.prototype.angleTo = function(pt){
+	return Math.atan2(pt.y-this.cp[0].y, pt.x-this.cp[0].x);
+}
+op.prototype.radiusOf = function(pt){
+	var dx = this.cp[0].x-pt.x;
+	var dy = this.cp[0].y-pt.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+Point = function(x,y){
+	return {x:x, y:y};
+}
+AddPoints = function(p1, p2){
+	return {x:p1.x+p2.x, y:p1.y+p2.y};
+}
+SubtractPoints = function(p1, p2){
+	return {x:p1.x-p2.x, y:p1.y-p2.y};
+}
+
+RotatePointAroundPoint = function(pt, origin, angle){
+	var ca=Math.cos(angle);
+	var sa=Math.sin(angle);
+	var x = pt.x-origin.x;
+	var y = pt.y-origin.y;
+	return {x: origin.x + x*ca-y*sa, y: origin.y + x*sa+y*ca};
+}
+SetNewNode = function(ns){
+	var i = ns.length;
+	ns.length++;
+	var n = ns[i];
+	return n;
+}
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX = ptp.x;	n.predY =ptp.y;
+	n.x = pt.x;			n.y = pt.y;
+	n.succX = pts.x;		n.succY = pts.y;
+}
+MatchNodePosition = function(target, match){
+	target.predX = match.predX;	target.predY = match.predY;
+	target.x = match.x;			target.y = match.y;
+	target.succX = match.succX;	target.succY = match.succY;
+}
+OffsetNodePosition = function(target, offset){
+	target.predX += offset.x;	target.predY += offset.y;
+	target.x += offset.x;		target.y += offset.y;
+	target.succX += offset.x;	target.succY += offset.y;
+}
+MatchObjToObj = function(cp1, cp2){
+	for (var i in cp2) cp1[i] = cp2[i];
+}
+// init
+new op(smartShape.operation);

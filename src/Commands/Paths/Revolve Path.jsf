@@ -1,0 +1,80 @@
+f = new Object();
+f.DistanceBetween = function(p1, p2){
+	var dx = p2.x - p1.x;
+	var dy = p2.y - p1.y;
+	return Math.sqrt(dx*dx + dy*dy);
+}
+f.PointBetween = function(p1, p2){
+	return {x:p1.x + (p2.x-p1.x)/2, y:p1.y + (p2.y-p1.y)/2};
+}
+f.AngleBetween = function(p1, p2){
+	return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+}
+f.PointFromVector = function(origin, angle, power){
+	return {x: origin.x + Math.cos(angle)*power, y: origin.y + Math.sin(angle)*power};
+}
+f.RotatePointAroundPoint = function(pt, origin, angle){
+	var ca = Math.cos(angle),	sa = Math.sin(angle); // get sine and cosine values for the angle
+	var dx = pt.x - origin.x,	dy = pt.y - origin.y; // get the differences in x and y locations
+	return {x:origin.x + dx*ca - dy*sa, y:origin.y + dx*sa + dy*ca}; // return rotated point
+}
+
+f.RevolvePath = function(count){
+	count = parseInt(count);
+	if (!count || count <= 0) return alert("Error: Invalid value.");
+	var dom = fw.getDocumentDOM();
+	var ns = fw.selection[0].contours[0].nodes;
+	var len = ns.length;
+	var first = ns[0];
+	var last = ns[len-1];
+	var angle = 2*Math.PI/count;
+	// fix pred and succ for first and last points for correct revolve
+	var dx = first.succX - first.x;
+	var dy = first.succY - first.y;
+	dom.modifyPointOnPath(
+		0, len-1,
+		{x:last.predX, y:last.predY},
+		{x:last.x, y:last.y},
+		f.RotatePointAroundPoint({x:last.x + dx, y:last.y + dy}, last, angle),
+		false, true
+	);
+	dx = last.predX - last.x;
+	dy = last.predY - last.y;
+	dom.modifyPointOnPath(
+		0, 0,
+		f.RotatePointAroundPoint({x:ns[0].x + dx, y:ns[0].y + dy}, first, -angle),
+		{x:ns[0].x, y:ns[0].y},
+		{x:ns[0].succX, y:ns[0].succY},
+		false, true
+	);
+	// reasign nodes because FW is gay
+	ns = fw.selection[0].contours[0].nodes;
+	first = ns[0];
+	last = ns[len-1];
+	// find center of rotation
+	if (count == 2) var center = f.PointBetween(first, last);
+	else{
+		var adj = .5*f.DistanceBetween(first, last)/Math.tan(Math.PI/count);
+		var center = f.PointFromVector(f.PointBetween(first, last), f.AngleBetween(first, last)+Math.PI/2, adj);
+	}
+	// for each revolution
+	var i, ang, n, nods = len;
+	var end = count-1;
+	for (i=1; i<count; i++){
+		// for each node in the original path
+		ang = i*angle;
+		if (i == end) nods--;
+		for (n=1; n<nods; n++){
+			// add rotated, copied point
+			dom.appendPointToPath(
+				0, len++,
+				f.RotatePointAroundPoint({x:ns[n].predX, y:ns[n].predY}, center, ang),
+				f.RotatePointAroundPoint({x:ns[n].x, y:ns[n].y}, center, ang),
+				f.RotatePointAroundPoint({x:ns[n].succX, y:ns[n].succY}, center, ang)
+			);
+		}
+	}
+}
+f.RevolvePath(prompt("Revolve Path: How many times?", "4"));
+f = undefined;
+delete f;

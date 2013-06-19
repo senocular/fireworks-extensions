@@ -1,0 +1,110 @@
+﻿// version 0.9.7
+
+function CopyComponentSkin(){
+	if (fw.selection.length < 2){
+		alert("This command is used to copy the skin of one Scale-3 or Scale-9 component to another Scale-3 or Scale-9 component.\nYou must arrange the source component with the skin you wish to copy above the destination component, select both, then run this script.");
+		return;
+	}
+	var userIsSure = fw.yesNoDialog("Make sure the source component is arranged above the destination component.\nThis action CANNOT BE UNDONE.\nContinue copying component skin?");
+	if (!userIsSure) return;
+	
+	var dom = fw.getDocumentDOM();
+	var oldcomp = fw.selection[0], newcomp = fw.selection[1];
+	var n, i;
+	
+	// options, script will fail here if not valid components lacking optionsObj
+	newcomp.elements[0].customData.optionsObj = ObjectCopy(newcomp.elements[0].customData.optionsObj);
+	CopyOptionProperties(oldcomp.elements[0].customData.optionsObj, newcomp.elements[0].customData.optionsObj);
+	
+	// slices
+	n = Math.min(oldcomp.elements.length, newcomp.elements.length);
+	var oldprop = (oldcomp.elements[1].customData.sliceObj) ? "sliceObj" : "quadrantObj";
+	var newprop = (newcomp.elements[1].customData.sliceObj) ? "sliceObj" : "quadrantObj";
+	for (i=1; i<n; i++){
+		newcomp.elements[i].customData[newprop] = ObjectCopy(newcomp.elements[i].customData[newprop]);
+		CopySliceProperties(oldcomp.elements[i].customData[oldprop], newcomp.elements[i].customData[newprop]);
+	}
+	
+	// text
+	var elems = oldcomp.elements[0].elements;
+	n = elems.length;
+	var txt;
+	for (i=0; i<n; i++) {
+		// assume all elements in elements[0] are text (they should be)
+		newcomp.elements[0].elements[i] = new Text();
+		CopyText(elems[i], oldcomp.elements[1], newcomp.elements[0].elements[i], newcomp.elements[1]);
+	}
+	newcomp.elements[0].elements.length = n;
+	
+	// refresh
+	fw.selection = [ newcomp ];
+	dom.redrawSmartShape();
+}
+ObjectCopy = function(obj){
+	var o;
+	eval("o = "+obj.toSource());
+	return o;
+}
+CopyProperties = function(from, to){
+	for (var p in from) to[p] = from[p];
+}
+CopyOptionProperties = function(from, to){
+	for (var p in from){
+		// do not copy version and name
+		switch(p){
+			case "version":
+			case "autoshapename":
+				break;
+			default:
+				to[p] = from[p];
+		}
+	}
+}
+CopySliceProperties = function(from, to){
+	if (from.name != undefined){
+		// pre-state version
+		for (var p in from){
+			to[p] = from[p];
+			switch(p){
+				case "width":
+				case "height":
+				case "x":
+				case "y":
+				case "index":
+					break;
+					
+				// copy into first state as well
+				default:
+					to[p+"1"] = from[p];
+			}
+		}
+		//exit
+		return;
+	}
+	// normal 1:1 copying (states)
+	CopyProperties(from, to);
+}
+CopyText = function(from, fromRef, to, toRef){
+	to.antiAliasMode = from.antiAliasMode;
+	to.antiAliased = from.antiAliased;
+	to.autoExpand = from.autoExpand;
+	to.autoKern = from.autoKern;
+	to.blendMode = from.blendMode;
+	to.opacity = from.opacity;
+	to.orientation = from.orientation;
+	to.rawHeight = from.rawHeight;
+	to.rawWidth = from.rawWidth;
+	to.transformMode = from.transformMode;
+	to.pathAttributes = from.pathAttributes;
+	if (!from.pathAttributes.brush) to.pathAttributes.brush = null; // workaround - otherwise if null, not copied instead document brush is used 
+	to.effectList = from.effectList;
+	to.textureOffset = from.textureOffset;
+	to.textRuns = from.textRuns;
+	// new position based on relation to reference element
+	var fromOff = {x:from.rawLeft-fromRef.left, y:from.rawTop-fromRef.top};
+	to.rawLeft = toRef.left + fromOff.x;
+	to.rawTop = toRef.top + fromOff.y;
+	CopyProperties(from.customData, to.customData);
+}
+// run
+CopyComponentSkin();

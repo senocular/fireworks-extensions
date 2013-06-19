@@ -1,0 +1,1398 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<codehints>
+<menugroup name="Fireworks JSF Code Hints" enabled="true" id="JSF_CodeHints">
+<description>
+	<![CDATA[
+	Fireworks JavaScript Code Hints by senocular
+	]]>
+</description>
+
+<!-- fireworks object -->
+<menu pattern="fw./fireworks." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="activeTool:String" value="activeTool" value="activeTool" value="notmybitch" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="activeViewScale:Float" value="activeViewScale" value="activeViewScale" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appBatchCodeDir:String" value="appBatchCodeDir" value="appBatchCodeDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appDir:String" value="appDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appExportSettingsDir:String" value="appExportSettingsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appFavoritesDir:String" value="appFavoritesDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appHelpDir:String" value="appHelpDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appHtmlCodeDir:String" value="appHtmlCodeDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appJsCommandsDir:String" value="appJsCommandsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appJsExtensionsDir:String" value="appJsExtensionsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appMacCreator:String" value="appMacCreator" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appMacJsfFileType:String" value="appMacJsfFileType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appName:String" value="appName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appPatternsDir:String" value="appPatternsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appPrefsDir:String" value="appPrefsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appPresetsDir:String" value="appPresetsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appSettingsDir:String" value="appSettingsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appSmartShapesDir:String" value="appSmartShapesDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appSmartShapeToolsDir:String" value="appSmartShapeToolsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appStylesDir:String" value="appStylesDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appSwfCommandsDir:String" value="appSwfCommandsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appSymbolLibrariesDir:String" value="appSymbolLibrariesDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appTexturesDir:String" value="appTexturesDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="appXtrasDir:String" value="appXtrasDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="batchStatusString:String" value="batchStatusString" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="currentScriptDir:String" value="currentScriptDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="currentScriptFileName:String" value="currentScriptFileName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dialogs:Object" value="dialogs" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dismissBatchDialogWhenDone:Boolean" value="dismissBatchDialogWhenDone" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="documentList:Array" value="documentList" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="documents:Array" value="documents" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ellipseBCPConst:Float" value="ellipseBCPConst" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="errorReportingOK:Boolean" value="errorReportingOK" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="files:Object" value="files" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="getDynamicSWFURL:String" value="getDynamicSWFURL" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="getEndBackgroundColor:String" value="getEndBackgroundColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="getStartBackgroundColor:String" value="getStartBackgroundColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="historyPalette:String" value="historyPalette" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isConnectedToInternet:Integer" value="isConnectedToInternet" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="mruRecentFilesList:Array" value="mruRecentFilesList" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="mruRecentFileNames:Array" value="mruRecentFileNames" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="platform:String" value="platform" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="progressCountCurrent:Integer" value="progressCountCurrent" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="progressCountTotal:Integer" value="progressCountTotal" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="screenRect:Rectangle" value="screenRect" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="selection:Array" value="selection" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="selectedMask:ElementMask" value="selectedMask" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="styles:Array" value="styles" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textInsertionIndex:Integer" value="textInsertionIndex" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textInsertionLength:Integer" value="textInsertionLength" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textOutputEncoding:String" value="textOutputEncoding" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="userJsCommandsDir:String" value="userJsCommandsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="userSmartShapesDir:String" value="userSmartShapesDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="userSmartShapeToolsDir:String" value="userSmartShapeToolsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="userSymbolLibrariesDir:String" value="userSymbolLibrariesDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="userSwfCommandsDir:String" value="userSwfCommandsDir" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="xhtmlFormat:Boolean" value="xhtmlFormat" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+
+<!-- dom object -->
+<menu pattern="dom." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="backgroundColor:String" value="backgroundColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="backgroundURL:String" value="backgroundURL" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="brushes:Array" value="brushes" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="currentFrameNum:Integer" value="currentFrameNum" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="currentLayerNum:Integer" value="currentLayerNum" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="defaultAltText:String" value="defaultAltText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="docTitleWithoutExtension:String" value="docTitleWithoutExtension" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="exportFormatOptions:ExportOptions" value="exportFormatOptions" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="exportOptions:ExportOptions" value="exportOptions" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="exportSettings:ExportSettings" value="exportSettings" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="filePathForRevert:String" value="filePathForRevert" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="filePathForSave:String" value="filePathForSave" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fills:Array" value="fills" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="frameCount:Integer" value="frameCount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="frameLoopingCount:Integer" value="frameLoopingCount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="frames:Array" value="frames" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gammaPreview:Boolean" value="gammaPreview" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gradients:Array" value="gradients" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gridColor:String" value="gridColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gridOrigin:Point" value="gridOrigin" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gridSize:Point" value="gridSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="guides:Guides" value="guides" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="height:Integer" value="height" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isDirty:Boolean" value="isDirty" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isPaintMode:Boolean" value="isPaintMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isSymbolDocument:Boolean" value="isSymbolDocument" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isValid:Boolean" value="isValid" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="lastExportDirectory:String" value="lastExportDirectory" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="lastExportFile:String" value="lastExportFile" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="layers:Array" value="layers" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="left:Integer" value="left" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="mapType:String" value="mapType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="matteColor:String" value="matteColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="onionSkinAfter:Integer" value="onionSkinAfter" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="onionSkinBefore:Integer" value="onionSkinBefore" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="patterns:Array" value="patterns" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pathAttributes:PathAttrs" value="pathAttributes" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pngText:Object" value="pngText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="resolution:Float" value="resolution" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="resolutionUnits:String" value="resolutionUnits" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="savedSelections:Object" value="savedSelections" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textures:Array" value="textures" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="top:Integer" value="top" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="useMatteColor:Boolean" value="useMatteColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="width:Integer" value="width" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<function pattern="dom.addBehavior(action:String, event:String, eventIndex:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addElementMask(mode:String [, bEnterMaskEditMode:Boolean])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addFrames(howMany:Integer, where:String [, bAdvanceActiveFrame:Boolean])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addGuide(position:Float, guidekind:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewHotspot(hotspot-kind:String, hotspot-shape:String, boundingRectangle:Rectangle)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewImage(boundRectangle:Rectangle, bEnterPaintMode:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewImageViaCopy()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewImageViaCut()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewLayer(name:String, bshared:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewLine(startPoint:Point, endPoint:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewOval(boundingRectangle:Rectangle)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewRectangle(boundingRectangle:Rectangle, roundness:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewRectanglePrimitive(boundingRectangle:Rectangle, roundness:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewSinglePointPath(controlPointFirst:Point, controlPointLast:Point, bCopyAttrs:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewStar(numSides:Integer, spikiness:Float, bIsStar:Boolean, centerPoint:Point, outsidePoint:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewSymbol(type:String, name:String, bAddToDoc:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addNewText(boundingRectangle:Rectangle, bInitFromPrefs:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.addSwapImageBehaviorFromPoint(where:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.adjustExportToSize(sizeInBytes:Integer, bOkToIncreaseSize:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.adjustFontSize(amount:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.align(alignmode:String, alignToCanvas:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.appendPointToHotspot(pt:Point, tolerance)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.appendPointtoPath(contourIndex:Integer, ptToInsertBefore:Integer, controlPointFirst:Point, mainPoint:Point, controlPointLast:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.appendPointToSlice(pt:Point, tolerance:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.applyCharacterMarkup(tag:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.applyCurrentFill(noNullFills:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.applyEffects(effectList:EffectList)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.applyFontMarkup(fontAttribute:String, value:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.applyStyle(styleName:String, styleIndex:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.arrange(arrangemode:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.attachtTextToPath()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.changeGuide(currentPosition:Float, newPosition:Float, guidekind:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.changeSliceGuide(currentPosition:Float, newPosition:Float, guidekind:String), isMagneticDrag:Boolean, isSingleDrag:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clearJPEGMask()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipCopy()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipCopyAsPaths()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipCopyFormats(format:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipCut()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipPaste([whatIfResolutionDifferent:String, whatIfPastingIntoElementMask:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipPasteAsMask(whatIfResolutionDifferent:String, masktype:String, maskReplaceOptions:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipPasteAttributes()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipPasteFromChannelToChannel(fromChannel:String, toChannel:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.clipPasteInside([whatIfResolutionDifferent:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.cloneSelection()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.close(bPromptToSaveChanges:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.convertAnimSymbolToGraphicSymbol()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.convertMarqueeToPath()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.convertPathToMarquee(mode:String, featherAmount:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.convetToAnimSymbol(name:String, numFrames:Integer, offsetDistPt:Point, rotationAmount:Float, scaleAmount:Float, startOpacity:Integer, endOpacity:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.convertToPaths()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.convertToSymbol(type:String, name:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.convolveSelection(kernelWidth:Integer, kernelHeight:Integer, kernelValues:Array, affectsAlpha:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.copyHtmlWizard()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.copyToHotspot(hotspotType:String [, whatIfMultipleSelected:String, makeRectangular:Boolean])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.cropSelection(boundingRectangle:Rectangle)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.deleteAllInDocument()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.deleteFrames(frameIndex:Integer, howMany:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.deleteLayer(layerIndex:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.deletePointOnPath(contourIndex:Integer, pointIndex:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.deleteSavedSelection(bFillDeletedArea:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.deleteSelection(bFillDeletedArea:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.deleteSymbol(symbolName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.detachInstanceFromSymbol()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.detachTextFromPath()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.distribute(distmode:String, distributeToCanvas:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.distributeLayerToFrames(layerIndex:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.distributeSelectionToFrames()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.dragControlPoint(index:Integer, newLoc:Point, shiftKeyDown:Boolean, ctrlCmdKeyDown:Boolean, altOptKeyDown:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.duplicateFrame(frameIndex:Integer, howMany:Integer, where:String, bDupeSelectionOnly:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.duplicateLayer(layerIndex:Integer [, howMany:Integer, where:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.duplicateSelection()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.duplicateSelectionToFrameRange(frameIndexFirst:Integer, frameIndexLast:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.duplicateSelectionToFrames(whichFrames:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.duplicateSymbol(symbol:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.duplicateSymbolForAlias()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.elementsAt(where:Rectangle)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.enableElementMask(enable:Boolean, selectAndEnterPaintModeIfPossible:Boolean [, newSelectionMask:Mask])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.enableTextAntiAliasing(antiAlias:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.enterElementMaskEditMode()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.enterPaintMode([newSelectionMask:Mask])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.exitElementMaskEditMode()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.exitPaintMode()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.exportOptions.loadColorPalette(fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.exportOptions.saveColorPalette(fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.exportTo(fileURL:String [, exportOptions:ExportOptions])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.fillSelectedPixels(clickPt:Point, p1:Point, p2:Point, p3:Point, bFillSelectionOnly:Boolean, tolerance:Integer, edgemode:String, featherAmt:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.filterSelection(liveEffect:Effect)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.filterSelectionByID(ID:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.filterSelectonByName(category:String, name:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.findNamedElements(name:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.flattenDocument()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.flattenSelection()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getFontMarkup(fontAttribute:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getPixelMask()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getSelectionBounds()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getShowGrid()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getShowGuides()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getShowRulers()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getSnapToGuides()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getSnapToGrid()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.getTextAlignment()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.group([type:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.hasCharacterMarkup(tag:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.hideSelection()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.importFile(fileURL:String, boundingRectangle:Rectangle, bMaintainAspectRatio:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.importSymbol(fileURL:String, bAddToDoc:Boolean, bAllowUI:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.importSymbolButNotAsAlias(filepath:String, whichSymbol:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.inLaunchAndEdit()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.insertPointInPath(contourIndex:Integer, ptToInsertBefore:Integer, tParameter:Float, controlPointFirst:Point, mainPoint:Point, controlPointLast:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.insertSmartShapeAt(name:String, location:Point, useToolBlendModeOpacity:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.insertSymbolAt(uiName:String, locationPoint:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.isSelectionDirectlyAboveBitmapObject()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.joinPaths()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.knifeElementsFromPoint(from:Point, tolerance:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.knifeElementsFromPoints(from:Point, to:Point, tolerance:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.linkElementMask(frame:Integer, layer:Integer, element:Integer, bLink:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.lockSelection()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.makeFind(findSpec:Find)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.makeActive()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.mergeDown()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.modifyPointOnPath(contourIndex:Integer, ptToModify:Integer, controlPointFirst:Point, mainPoint:Point, controlPointLast:Point, bReapplyAttrs:Boolean, bClosePath:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.motionBlurSelection(typeStr:String, angle:Integer, distance:Float, samples:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveBezierHandleBy(whichPath:Integer, contourIndex:Integer, ptToModify:Integer, deltaControlPointFirst:Point, deltaControlPointLast:Point))" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveElementMaskBy(delta:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveFillVectorHandleBy(delta:Point, whichHandle:String, bConstrain:Boolean, bMoveJustOne:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveMaskGroupContentsBy(delta:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.movePixelMaskBy(delta:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.movePointOnHotspotBy(ptToModifyIndex:Integer, delta:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.movePointOnHotspotByWithFlags(ptToModifyIndex:Integer, delta:Point, flags:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveSelectedBezierPointsBy(delta:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveSelectionBy(delta:Point, bMakeCopy:Boolean, doSubSel:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveSelectionMaskBy(delta:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveSelectionTo(location:Point, bMakeCopy:Boolean, doSubSel:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveSelectionToFrame(frameIndex, bMakeCopy:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveSelectionToLayer(layerIndex:Integer, bMakeCopy:Boolean [, whatIfMultipleSelected:String, elementIndex:Integer])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.moveSelectionToNewLayer(bMakeCopy:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.pathCrop()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.pathExpand(width:Float, miter:Float, cap:String, join:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.pathInset(width:Float, miter:Float, join:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.pathIntersect()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.pathPunch()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.pathSimplify(limit:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.pathUnion()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.previewInBrowser(primaryBrowser:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.rebuildColorTable()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.redo()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.redraw()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.redrawSmartShape()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.reflectSelection(bHoriz:Boolean, bVert:Boolean, opts:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeAllGuides(guidekind:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeBehavior([event:String, eventIndex:Integer])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeBrush()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeCharacterMarkup(tag:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeElementMask(whatIfElementIsAnImage:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeFontMarkup(fontAttribute:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeFill()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeGuide(position:Float, guidekind:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.removeTransformation()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.reorderFrame(frameToMove:Integer, frameToPutItBefore:Integer, bMakeCopy:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.reorderLayer(layerToMove:Integer, layerToPutItBefore:Integer, bMakeCopy:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.replaceButtonTextStrings(newString:String, uniformAttrs:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.replaceButtonTextStringsInInstances(newString:String, uniformAttrs:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.replaceTextString(newString:String, uniformAttrs:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.resizeSelection(width:Integer, height:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.restoreJPEGMask()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.restoreSelection(selectionName:String, fromDocument:Integer [, operation:String, invert:Boolean])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.reversePathTextDirection()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.rotateDocument(rotationAmount:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.rotateSelection(rotationDegrees:Float, opts:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.save([bOkToSaveAs:Boolean])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.saveCopyAs(fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.saveJPEGMask()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.saveSelection([selectionName:String, toDocument:Integer, operation:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.scaleSelection(xScaleAmount:Float, yScaleAmount:Float, opts:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectAdjustPixelSel(whatToDo:String, amount:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectAll()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectAllOnLayer(layerIndex:Integer, bRememberSelection:Boolean, bToggleSelection:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectChildren()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectFeather(featherAmount:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectInverse()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectNone()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectParents()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectSimilar(tolerance:Integer, edgemode:String, featherAmt:Integer, combinemode:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.selectSimilarFromPoint(where:Point, tolerance:Integer, edgemode:String, featherAmt:Integer, combinemode:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.sendEmail(fileAttachment:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setAllLayersDisclosure(bDisclosed:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setAnimInstanceLoopCount(loopCount:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setAnimInstanceNumFrames(numFrames:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setAnimInstanceOffsetDist(offsetDistPt:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setAnimInstanceRotationAmount(rotationAmount:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setAnimInstanceScaleAmount(scaleAmount:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setAnimInstanceStartEndOpacity(startOpacity:Float, endOpacity:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setAnimInstanceStartFrame(startFrame:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setBlendMode(mode:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setBrush(brush:Brush)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setBrushColor(color:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setBrushName(category:String, currentName:String, newName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setBrushNColor(brush:Brush, brushColor:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setBrushNColorNTexture(brush:Brush, color:String, texture-name:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setBrushPlacement(placement:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setButtonAutoSlice(bAutoSlice:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setButtonIncludeDownState(bIncludeDownState:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setButtonIncludeDownState(bIncludeOverWhileDownState:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setButtonShowDownOnLoad(bShowDownOnLoad:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setButtonOptions(exportOptions:ExportOptions, URLString:String, altTagString:String, targetTagString:String, sliceName:String, statusMessage:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setDefaultBrushAndFillColors()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setDefaultFillVector()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setDocumentCanvasColor(color:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setDocumentCanvasSize(boundingRectangle:Rectangle)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setDocumentCanvasSizeToDocumentExtents(bGrowCanvas:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setDocumentCanvasSizeToSelection()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setDocumentImageSize(boundingRectangle:Rectangle, resolution:Resolution)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setDocumentResolution(resolution:Resolution)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setEffectName(category:String, oldName:String, newName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setElementLocked(frameNum:Integer, layerNum:Integer, objectIndex:Integer, bLock:Boolean, bAllLayers:Boolean, bLockLayers:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setElementLockedByName(name:String, bLock:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setElementMaskMode(mode:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setElementMaskShowAttrs(bShow:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setElementName(name:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setElementVisisble(frameIndex:Integer, layerIndex:Integer, elementIndex:Integer, bShow:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setElementVisibleByName(name:String, bShow:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setExportOptions(exportOptions:ExportOptions)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setExportSettings(exportSettings:ExportSettings)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setFill(fill:Fill)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setFillColor(color:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setFillEdgeMode(edgemode:String, featherAmt:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setFillNColor(fill:Fill, color:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setFillNColorNTexture(fill:Fill, color:String, texture-name:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setFillPlacement(placement:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setFillVector(p1:Point, p2:Point, p3:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setFillVectorStart(p1:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setGradientName(urrentName:String, newName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setGridOrigin(gridOrigin:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setGridSize(gridSize:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setGridColor(gridColor:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setGroupType([type:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setGuideColor(guideColor:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setHotspotAltTag(whatToSet:String, altTagString:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setHotSpotColor(whatToSet:String, color:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setHotspotRectangle(boundingRectangle:Rectangle, bMakeCopy:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setHotspotShape(whatToSet:String, shape:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setHotspotTarget(whatToSet:String, targetTagString:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setHotspotText(whatToSet:String, textString:String, urlToMatch:String, bUpdateAttributes:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setLayerDisclosure(layerIndex:Integer, bDisclosed:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setLayerLocked(layerIndex:Integer, frameIndex:Integer, bLock:Boolean, bAllLayers:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setLayerName(layerIndex:Integer, layerName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setLayerSharing(layerIndex:Integer, sharedStatus:String, bUnshareCopiesToAllFrames:Boolean, bWarnUser:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setLayerVisible(layerIndex:Integer, frameIndex:Integer, bShow:Boolean, bAllLayers:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setMatteColor(bUseMatteColor:String, matteColor:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setPixelMask(mask:Mask, howToCombineMasks:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setOnionSkinning(before:Integer, after:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setOpacity(opacity:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setQuadrangle(pTopLeft:Point, pTopRight:Point, pBottomRight:Point, pBottomLeft:Point, opts:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setRectRoundness(roundness:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setRectSides(newSides:Rectangle)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSelectionBounds(boundingRectangle:Rectangle, opts:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSelectionMask(mask:Mask, howToCombineMasks:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setShowEdges(bShowEdges:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setShowGammaPreview(bPreviewGamma:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setShowGrid(bShow:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setShowGuides(bShow:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setShowRulers(bShow:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setShowSliceGuides(bShow:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setShowSliceOverlay(bShow:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSliceAutonaming(bAutoname:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSliceExportOptions(exportOptions:ExportOptions)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSliceFilename(fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSliceGuideColor(color:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSliceHtml(htmlText:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSliceIsHtml(bHtml:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSnapToGrid(bSnap:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSnapToGuides(bSnap:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setSymbolProperties(currentName:String, symbolType:String, newName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextAlignment(alignment:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextAntiAliasing(level:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextAutoKern(bKern:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextCharSpacing(charSpace:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextCustomAntiAliasOverSample(overSample:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextCustomAntiAliasSharpness(sharpness:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextCustomAntiAliasStrength(strength:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextFlow(flowDirection:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextHorizontalScale(horizScale:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextLeading(leadingValue:Float, leadingMode:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextOnPathMode(mode:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextOnPathOffset(offset:Float)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextOrientation(orientation:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextParaIndent(paraIndent:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextParaSpacingAfter(paraSpaceAfter:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextParaSpacingBefore(paraSpaceBefore:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextRuns(textRuns:TextRuns)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTransformMode(mode:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextRectangle(boundingRectangle:Rectangle)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextRectangleAuto()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.setTextRectangleAutoFromPoint(anchorPoint:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.showAllHidden()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.splitPaths()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.swapBrushAndFillColors()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.transformSelection(matrix:Matrix, options:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.tween()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.undo()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.updateSymbol(name:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="dom.ungroup()" doctypes="JavaScript" caseSensitive="true"/>
+
+<!-- fw (fireworks) object -->
+<function pattern="fw.browseDocument(URL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.browseForFileURL(browseType:String, title:String, previewArea:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.browseForFolderURL([title:String, startFolder:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.browseHelp(helpID:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.checkFwJsVersion(version:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.chooseBrowser(primaryBrowser:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.chooseScriptTargetDialog(formatlist:Array)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.closeDocument(document:Document [, bPromptToSaveChanges:Boolean])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.createDocument()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.createDocumentWithDialog()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.createFireworksDocument(size:Point, res:Resolution, backgroundColor:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.disableFlashDebugging()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.dismissBatchDialogWhenDone(autoClose:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.enableFlashDebugging()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportAndCopyHTMLCode(document:Document)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportDirectorAsLayers(document:Document, fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportDirectorAsSlices(document:Document, fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportDocumentAs(document:Document, fileURL:String, exportOptions:ExportOptions)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportFrames(document:Document, directoryURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportHtmlAndImages(document:Document, htmlUrl:String, imagesUrl:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportIllustrator(document:Document, fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportLayers(document:Document, directoryURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportPSD(document:Document, PSDDocumentURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.exportSWF(document:Document, FlashDocumentURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.findApp(macAppSignatureOrWinExeRegistryName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.findNext()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.findOpenDocument(docname:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getDocumentDOM([which-string:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getDocumentPath(document:Document)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getFloatGroupings()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getFloaterPosition(panelName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getFloaterVisibility(panelName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getHideAllFloaters()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getHTMLFileForScript()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getNumberOfTables(filename:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getPref(prefkey:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.launchApp(appPath:String, filePathsToOpen:Array)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.launchBrowserTo(url:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.locateDocDialog(maxnumdocs:Integer, formatlist:Array)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.openDocument([fileURLl:String, bOpenAsNew:Boolean, bOpenWithWindowHidden:Boolean])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.popupColorPicker(screenLoc:Point, initialColor:String, allowTransparent:Boolean, forceWeb216:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.popupColorPickerOverMouse(initialColor:String, allowTransparent:Boolean, forceWeb216:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.quit()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.quitApplication()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.readNthTable(filename:String, tablenumber:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.readPanelStateFromFile(filepath:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.replace()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.replaceAll()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.revertDocument([document:Document])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.runScript(filename:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.saveAll()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.saveDocument(document:Document [, fileURL:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.saveDocumentAs(document:Document)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.saveDocumentCopyAs(document:Document, fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.saveJsCommand(jscode:String, filename:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setActiveViewScale(scale:Float, center:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setActiveWindow(document:Document [, trueFalse:Boolean])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setFloaterGrouping(panelNameToMove:String, panelNameToReceive:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setFloaterPosition(panelName:String, boundingRectangle:Rectangle)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setFloaterVisibility(panelName:String, bVisible:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setHideAllFloaters(bHide:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setPref(prefname:String, prefval:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setUpFindReplace(findSpec:Find)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.toggleFloater(panelName:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.ungroupPrimitives()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.updateHTML(document:Document, htmlUrl:String, bRecoverFromError:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.writePanelStateToFile(filepath:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.yesNoDialog(promptString:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.showPIWindow()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.hidePIWindow()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.isPIExpanded()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.isVisible()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.growPIWindow()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.shrinkPIWindow()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.setPIPosition(pt:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.getPIPosition()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.clearSteps()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.copySteps(arrayOfIndexes:Array)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.getSelection()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.getStepCount()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.getStepsAsJavaScript(arrayOfIndexes:Array)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.getUndoState()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.replaySteps(arrayOfIndexes)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.saveAsCommand(arrayOfIndexes:Array [, filename:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.setSelection(arrayOfIndexes:Array)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.historyPalette.setUndoState(undoStateString:String)" doctypes="JavaScript" caseSensitive="true"/>
+
+<!-- document object -->
+<function pattern="document.findExportFormatOptionsByName(name)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="document.makeGoodNativeFilePath(fileURL)" doctypes="JavaScript" caseSensitive="true"/>
+
+<!-- app object -->
+<function pattern="app.toggleFloater()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="app.setFloaterVisibility()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="app.getRootDirectory()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="app.browseDocument()" doctypes="JavaScript" caseSensitive="true"/>
+
+<!-- dialogs object -->
+<function pattern="fw.dialogs.runEditGrids()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.dialogs.runEditGuides()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="fw.dialogs.runNumericTransform()" doctypes="JavaScript" caseSensitive="true"/>
+
+<!-- pngText object -->
+<menu pattern="*pngText." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="CreationTime:String" value="CreationTime" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="Software:String" value="Software" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+
+<!-- Errors object -->
+<menu pattern="Errors." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="EAppAlreadyRunning:String" value="EAppAlreadyRunning" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EAppNotSerialized:String" value="EAppNotSerialized" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EArrayIndexOutOfBounds:String" value="EArrayIndexOutOfBounds" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EBadFileContents:String" value="EBadFileContents" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EBadJsVersion:String" value="EBadJsVersion" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EBadNesting:String" value="EBadNesting" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EBadParam:String" value="EBadParam" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EBadParamType:String" value="EBadParamType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EBadSelection:String" value="EBadSelection" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EBufferTooSmall:String" value="EBufferTooSmall" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ECharConversionFailed:String" value="ECharConversionFailed" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EDatabaseError:String" value="EDatabaseError" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EDeletingLastMasterChild:String" value="EDeletingLastMasterChild" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EDiskFull:String" value="EDiskFull" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EDuplicateFileName:String" value="EDuplicateFileName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EFileIsReadOnly:String" value="EFileIsReadOnly" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EFileNotFound:String" value="EFileNotFound" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EGenericErrorOccurred:String" value="EGenericErrorOccurred" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EGroupDepth:String" value="EGroupDepth" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EIllegalThreadAccess:String" value="EIllegalThreadAccess" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EInternalError:String" value="EInternalError" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ELowOnMem:String" value="ELowOnMem" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENoActiveDocument:String" value="ENoActiveDocument" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENoActiveSelection:String" value="ENoActiveSelection" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENoFilesSelected:String" value="ENoFilesSelected" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENoNestedMastersOrAliases:String" value="ENoNestedMastersOrAliases" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENoNestedPasting:String" value="ENoNestedPasting" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENoSliceableElems:String" value="ENoSliceableElems" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENoSuchElement:String" value="ENoSuchElement" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENotImplemented:String" value="ENotImplemented" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ENotMyType:String" value="ENotMyType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EOutOfMem:String" value="EOutOfMem" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EResourceNotFound:String" value="EResourceNotFound" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ESharingViolation:String" value="ESharingViolation" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EUnknownReaderFormat,:String" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EUserCanceled:String" value="EUserCanceled" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EUserInterrupted:String" value="EUserInterrupted" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EWrongType:String" value="EWrongType" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+
+<!-- Find object -->
+<menu pattern="*find." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="whatToFind:String" value="whatToFind" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="find:String" value="find" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="matchCase:Boolean" value="matchCase" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="regExp:Boolean" value="regExp" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="replace:String" value="replace" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="wholeWord:Boolean" value="wholeWord" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="findStyle:Integer" value="findStyle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="replaceStyle:Integer" value="replaceStyle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="findMinSize:Integer" value="findMinSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="findMaxSize:Integer" value="findMaxSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="replaceSize:Integer" value="replaceSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fills:Boolean" value="fills" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="strokes:Boolean" value="strokes" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="effects:Boolean" value="effects" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+
+<!-- Files object -->
+<function pattern="Files.copy(fromfileURL:String, tofileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.createDirectory(directory:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.createFile(fileURL:String, fileType:String, fileCreator:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.deleteFile(fileOrDir:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.deleteFileIfExisting(fileOrDir:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.enumFiles(fileOrDir:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.exists(fileOrDir:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.getDirectory(fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.getExtension(fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.getFilename(fileURL:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.getLanguageDirectory()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.getLastErrorString()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.getTempFilePath([directory:String])" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.isDirectory(directory:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.makePathFromDirAndFile(directory:String, plainFilename:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.open(fileURL:String, bWrite:Boolean)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.rename(fileURL:String, newPlainFilename:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.setFilename(fileURL:String, newPlainFilename:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="Files.swap(fileURL1:String, fileURL2:String)" doctypes="JavaScript" caseSensitive="true"/>
+
+<!-- File Pointer object -->
+<function pattern="*fp.close()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*fp.readline()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*fp.write(text:String)" doctypes="JavaScript" caseSensitive="true"/>
+
+<!-- System Object -->
+<menu pattern="System." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="osName:String" value="osName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="controlFaceColor:String" value="controlFaceColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="controlHighlightColor:String" value="controlHighlightColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="controlShadowColor:String" value="controlShadowColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="controlDarkShadowColor:String" value="controlDarkShadowColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="highlightItemColor:String" value="highlightItemColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="highlightTextColor:String" value="highlightTextColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textColorAbstract:String" value="textColorAbstract" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuCo lor:String" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuTextColor:String" value="menuTextColor" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+
+<!-- MISC -->
+<!-- Behavior object -->
+<menu pattern="*behavior." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="call:String" value="call" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="event:String" value="event" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*brush." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="alphaRemap:String" value="alphaRemap" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="angle:Integer" value="angle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="antiAliased:Boolean" value="antiAliased" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="aspect:Float" value="aspect" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="blackness:Float" value="blackness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="category:String" value="category" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="concentration:Float" value="concentration" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dashOffSize1:Integer" value="dashOffSize1" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dashOffSize2:Integer" value="dashOffSize2" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dashOffSize3:Integer" value="dashOffSize3" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dashOnSize1:Integer" value="dashOnSize1" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dashOnSize2:Integer" value="dashOnSize2" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dashOnSize3:Integer" value="dashOnSize3" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="diameter:Integer" value="diameter" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="feedback:String" value="feedback" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="flowRate:Float" value="flowRate" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maxCount:Integer" value="maxCount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="minSize:Float" value="minSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="numDashes:Integer" value="numDashes" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_hdir_angle:Float" value="sense_hdir_angle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_hdir_blackness:Float" value="sense_hdir_blackness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_hdir_hue:Float" value="sense_hdir_hue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_hdir_lightness:Float" value="sense_hdir_lightness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_hdir_opacity:Float" value="sense_hdir_opacity" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_hdir_saturation:Float" value="sense_hdir_saturation" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_hdir_scatter:Float" value="sense_hdir_scatter" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_hdir_size:Float" value="sense_hdir_size" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_pressure_angle:Float" value="sense_pressure_angle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_pressure_blackness:Float" value="sense_pressure_blackness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_pressure_hue:Float" value="sense_pressure_hue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_pressure_lightness:Float" value="sense_pressure_lightness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_pressure_opacity:Float" value="sense_pressure_opacity" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_pressure_saturation:Float" value="sense_pressure_saturation" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_pressure_scatter:Float" value="sense_pressure_scatter" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_pressure_size:Float" value="sense_pressure_size" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_random_angle:Float" value="sense_random_angle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_random_blackness:Float" value="sense_random_blackness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_random_hue:Float" value="sense_random_hue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_random_lightness:Float" value="sense_random_lightness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_random_opacity:Float" value="sense_random_opacity" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_random_saturation:Float" value="sense_random_saturation" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_random_scatter:Float" value="sense_random_scatter" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_random_size:Float" value="sense_random_size" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_speed_angle:Float" value="sense_speed_angle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_speed_blackness:Float" value="sense_speed_blackness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_speed_hue:Float" value="sense_speed_hue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_speed_lightness:Float" value="sense_speed_lightness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_speed_opacity:Float" value="sense_speed_opacity" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_speed_saturation:Float" value="sense_speed_saturation" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_speed_scatter:Float" value="sense_speed_scatter" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_speed_size:Float" value="sense_speed_size" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_vdir_angle:Float" value="sense_vdir_angle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_vdir_blackness:Float" value="sense_vdir_blackness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_vdir_hue:Float" value="sense_vdir_hue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_vdir_lightness:Float" value="sense_vdir_lightness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_vdir_opacity:Float" value="sense_vdir_opacity" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_vdir_saturation:Float" value="sense_vdir_saturation" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_vdir_scatter:Float" value="sense_vdir_scatter" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sense_vdir_size:Float" value="sense_vdir_size" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="shape:String" value="shape" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="softenMode:String" value="softenMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="softness:Float" value="softness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="spacing:Float" value="spacing" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textureBlend:Float" value="textureBlend" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textureEdge:Float" value="textureEdge" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tipColoringMode:String" value="tipColoringMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tipCount:Integer" value="tipCount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tipSpacing:Float" value="tipSpacing" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tipSpacingMode:String" value="tipSpacingMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="type:String" value="type" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Contour object -->
+<menu pattern="*contour." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="isClosed:Boolean" value="isClosed" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="nodes:Array" value="nodes" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- ContourNode object -->
+<menu pattern="*contourNode." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="dynamicInfo:Array" value="dynamicInfo" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isCurvePoint:Boolean" value="isCurvePoint" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isSelectedPoint:Boolean" value="isSelectedPoint" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="predX:Float" value="predX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="predY:Float" value="predY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="randomSeed:Integer" value="randomSeed" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="succX:Float" value="succX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="succY:Float" value="succY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="x:Float" value="x" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="y:Float" value="y" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<function pattern="*contourNode.RegisterMove(parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*contourNode.RegisterLinearMove(point:Point, parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*contourNode.RegisterCircularMove(point:Point, parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*contourNode.RegisterPolygonMove(point:Point, parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<!-- ContourNodeDynamicInfo object -->
+<menu pattern="*contourNodeDynamicInfo." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="duration:Float" value="duration" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pressure:Float" value="pressure" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="velocity:Float" value="velocity" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- ControlPoint object -->
+<menu pattern="*controlPoint." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="hiliteDragOverObject:Boolean" value="hiliteDragOverObject" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="index:Integer" value="index" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="toolTip:String" value="toolTip" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="toolTipTracksDrag:Boolean" value="toolTipTracksDrag" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="type:String" value="type" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="visible:Boolean" value="visible" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="x:Float" value="x" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="y:Float" value="y" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<function pattern="*controlPoint.RegisterMove(parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*controlPoint.RegisterLinearMove(point:Point, parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*controlPoint.RegisterCircularMove(point:Point, parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*controlPoint.RegisterPolygonMove(point:Point, parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*controlPoint.RegisterInsertBBoxMove(parms:RegisterMoveParms)" doctypes="JavaScript" caseSensitive="true"/>
+<!-- Effects objects -->
+<menu pattern="*bevel./*blur./*blurMore./*brightnessContrast./*convertToAlpha./*curves./*dropShadow./*innerShaddow./*findEdges./*gaussianBlur./*invert./*hueSaturation./*levels./*sharpen./*sharpenMore./*unsharpMask." 
+patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="category:String" value="category" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EffectIsVisible:Boolean" value="EffectIsVisible" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EffectMoaID:String" value="EffectMoaID" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*bevel." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="AngleSoftness:Integer" value="AngleSoftness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="BevelContrast:Integer" value="BevelContrast" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="BevelType:Integer" value="BevelType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="BevelWidth:Integer" value="BevelWidth" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ButtonState:Integer" value="ButtonState" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="DownBlendColor:String" value="DownBlendColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EdgeThreshold:Integer" value="EdgeThreshold" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="EmbossFaceColor:String" value="EmbossFaceColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="GlowStartDistance:Integer" value="GlowStartDistance" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="GlowWidth:Integer" value="GlowWidth" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="HiliteColor:String" value="HiliteColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="HitBlendColor:String" value="HitBlendColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="LightAngle:Integer" value="LightAngle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="MaskSoftness:Integer" value="MaskSoftness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="OuterBevelColor:String" value="OuterBevelColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ShadowColor:String" value="ShadowColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ShowObject:Boolean" value="ShowObject" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="SlopeMultiplier:Float" value="SlopeMultiplier" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="SlopeType:Integer" value="SlopeType" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*brightnessContrast." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="brightness_amount:Integer" value="brightness_amount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="contrast_amount:Integer" value="contrast_amount" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*curves." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="rgb_points:Array" value="rgb_points" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="red_points:Array" value="red_points" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="green_points:Array" value="green_points" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="blue_points:Array" value="blue_points" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*dropShadow./*innerShaddow." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="ShadowAngle:Float" value="ShadowAngle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ShadowBlur:Integer" value="ShadowBlur" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ShadowColor:String" value="ShadowColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ShadowDistance:Integer" value="ShadowDistance" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ShadowType:Integer" value="ShadowType" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*gaussianBlur." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="gaussian_blur_radius:Float" value="gaussian_blur_radius" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*hueSaturation." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="hue_amount:Integer" value="hue_amount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="saturation_amount:Integer" value="saturation_amount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="lightness_amount:Integer" value="lightness_amount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hls_colorize:Boolean" value="hls_colorize" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*levels." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="source_low_rgb:Integer" value="source_low_rgb" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="source_high_rgb:Integer" value="source_high_rgb" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="source_low_red:Integer" value="source_low_red" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="source_high_red:Integer" value="source_high_red" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="source_low_green:Integer" value="source_low_green" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="source_high_green:Integer" value="source_high_green" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="source_low_blue:Integer" value="source_low_blue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="source_high_blue:Integer" value="source_high_blue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dest_low_rgb:Integer" value="dest_low_rgb" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dest_high_rgb:Integer" value="dest_high_rgb" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dest_low_red:Integer" value="dest_low_red" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dest_high_red:Integer" value="dest_high_red" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dest_low_green:Integer" value="dest_low_green" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dest_high_green:Integer" value="dest_high_green" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dest_low_blue:Integer" value="dest_low_blue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dest_high_blue:Integer" value="dest_high_blue" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gamma_rgb:Float" value="gamma_rgb" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gamma_red:Float" value="gamma_red" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gamma_green:Float" value="gamma_green" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gamma_blue:Float" value="gamma_blue" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<menu pattern="*unsharpMask." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="unsharp_mask_amount:Integer" value="unsharp_mask_amount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="unsharp_mask_radius:Float" value="unsharp_mask_radius" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="unsharp_mask_threshold:Integer" value="unsharp_mask_threshold" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- EffectList object -->
+<menu pattern="*effectList." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="category:String" value="category" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="effects:Array" value="effects" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Element objects -->
+<menu pattern="*elem./*element./*group./*image./*instance./*hotspot./*sliceHotspot./*slice./*path./*rectanglePrimitive./*text./*texture." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="blendMode:String" value="blendMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="customData:Object" value="customData" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="effectList:EffectList" value="effectList" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="height:Integer" value="height" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isSmartShape:Boolean" value="isSmartShape" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="left:Float" value="left" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="mask:ElementMask" value="mask" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="opacity:Float" value="opacity" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="rawLeft:Float" value="rawLeft" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="rawTop:Float" value="rawTop" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="top:Float" value="top" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pixelRect:Rectangle" value="pixelRect" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="visible:Boolean" value="visible" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="width:Float" value="width" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Group object -->
+<menu pattern="*group." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="controlPoints:Array" value="controlPoints" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="elements:Array" value="elements" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="groupType:String" value="groupType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="smartShapeCode:String" value="smartShapeCode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="transformMode:String" value="transformMode" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<function pattern="*group.generateSmartShapeCode(prefix:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*group.globalToSmartShapeCoords(pt:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*group.RegisterForEvent(event:String)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*group.removeTransformation()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*group.smartShapeToGlobalCoords(pt:Point)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*group.UnRegisterAllEvents()" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*group.UnRegisterForEvent(event:String)" doctypes="JavaScript" caseSensitive="true"/>
+<!-- SmartShape object -->
+<menu pattern="SmartShape." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="altOptKeyDown:Boolean" value="altOptKeyDown" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrainDragInsertAspect:Boolean" value="constrainDragInsertAspect" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrainDragInsertAspectKey:String" value="constrainDragInsertAspectKey" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ctrlCmdKeyDown:Boolean" value="ctrlCmdKeyDown" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="currentControlPoint:ControlPoint" value="currentControlPoint" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="currentControlPointIndex:Integer" value="currentControlPointIndex" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="currentControlPointName:String" value="currentControlPointName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="currentMousePos:Point" value="currentMousePos" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="elem:Element" value="elem" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="getsDragEvents:Boolean" value="getsDragEvents" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="livePreview:Boolean" value="livePreview" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="mouseDownPos:Point" value="mouseDownPos" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="operation:String" value="operation" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="prevMousePos:Point" value="prevMousePos" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="shiftKeyDown:Boolean" value="shiftKeyDown" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<function pattern="SmartShape.GetDefaultMoveParms()" doctypes="JavaScript" caseSensitive="true"/>
+<!-- Instance object -->
+<menu pattern="*instance." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="altText:String" value="altText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="instanceType:String" value="instanceType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="symbolID:String" value="symbolID" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="targetText:String" value="targetText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="transformMode:String" value="transformMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="urlText:String" value="urlText" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Instance object -->
+<menu pattern="*hotspot./*sliceHotspot./*slice." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="altText:String" value="altText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="behaviors:Array" value="behaviors" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="color:String" value="color" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="contour:Contour" value="contour" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="shape:String" value="shape" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="targetText:String" value="targetText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="urlText:String" value="urlText" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Hotspot object -->
+<menu pattern="*sliceHotspot./*slice." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="baseName:String" value="baseName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="exportOptions:ExportOptions" value="exportOptions" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="htmlText:String" value="htmlText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceID:String" value="sliceID" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceKind:String" value="sliceKind" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tdTagText:String" value="tdTagText" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Path object -->
+<menu pattern="*path." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="contours:Array" value="contours" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isEvenOddFill:Boolean" value="isEvenOddFill" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pathAttributes:PathAttrs" value="pathAttributes" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="randSeed:Float" value="randSeed" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textureOffset:Point" value="textureOffset" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- RectanglePrimitive object -->
+<menu pattern="*rectanglePrimitive." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="roundness:Float" value="roundness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="originalSides:Rectangle" value="originalSides" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="transform:Matrix" value="transform" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pathAttributes:PathAttrs" value="pathAttributes" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Text object -->
+<menu pattern="*text." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="antiAliased:Boolean" value="antiAliased" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="antiAliasMode:String" value="antiAliasMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="autoExpand:Boolean" value="autoExpand" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="autoKern:Boolean" value="autoKern" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="orientation:String" value="orientation" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pathAttributes:PathAttrs" value="pathAttributes" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="randSeed:Float" value="randSeed" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textRuns:TextRuns" value="textRuns" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textureOffset:Point" value="textureOffset" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="transformMode:String" value="transformMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="rawTop:Float" value="rawTop" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="rawLeft:Float" value="rawLeft" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="rawWidth:Float" value="rawWidth" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="rawHeight:Float" value="rawHeight" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Texture object -->
+<menu pattern="*texture." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- ElementMask object -->
+<menu pattern="*elementMask." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="autoExpandImages:Boolean" value="autoExpandImages" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="element:Element" value="element" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="enabled:Boolean" value="enabled" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="linked:Boolean" value="linked" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="mode:String" value="mode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="owner:Element" value="owner" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="showAttrs:Boolean" value="showAttrs" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- ExportFrameInfo object -->
+<menu pattern="*exportFrameInfo." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="delayTime:Integer" value="delayTime" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="frameHidden:Boolean" value="frameHidden" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="frameName:String" value="frameName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gifDisposalMethod:String" value="gifDisposalMethod" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- ExportOptions object -->
+<menu pattern="*exportFrameInfo." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="animAutoCrop:Boolean" value="animAutoCrop" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="animAutoDifference:Boolean" value="animAutoDifference" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="applyScale:Boolean" value="applyScale" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="colorMode:String" value="colorMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="crop:Boolean" value="crop" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cropBottom:Integer" value="cropBottom" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cropLeft:Integer" value="cropLeft" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cropRight:Integer" value="cropRight" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cropTop:Integer" value="cropTop" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ditherMode:String" value="ditherMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ditherPercent:Integer" value="ditherPercent" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="exportFormat:String" value="exportFormat" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="frameInfo:Array" value="frameInfo" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="interlacedGIF:Boolean" value="interlacedGIF" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="jpegQuality:Integer" value="jpegQuality" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="jpegSmoothness:Integer" value="jpegSmoothness" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="jpegSubsampling:Integer" value="jpegSubsampling" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="localAdaptive:Boolean" value="localAdaptive" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="lossyGifAmount:Integer" value="lossyGifAmount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="macFileCreator:String" value="macFileCreator" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="macFileType:String" value="macFileType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="numCustomEntries:Integer" value="numCustomEntries" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="numEntriesRequested:Integer" value="numEntriesRequested" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="numGridEntries:Integer" value="numGridEntries" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="optimized:Boolean" value="optimized" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="paletteEntries:Array" value="paletteEntries" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="paletteInfo:Array" value="paletteInfo" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="paletteMode:String" value="paletteMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="paletteTransparencyType:String" value="paletteTransparencyType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="percentScale:Integer" value="percentScale" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="progressiveJPEG:Boolean" value="progressiveJPEG" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="savedAnimationRepeat:Integer" value="savedAnimationRepeat" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sorting:String" value="sorting" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="transparencyIndex:Integer" value="transparencyIndex" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="useScale:Boolean" value="useScale" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="webSnapAdaptive:Boolean" value="webSnapAdaptive" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="webSnapTolerance:Integer" value="webSnapTolerance" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="xSize:Integer" value="xSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ySize:Integer" value="ySize" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- ExportPaletteInfo object -->
+<menu pattern="*exportPaletteInfo." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="colorLocked:Boolean" value="colorLocked" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="colorModified:Boolean" value="colorModified" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="colorSelected:Boolean" value="colorSelected" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="colorTransparent:Boolean" value="colorTransparent" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="newColorValue:String" value="newColorValue" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- ExportSettings object -->
+<menu pattern="*exportSettings." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="baseName:String" value="baseName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="discardUnspecifiedSlices:Boolean" value="discardUnspecifiedSlices" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="docHtmlEncoding:String" value="docHtmlEncoding" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="docXHTMLFormat:Boolean" value="docXHTMLFormat" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="exportFileStyle:String" value="exportFileStyle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fileExtension:String" value="fileExtension" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="generateDemoHtml:Boolean" value="generateDemoHtml" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="htmlDestination:String" value="htmlDestination" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="setByUser:Boolean" value="setByUser" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="shimGeneration:String" value="shimGeneration" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceAlongGuides:Boolean" value="sliceAlongGuides" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceAutoNaming1:String" value="sliceAutoNaming1" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceAutoNaming2:String" value="sliceAutoNaming2" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceAutoNaming3:String" value="sliceAutoNaming3" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceAutoNaming4:String" value="sliceAutoNaming4" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceAutoNaming5:String" value="sliceAutoNaming5" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceAutoNaming6:String" value="sliceAutoNaming6" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceFrameNaming1:String" value="sliceFrameNaming1" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceFrameNaming2:String" value="sliceFrameNaming2" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sliceUsingUrls:Boolean" value="sliceUsingUrls" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="templateName:String" value="templateName" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Fill object -->
+<menu pattern="*fill." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="category:String" value="category" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="ditherColors:Array" value="ditherColors" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="edgeType:String" value="edgeType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="feather:Integer" value="feather" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="gradient:Gradient" value="gradient" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pattern:Pattern" value="pattern" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="shape:String" value="shape" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="stampingMode:String" value="stampingMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textureBlend:Float" value="textureBlend" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="webDitherTransparent:Boolean" value="webDitherTransparent" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Frame object -->
+<menu pattern="*frame." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="delay:Integer" value="delay" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="disposal:String" value="disposal" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="layers:Array" value="layers" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="visible:Boolean" value="visible" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- FrameNLayerIntersection object -->
+<menu pattern="*frameNLayerIntersection./*flint." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="elements:Array" value="elements" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="locked:Boolean" value="locked" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="visible:Boolean" value="visible" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Gradient object -->
+<menu pattern="*gradient." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="nodes:Array" value="nodes" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="opacityNodes:Array" value="opacityNodes" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- GradientNode object -->
+<menu pattern="*gradientNode." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="color:String" value="color" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isOpacityNode:Boolean" value="isOpacityNode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="position:Float" value="position" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Guides object -->
+<menu pattern="*guides." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="color:String" value="color" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hGuides:Array" value="hGuides" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="locked:Boolean" value="locked" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="vGuides:Array" value="vGuides" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Layer object -->
+<menu pattern="*layer." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="disclosure:Boolean" value="disclosure" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="frames:Array" value="frames" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="layerType:String" value="layerType" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="sharing:String" value="sharing" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- PathAttrs object -->
+<menu pattern="*pathAttrs./*pathAttributes." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="brush:Brush" value="brush" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="brushColor:String" value="brushColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="brushPlacement:String" value="brushPlacement" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="brushTexture:Texture" value="brushTexture" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fill:Fill" value="fill" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fillColor:String" value="fillColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fillHandle1:Point" value="fillHandle1" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fillHandle2:Point" value="fillHandle2" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fillHandle3:Point" value="fillHandle3" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fillOnTop:Boolean" value="fillOnTop" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fillTexture:Texture" value="fillTexture" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Pattern object -->
+<menu pattern="*pattern." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- RegisterMoveParms object -->
+<menu pattern="*registerMoveParms./*parms." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="constrainAngles:Boolean" value="constrainAngles" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrainRotateKey:String" value="constrainRotateKey" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrainX:Float" value="constrainX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrainXKey:String" value="constrainXKey" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrainY:Float" value="constrainY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrainYKey:String" value="constrainYKey" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrain45Key:String" value="constrain45Key" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="constrain90Key:String" value="constrain90Key" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaLinearToLinear:Float" value="deltaLinearToLinear" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaRtoR:Float" value="deltaRtoR" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaShortestSideToX:Float" value="deltaShortestSideToX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaShortestSideToY:Float" value="deltaShortestSideToY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaLongestSideToX:Float" value="deltaLongestSideToX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaLongestSideToY:Float" value="deltaLongestSideToY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaXtoX:Float" value="deltaXtoX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaXtoY:Float" value="deltaXtoY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaYtoX:Float" value="deltaYtoX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="deltaYtoY:Float" value="deltaYtoY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="disableRotateKey:String" value="disableRotateKey" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="incrementRadius:Float" value="incrementRadius" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="incrementX:Float" value="incrementX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="incrementY:Float" value="incrementY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maxAngle:Point" value="maxAngle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maxLinear:Float" value="maxLinear" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maxRadius:Float" value="maxRadius" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maxX:Float" value="maxX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maxY:Float" value="maxY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="minAngle:Point" value="minAngle" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="minLinear:Float" value="minLinear" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="minMaxRelative:Boolean" value="minMaxRelative" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="minX:Float" value="minX" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="minY:Float" value="minY" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="minRadius:Float" value="minRadius" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="movePred:Boolean" value="movePred" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="movePt:Boolean" value="movePt" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="moveSucc:Boolean" value="moveSucc" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="rotate:Boolean" value="rotate" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- SingleTextRun object -->
+<menu pattern="*singleTextRun./*textRun." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="changedAttrs:TextAttrs" value="changedAttrs" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="characters:String" value="characters" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Style object -->
+<menu pattern="*style." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="effectList:EffectList" value="effectList" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="name:String" value="name" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pathAttributes:PathAttrs" value="pathAttributes" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tdTagText:String" value="tdTagText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textBold:Boolean" value="textBold" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textFont:String" value="textFont" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textItalic:Boolean" value="textItalic" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textSize:String" value="textSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textUnderline:Boolean" value="textUnderline" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="use_brush:Boolean" value="use_brush" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="use_brushColor:Boolean" value="use_brushColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="use_effectList:Boolean" value="use_effectList" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="use_fill:Boolean" value="use_fill" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="use_fillColor:Boolean" value="use_fillColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="use_textFont:Boolean" value="use_textFont" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="use_textSize:Boolean" value="use_textSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="use_textStyles:Boolean" value="use_textStyles" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- TextAttrs object -->
+<menu pattern="*style." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="alignment:String" value="alignment" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="baselineShift:Integer" value="baselineShift" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="bold:Boolean" value="bold" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="face:String" value="face" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="fillColor:String" value="fillColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="horizontalScale:Float" value="horizontalScale" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="italic:Boolean" value="italic" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="kerning:Float" value="kerning" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="leading:Float" value="leading" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="leadingMode:String" value="leadingMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="rangeKerning:Float" value="rangeKerning" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="size:String" value="size" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="underline:Boolean" value="underline" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- TextRuns object -->
+<menu pattern="*textRuns." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="initialAttrs:TextAttrs" value="initialAttrs" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textRuns:Array" value="textRuns" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- TextAttrs object -->
+<menu pattern="*style." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="alignment:String" value="alignment" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- BehaviorInfo object -->
+<menu pattern="*behaviorInfo." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="action:Integer" value="action" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="behaviorText:String" value="behaviorText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="borderColor:String" value="borderColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="borderSize:Integer" value="borderSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cellOverColor:String" value="cellOverColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cellUpColor:String" value="cellUpColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="creationDate:Date" value="creationDate" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dhHref:String" value="dhHref" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="dhTargetFrame:Integer" value="dhTargetFrame" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="downHighlight:Boolean" value="downHighlight" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="event:Integer" value="event" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasDhTargetFrame:Boolean" value="hasDhTargetFrame" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasDhHRef:Boolean" value="hasDhHRef" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasHref:Boolean" value="hasHref" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasStatusText:Boolean" value="hasStatusText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasTargetFrame:Boolean" value="hasTargetFrame" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hideOnMouseout:Boolean" value="hideOnMouseout" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="horzOffset:Integer" value="horzOffset" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="href:String" value="href" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hiliteColor:String" value="hiliteColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuFontFamily:String" value="menuFontFamily" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuHeight:Integer" value="menuHeight" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuImagePath:String" value="menuImagePath" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuImagePath2:String" value="menuImagePath2" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuItems:Array" value="menuItems" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuItemPadding:Integer" value="menuItemPadding" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuItemSpacing:Integer" value="menuItemSpacing" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="menuWidth:Integer" value="menuWidth" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="opaqueBackground:Boolean" value="opaqueBackground" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="preload:Boolean" value="preload" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="restoreOnMouseout:Boolean" value="restoreOnMouseout" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="shadowColor:String" value="shadowColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="statusText:String" value="statusText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="targetFrameNum:Integer" value="targetFrameNum" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="targetRowNum:Integer" value="targetRowNum" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="targetTable:Object" value="targetTable" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textAlignment:String" value="textAlignment" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textBold:Boolean" value="textBold" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textFamily:String" value="textFamily" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textIndent:Integer" value="textIndent" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textOnly:Boolean" value="textOnly" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textBold:Boolean" value="textBold" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textOverColor:String" value="textOverColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textSize:Integer" value="textSize" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="textUpColor:String" value="textUpColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="vertical:Boolean" value="vertical" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="vertOffset:Integer" value="vertOffset" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- BehaviorList object -->
+<menu pattern="*behaviorList." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="numberOfBehaviors:Integer" value="numberOfBehaviors" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- exportDoc object -->
+<menu pattern="*exportDoc." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="altText:String" value="altText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="backgroundColor:String" value="backgroundColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="backgroundIsTransparent:Boolean" value="backgroundIsTransparent" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="backgroundLink:String" value="backgroundLink" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cssPopupMenus:Boolean" value="cssPopupMenus" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="docID:Integer" value="docID" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="docSaveFolder:String" value="docSaveFolder" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="docSaveName:String" value="docSaveName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="emptyCellColor:String" value="emptyCellColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="emptyCellContents:Integer" value="emptyCellContents" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="emptyCellUsesCanvasColor:Boolean" value="emptyCellUsesCanvasColor" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="externalCSS:Boolean" value="externalCSS" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="externalCSSFileName:String" value="externalCSSFileName" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="filename:String" value="filename" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="generateHeader:Boolean" value="generateHeader" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasAltText:Boolean" value="hasAltText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasBackgroundLink:Boolean" value="hasBackgroundLink" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="height:Integer" value="height" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="htmlEncoding:String" value="htmlEncoding" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="htmlOutputPath:String" value="htmlOutputPath" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="imagename:String" value="imagename" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="includeHTMLComments:Boolean" value="includeHTMLComments" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="numFrames:Integer" value="numFrames" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pathBase:String" value="pathBase" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="pathSuffix:String" value="pathSuffix" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="startColumn:Integer" value="startColumn" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="startRow:Integer" value="startRow" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="style:String" value="style" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tableAlignment:String" value="tableAlignment" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="width:Integer" value="width" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="xhtmlFormat:Integer" value="xhtmlFormat" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- ImageMap object -->
+<menu pattern="*imageMap." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="altText:String" value="altText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="behaviors:BehaviorsList" value="behaviors" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasAltText:Boolean" value="hasAltText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasHref:Boolean" value="hasHref" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasTargetText:Boolean" value="hasTargetText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="href:String" value="href" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="numCoords:Integer" value="numCoords" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="radius:Integer" value="radius" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="shape:String" value="shape" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="targetText:String" value="targetText" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<function pattern="*imageMap.xCoord(index:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*imageMap.yCoord(index:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<!-- ImagemapList object -->
+<menu pattern="*imagemapList." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="numberOfURLs:Integer" value="numberOfURLs" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- SliceInfo object -->
+<menu pattern="*sliceInfo." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="altText:String" value="altText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="behaviors:BehaviorsList" value="behaviors" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cellHeight:Integer" value="cellHeight" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="cellWidth:Integer" value="cellWidth" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasAltText:Boolean" value="hasAltText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasHref:Boolean" value="hasHref" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasHtmlText:Boolean" value="hasHtmlText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasImage:Boolean" value="hasImage" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasImagemap:Boolean" value="hasImagemap" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="hasTargetText:Boolean" value="hasTargetText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="height:Integer" value="height" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="href:String" value="href" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="htmlText:String" value="htmlText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="imagemap:ImagemapList" value="imagemap" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="imageSuffix:String" value="imageSuffix" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="isUndefined:Boolean" value="isUndefined" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="left:Integer" value="left" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="nestedTableSlices:Slices" value="nestedTableSlices" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="skipCell:Boolean" value="skipCell" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tableAlign:String" value="tableAlign" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tableBorder:Integer" value="tableBorder" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tablePadding:Integer" value="tablePadding" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tableSpacing:Integer" value="tableSpacing" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tableTagText:String" value="tableTagText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="tableWidth:Integer" value="tableWidth" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="targetText:String" value="targetText" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="top:Integer" value="top" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="width:Integer" value="width" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<function pattern="*sliceInfo.getFrameFileName(frameIndex:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<function pattern="*sliceInfo.setFrameFileName(frameIndex:Integer)" doctypes="JavaScript" caseSensitive="true"/>
+<!-- Slices object -->
+<menu pattern="*imagemapList." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="demoIndex:Integer" value="demoIndex" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="doDemoHTML:Boolean" value="doDemoHTML" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="doShimEdges:Boolean" value="doShimEdges" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="doSkipUndefined:Boolean" value="doSkipUndefined" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="imagesDirPath:String" value="imagesDirPath" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="numColumns:Integer" value="numColumns" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="numRows:Integer" value="numRows" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="shimPath:String" value="shimPath" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+
+<!-- Other Data Types -->
+<!-- Mask data type -->
+<menu pattern="*mask." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="maskBounds:Rectangle" value="maskBounds" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maskKind:String" value="maskKind" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maskEdgeMode:String" value="maskEdgeMode" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="featherAmount:Integer" value="featherAmount" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="maskData:String" value="maskData" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Matrix data type -->
+<menu pattern="*matrix." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="matrix:Array" value="matrix" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Point data type -->
+<menu pattern="*point./*pt." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="x:Float" value="x" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="y:Float" value="y" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Rectangle data type -->
+<menu pattern="*rectangle." doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="bottom:Float" value="bottom" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="left:Float" value="left" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="right:Float" value="right" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="top:Float" value="top" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+<!-- Resolution data type -->
+<menu pattern="*resolution./*res." patternseparator="/" doctypes="JavaScript" caseSensitive="true">
+	<menuitem label="pixelsPerUnit:Float" value="pixelsPerUnit" icon="shared/mm/images/hintMisc.gif"/>
+	<menuitem label="unit:String" value="unit" icon="shared/mm/images/hintMisc.gif"/>
+</menu>
+
+</menugroup>
+</codehints>

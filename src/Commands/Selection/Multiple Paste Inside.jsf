@@ -1,0 +1,17 @@
+function MultiplePasteInside() {
+	var dom = fw.getDocumentDOM();
+	var sel = fw.selection;
+	var len = sel.length;
+	var unqName = "__PASTE_INSIDE_OPERATION__";
+	var savedNames = [];
+	for (i=0;i<len;i++) {
+		savedNames[i] = sel[i].name;
+		sel[i].name = unqName+i;
+	}
+	for (i=0;i<len;i++){
+		dom.setElementVisibleByName(unqName+i, true);
+		dom.clipPasteInside("do not resample");
+		dom.setElementName(savedNames[i]);
+	}
+}
+MultiplePasteInside();

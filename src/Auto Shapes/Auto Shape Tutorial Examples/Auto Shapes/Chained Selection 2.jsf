@@ -1,0 +1,528 @@
+﻿// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a short variable name to represent the Auto Shape's customData
+// property. This provides an object to store information and other variables
+// that will be retained even after the script has been completed
+var data = smartShape.elem.customData;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+
+	// get an object for the current date
+	var currDate = new Date();
+	
+	// set an id for this shape to be based on the current time from the date
+	// the idea being that if you have more than one Chained Selection 
+	// shape, each will have different ids since they would have been
+	// created at different times
+	data.linkerShapeId = currDate.getTime();
+	
+	// create 3 control points
+	cps.length = 3;
+	
+	// set first control point at the mouse
+	SetControlPoint(cps[0], mouse);
+	
+	// set the next control points 50 pixels to the right of the one before it
+	SetControlPoint(cps[1], AddPoints(mouse, {x:50, y:0}));
+	SetControlPoint(cps[2], AddPoints(mouse, {x:100, y:0}));
+	
+	// create a new path for the line that connects the control points
+	smartShape.elem.elements[0] = new Path();
+	
+	// create new contour as first contour in contours array
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	
+	// assign a short variable to represent the shape element's pathAttributes object
+	var attrs = smartShape.elem.elements[0].pathAttributes;
+
+	// remove any fill for the path 
+	attrs.fill = null;
+	
+	// set the brush to a 1px pencil brush 
+	attrs.brush = { category:"bc_Pencil", name:"bn_1-Pixel Anti-Aliased", alphaRemap:"none", angle:0, antiAliased:true, aspect:100, blackness:0, concentration:100, dashOffSize1:2, dashOffSize2:2, dashOffSize3:2, dashOnSize1:8, dashOnSize2:1, dashOnSize3:1, diameter:1, feedback:"brush", flowRate:0, maxCount:15, minSize:1, numDashes:0, shape:"circle", softenMode:"bell curve", softness:0, spacing:15, textureBlend:0, textureEdge:0, tipColoringMode:"random", tipCount:1, tipSpacing:0, tipSpacingMode:"random", type:"simple" };
+	
+	// set a unique brush color for the path 
+	attrs.brushColor = "#0099FF";
+	
+	// call the Draw function to draw the contour between the control points
+	Draw();
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// create a variable to represent the current control point index
+	// or its position in the control points array
+	var cpi = smartShape.currentControlPointIndex;
+
+	// set getsDragEvents to be true so that the DragControlPoint event will
+	// run for the Auto Shape
+	smartShape.getsDragEvents = true;
+
+	// if the control/command key and alt/option key is being pressed (deleting point)
+	if (smartShape.ctrlCmdKeyDown && smartShape.altOptKeyDown){
+	
+		// if the shape has at least 4 points and the current control
+		// point is the last point 
+		if (cps.length > 2 && cpi == cps.length-1){
+		
+			// remove the last point by reducing the control points array length 
+			cps.length--;
+			
+			// redraw the shape
+			Draw();
+		}
+		
+	// else if just the control key is being pressed (associate or unassociate elements)
+	}else if (smartShape.ctrlCmdKeyDown){
+	
+		//if the control point is inverted (there are elements associated with it)
+		if (cps[cpi].type == "defaultInverted"){
+		
+			// return the control point to the default type
+			cps[cpi].type = "default";
+			
+			// remove the association with the control point
+			UnassociateSelectionWithPoint(cpi);
+		
+		// otherwise if the control point is the default type and
+		// there is at least 2 elements in the current selection
+		// (chained selection and one other element)
+		}else if (fw.selection.length > 1){
+		
+			// set the control point type to be inverted
+			cps[cpi].type = "defaultInverted";
+			
+			// associate the selection with this point 
+			AssociateSelectionWithPoint(cpi);
+		}
+		
+	// else if just the aly/option key is down (add a point)
+	}else if (smartShape.altOptKeyDown){
+	
+		// as long as the current control point is the last one
+		if (cpi == cps.length-1){
+		
+			// add a control point to the control points array 
+			cps.length++;
+			
+			// initially set the new control point to the point used to create it 
+			SetControlPoint(cps[cpi+1], cps[cpi]);
+			
+			// redraw the shape
+			Draw();
+			
+			// define a variable to hold a default RegisterMoveParms object
+			var parms = smartShape.GetDefaultMoveParms();
+
+			// assign a short variable to represent the nodes array
+			var nods = smartShape.elem.elements[0].contours[0].nodes;
+			
+			// set a maxLinear to make sure the distance of the control point 
+			// from the point before it is at least 5 px
+			parms.maxLinear = -5;
+			
+			// set a reference for linear movement based on the point before the last
+			var origin = {x:cps[cpi-1].x, y:cps[cpi-1].y};
+			
+			// register linear movement for both the new control point and the new
+			// node (added with Draw) to move linearly when created
+			cps[cpi+1].RegisterLinearMove(origin, parms);
+			nods[cpi+1].RegisterLinearMove(origin, parms);
+		}
+		
+	// else if just the shift key is down
+	}else if (smartShape.shiftKeyDown){
+
+		// if the control point is not the base 
+		if (cpi > 0){
+		
+			// define a variable to hold a default RegisterMoveParms object
+			var parms = smartShape.GetDefaultMoveParms();
+
+			// assign a short variable to represent the nodes array
+			var nods = smartShape.elem.elements[0].contours[0].nodes;
+			
+			// get the difference of this control point with the point before it 
+			var dif = SubtractPoints(cps[cpi], cps[cpi-1]);
+						
+			// set a maxLinear to make sure the distance of the control point 
+			// from the point before it is at least 5 px
+			parms.maxLinear = DistanceBetween(cps[cpi], cps[cpi-1])-5;
+			
+			// loop through all control points starting with the current
+			for (var i=cpi; i<cps.length; i++){
+			
+				// find a unique point for linear movement for this control point
+				// using the previously calculated difference 
+				var origin = SubtractPoints(cps[i], dif);
+				
+				// register linear movement for each control point and node so that they
+				// move with the control point moved
+				cps[i].RegisterLinearMove(origin, parms);
+				nods[i].RegisterLinearMove(origin, parms);
+			}
+		}
+		
+	// otherwise if no modifier keys are being pressed
+	}else{
+	
+		// define a variable to hold a default RegisterMoveParms object
+		var parms = smartShape.GetDefaultMoveParms();
+		
+		// assign a short variable to represent the nodes array
+		var nods = smartShape.elem.elements[0].contours[0].nodes;
+		
+		// if the current control point is the first control point (the base) 
+		if (cpi == 0){
+		
+			// loop through all the control points
+			for (var i=0; i<cps.length; i++){
+			
+				// use RegisterMove to move all control points and nodes with
+				// normal movement withthe mouse (moving the whole shape)
+				cps[i].RegisterMove(parms);
+				nods[i].RegisterMove(parms);
+			}
+			
+		// otherwise if the control point is one other than the first
+		}else{
+		
+			// find a point of origin for rotation that is based around
+			// the control point that comes before this one
+			var origin = {x:cps[cpi-1].x, y:cps[cpi-1].y};
+			
+			// loop through all of the control points from this current
+			// control point until the last
+			for (var i=cpi; i<cps.length; i++){
+			
+				// rotate all control points around specified origin
+				nods[i].RegisterCircularMove(origin, parms);
+				cps[i].RegisterCircularMove(origin, parms);
+			}
+		}
+	}
+}
+
+// define an DragControlPoint event handler that will be called
+// everytime the mouse moves when dragging a control point
+operation.DragControlPoint = function(){
+
+	// update the control point tool tips
+	UpdateToolTips();
+}
+
+// define an EndDragControlPoint event handler that will be called
+// as a result of releasing the mouse after clicking a control point
+operation.EndDragControlPoint = function(){
+
+	// position all linked elements with their respective control points
+	PositionLinked();
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * Draw creates nodes to connect the control points with the path element 
+ * Requires: SetNodePosition, UpdateToolTips
+*/
+Draw = function(){
+
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// set node count to equal control point count 
+	nods.length = cps.length;
+	
+	// loop for all nodes
+	for (var i=0; i<nods.length; i++){
+	
+		// set each node in the loop to its respective control point 
+		SetNodePosition(nods[i], cps[i]);
+	}
+	
+	// update the control point tool tips
+	UpdateToolTips();
+}
+
+/**
+ * UpdateToolTips updates the tool tips for the control points providing
+ * names (based on index), distance and angle
+ * Requires: DistanceBetween, AngleBetween
+*/
+UpdateToolTips = function(){
+
+	// set the first tool tip to be "Chain Base"
+	cps[0].toolTip = "Chain Base";
+	
+	// loop through the remaining control points
+	for (var i=1; i<cps.length; i++){
+	
+		// get the distance of this control point from the point before it 
+		var len = Math.round(DistanceBetween(cps[i-1], cps[i]));
+		
+		// get the angle of this control point in respect to the point before it 
+		var ang = -Math.round(AngleBetween(cps[i-1], cps[i])*180/Math.PI);
+		
+		// if the angle is negative
+		if (ang < 0){
+			
+			// add 360 degrees to make it positive
+			ang += 360;
+		}
+		
+		// set the tool tip of the current control point to be name "Link"
+		// with its control point number along with the length and angle
+		cps[i].toolTip = "Link "+i+", Length: "+len+"px, Angle: "+ang+"°";
+	}
+}
+
+/**
+ * PositionLinked moves all elements in the document associated with control 
+ * points in the shape to the location of those control points
+ * Requires: GetAssociatedElements, SubtractPoints, SelectionCenterOffset
+*/
+PositionLinked = function(){
+
+	// define document DOM
+	var dom = fw.getDocumentDOM();
+	
+	// loop through all control points
+	for (var i=0; i<cps.length; i++){
+	
+		// as long as the type is inverted we know it has elements associated with it 
+		if (cps[i].type == "defaultInverted"){
+			
+			// set the current selection in Fireworks to be elements associated
+			// with the current control point in the loop
+			fw.selection = GetAssociatedElements(i);
+			
+			// if there remains to be elements in the selection
+			if (fw.selection.length > 0){
+				
+				// move the current selection to the current control point.
+				// Since positioning for elements is based on the upper left corner
+				// of the selection and this shape uses the center, SelectionCenterOffset
+				// is used to make sure the selection is placed correctly
+				dom.moveSelectionTo(SubtractPoints(cps[i], SelectionCenterOffset()), false, false);
+				
+			// otherwise if there is nothing in the selection
+			}else{
+			
+				// assure that the control point type is set to default 
+				cps[i].type = "default";
+			}
+		}
+	}
+	
+	// once positioned, remove everything from the selection
+	fw.selection = new Array();
+}
+
+/**
+ * AssociateSelectionWithPoint sets customData variables in the current selection
+ * to associate the elements within to the current shape by its id and the
+ * control point specified by index
+*/
+AssociateSelectionWithPoint = function(index){
+
+	// loop through all elements in the current selection
+	for (var i=0; i<fw.selection.length; i++){
+	
+		// if the selection customData does not contain linkerShapeId
+		// in other words, its not a Chained Selection shape
+		if (!fw.selection[i].customData.linkerShapeId){
+		
+			// assign a linkerShapeInfp property in the element's
+			// customData object that has variables for this shape's
+			// linkerShapeId and the control point index passed
+			fw.selection[i].customData.linkerShapeInfo = {
+				id: data.linkerShapeId,
+				index: index
+			};
+		}
+	}
+}
+
+/**
+ * UnassociateSelectionWithPoint unsets elements with the index control point 
+*/
+UnassociateSelectionWithPoint = function(index){
+
+	// get the elements associated with the index control point 
+	var elems = GetAssociatedElements(index);
+	
+	// loop through all of those elements elements
+	for (var i=0; i<elems.length; i++){
+	
+		// set the linkerShapeInfo property in the customData object to null
+		elems[i].customData.linkerShapeInfo = null;
+	}
+}
+
+/**
+ * GetAssociatedElements returns an array of elements that are contains the elements
+ * associated with the index control point
+*/
+GetAssociatedElements = function(index){
+
+	// create a new array that represents the elements in the selection that
+	// are associated with the index control point 
+	var sel = new Array();
+	
+	// get the document DOM
+	var dom = fw.getDocumentDOM();
+	
+	// get the layers array for the document in the current frame 
+	var layers = dom.frames[dom.currentFrameNum].layers;
+	
+	// loop through all the layers
+	for (var l=0; l<layers.length; l++){
+	
+		// assign a short variable name for the current elements array
+		var elems = layers[l].elements;
+		
+		// loop through all the elements in the current layer 
+		for (var e=0; e<elems.length; e++){
+		
+			// assign a short variable for the current element's customData object
+			var ed = elems[e].customData;
+			
+			// if the element's customData object contains a valid
+			// linkerShapeInfo property
+			if (ed.linkerShapeInfo){
+			
+				// and if that property contains variables that match this shape's
+				// linkerShapeId and this control point index
+				if (ed.linkerShapeInfo.id == data.linkerShapeId
+				&& ed.linkerShapeInfo.index == index){
+				
+					// add the element to the returned array
+					sel.push(elems[e]);
+				}
+			}
+		}
+	}
+	
+	// return the array of associated elements
+	return sel;
+}
+
+/**
+ * SelectionCenterOffset returns an offset to a selection that would allow that selection
+ * to be moved by its center point when moved by the offset
+*/
+SelectionCenterOffset = function(){
+
+	// get document DOM
+	var dom = fw.getDocumentDOM();
+	
+	// group the current selection to contain them together as one element 
+	dom.group();
+	
+	// get the center of the group based on half its width and height
+	var center = {
+		x: fw.selection[0].width/2,
+		y: fw.selection[0].height/2
+	};
+	
+	// restore group to normal elements
+	dom.ungroup();
+	
+	// return the center point (offset)
+	return center;
+}
+
+// (common functions)
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;	node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt a
+*/
+SetControlPoint = function(cp, pt){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+
+/**
+ * SubtractPoints subtracts two points pt1 and pt2 and returns the resulting point
+*/
+SubtractPoints = function(pt1, pt2){
+	return {x:pt1.x - pt2.x, y:pt1.y - pt2.y}; // subtract x and y properties in returned object
+}
+
+/**
+ * PointBetween returns a point location between points pt1 and pt2
+*/
+PointBetween = function(pt1, pt2){
+	return {x:(pt1.x + pt2.x)/2, y:(pt1.y + pt2.y)/2}; // return average point between 2 points
+}
+
+/**
+ * DistanceBetween uses the pythagorean theorem to determine the true distance
+ * between two points pt1 and pt2.
+*/
+DistanceBetween = function(pt1, pt2){
+	var dx = pt2.x - pt1.x, dy = pt2.y - pt1.y; // find differences of point locations
+	return Math.sqrt(dx*dx + dy*dy); // pythagorean theorem
+}
+
+/**
+ * AngleBetween returns the angle between two points pt1 and pt2 in radians
+*/
+AngleBetween = function(pt1, pt2){
+	return Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x); // use arc tangent 2 to get angle
+}
+
+/**
+ * PointsEqual compares points pt1 and pt2 and returns true if they equal, false if not
+*/
+PointsEqual = function(pt1, pt2){
+	return (pt1.x == pt2.x && pt1.y == pt2.y); // return comparison of both x and y properties (true if both equal)
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

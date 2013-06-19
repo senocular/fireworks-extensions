@@ -1,0 +1,243 @@
+﻿// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a short variable name to represent the Auto Shape's customData
+// property. This provides an object to store information and other variables
+// that will be retained even after the script has been completed
+var data = smartShape.elem.customData;
+
+// variable specifying default text for the shape's text
+var defaultText = "Button";
+
+// variable representing the height of the patterns used in the button
+// or, really, the height of the button shape itself
+var patternHeight = 24;
+
+// variable representing the width of the ends of the button (both patterns)
+var endWidth = 14;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+
+	// create a new text element as the first element in this Auto Shape
+	smartShape.elem.elements[0] = new Text();
+	
+	// set the autoExpand property of the text element to true so that the size of
+	// the text box will size to match the size of the text within it
+	smartShape.elem.elements[0].autoExpand = true;
+	
+	// make sure the orientation of the text is normal
+	smartShape.elem.elements[0].orientation = "horizontal left to right";
+	
+	// next create 3 new default elements. Elements like this can only be
+	// created one at a time hense length is incremented 3 times here instead
+	// of being set to equal 4 (3 + 1 text from before). These elements are
+	// paths with no lines or fill, and one contour of 4 nodes which will make
+	// up the rectangles used to keep the 3 button patterns
+	smartShape.elem.elements.length++;
+	smartShape.elem.elements.length++;
+	smartShape.elem.elements.length++;
+
+	// assign a short variable to represent the nodes array for each of
+	// the three rectangle elements making up the pattern portions of the shape
+	var startNodes = smartShape.elem.elements[1].contours[0].nodes;
+	var midNodes = smartShape.elem.elements[2].contours[0].nodes;
+	var endNodes = smartShape.elem.elements[3].contours[0].nodes;
+
+	// set the node positions for the first element (left end) to be left of and
+	// above the mouse and sized based on the pattern size
+	SetNodePosition(startNodes[0], AddPoints(mouse, {x:-endWidth, y:-patternHeight}));
+	SetNodePosition(startNodes[1], AddPoints(mouse, {x:0, y:-patternHeight}));
+	SetNodePosition(startNodes[2], mouse);
+	SetNodePosition(startNodes[3], AddPoints(mouse, {x:-endWidth, y:0}));
+	
+	// set the two left nodes of the middle element to be against the first
+	// only these two are set because the right side depends on text size
+	SetNodePosition(midNodes[0], startNodes[1]);
+	SetNodePosition(midNodes[3], startNodes[2]);
+	
+	// call UpdateText to set the button text to the defined default text
+	UpdateText(defaultText);
+	
+	// call ApplyPattern for each elements 1, 2, 3 passing in the 
+	// name and position of the pattern to be used
+	ApplyPattern(1, "Aqua Button Start", PointFromNode(startNodes[0]));
+	ApplyPattern(2, "Aqua Button Mid", PointFromNode(midNodes[0]));
+	ApplyPattern(3, "Aqua Button End", PointFromNode(endNodes[0]));
+	
+	// create a new control point in the first position of the control points array
+	cps[0] = new ControlPoint();
+	
+	// set the first control point to a position just above the mouse in the center
+	// of the shape with the name "ChangeText" and the toolTip "Click to Change Button Text"
+	SetControlPoint(cps[0], AddPoints(mouse, {x:0, y:-patternHeight/2}), "ChangeText", "Click to Change Button Text");
+}
+
+// define an EndDragControlPoint event handler that will be called
+// as a result of releasing the mouse after clicking a control point
+operation.EndDragControlPoint = function(){
+
+	// create a prompt dialog that asks for and returns text from the user
+	// provide default text to be based on the text stored in the customData object
+	var input = prompt("Button Text", data.text);
+	
+	// if text was given and input has a value, call UpdateText with the input text 
+	if (input) UpdateText(input);
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * UpdateText updates the characters in the text of the Auto Shape to match the input
+*/
+UpdateText = function(input){
+
+	// store the input text in the customData object as text so it
+	// can be referenced later
+	data.text = input;
+	
+	// assign a short variable to represent the elements array
+	var elems = smartShape.elem.elements;
+	
+	// temporarily store the text elements textRuns object in a runs variable (as copy)
+	var runs = elems[0].textRuns;
+	
+	// set the textRuns array within runs to be a simple text run with the passed input
+	runs.textRuns = [ {changedAttrs:{}, characters: input} ];
+	
+	// assure left-alignment
+	runs.initialAttrs.alignment = "left";
+	
+	// re-assign runs back to the text elements textRuns property
+	elems[0].textRuns = runs;
+	
+	// set the left position of the text element to be the right edge
+	// of the left end of the button (the first of 3 paths)
+	elems[0].rawLeft = elems[1].contours[0].nodes[1].x;
+	
+	// center the text vertically in the button by setting its top relative to
+	// the bottom of the shape minus half the shape's height and half the text's height
+	elems[0].rawTop = (elems[1].contours[0].nodes[2].y -  patternHeight/2) - elems[0].rawHeight/2;
+
+	// call the resize function that will resize the middle and right end paths to
+	// size the button appropriately with the text added
+	Resize();
+}
+
+/**
+ * Resize resizes the middle and right end paths so that their size and positions
+ * correctly reflect the size of the button text
+*/
+Resize = function(){
+
+	// get the text width rounding it up to the nearest whole number
+	var textWidth = Math.ceil(smartShape.elem.elements[0].rawWidth);
+	
+	// assign a short variable to represent the nodes array for each of
+	// the middle and right end elements
+	var midNodes = smartShape.elem.elements[2].contours[0].nodes;
+	var endNodes = smartShape.elem.elements[3].contours[0].nodes;
+	
+	// position the left end of the middle shape to match the width of the text
+	SetNodePosition(midNodes[1], AddPoints(midNodes[0], {x:textWidth, y:0}));
+	SetNodePosition(midNodes[2], AddPoints(midNodes[3], {x:textWidth, y:0}));
+	
+	// position the entire left element path to be against the end of the middle
+	// path maintaining size proportions
+	SetNodePosition(endNodes[0], midNodes[1]);
+	SetNodePosition(endNodes[1], AddPoints(midNodes[1], {x:endWidth, y:0}));
+	SetNodePosition(endNodes[2], AddPoints(midNodes[2], {x:endWidth, y:0}));
+	SetNodePosition(endNodes[3], midNodes[2]);
+	
+	// update the position of the right end pattern so that it stays aligned
+	// with the new position of the path.  The middle element won't need to be
+	// updated since its pattern repeats itself
+	ApplyPattern(3, "Aqua Button End", PointFromNode(endNodes[0]));
+}
+
+/**
+ * ApplyPattern takes element number elemNum and assigns to it the pattern
+ * passed as patternName at the position of handleLoc
+*/
+ApplyPattern = function(elemNum, patternName, handleLoc){
+	// assign a short variable to represent element elemNum's path attributes
+	var attrs = smartShape.elem.elements[elemNum].pathAttributes;
+	
+	// set the fill to be a new default fill object using the Fill constructor
+	attrs.fill = new Fill();
+	
+	// set the fill's pattern to be the name of the pattern passed
+	// this pattern MUST be an installed pattern for this to be applied
+	attrs.fill.pattern = {
+		image: null,
+		name: patternName
+	}
+	
+	// set the center fill handle to be the location passed
+	attrs.fillHandle1 = handleLoc;
+	
+	// set the right handle to be right of the center handle based on end size
+	attrs.fillHandle2 = AddPoints(handleLoc, {x:endWidth, y:0});
+	
+	// set the top handle to be above the center handle based on pattern height
+	attrs.fillHandle3 = AddPoints(handleLoc, {x:0, y:-patternHeight});
+}
+
+// (common functions)
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+
+/**
+ * PointFromNode creates a generic point object from a ContourNode object
+*/
+PointFromNode = function(n){
+	return {x:n.x, y:n.y}; // copy x and y properties in returned object
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+// end custom functions
+
+if (operation[smartShape.operation]) operation[smartShape.operation]();

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Stroke Path" version="0.9.1" type="command" requires-restart="true">
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[
+		Stroke Path<br>
+		www.senocular.com<br><br>
+		
+		Stoke Path allows you to duplicate a selected element along a selected path. Before using Stroke Path, select exactly one Path element and exactly one other element (of any type) you wish to duplicate along path.]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open Stoke Path from the Commands > Paths menu.]]>
+	</ui-access>
+	<files>
+		<file source="Stroke Path.swf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Stroke Path.jsf.inc" destination="$fireworks/Configuration/Commands/Paths" />
+	</files>
+</macromedia-extension>

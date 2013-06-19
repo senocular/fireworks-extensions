@@ -1,0 +1,118 @@
+﻿/*
+%N File Name
+%D Date
+%T Time
+%L Layers
+%F Frames
+%W Width
+%H Height
+%R Resolution
+%U Resolution Units
+%P Platform
+%FW Fireworks Version
+*/
+
+var default_string = "%N.png: %Wx%H @ %R pixels/%U (%L Layers, %F Frames)\rCreated: %D, %T on %P using %FW";
+
+var cps = smartShape.elem.controlPoints;
+var elems = smartShape.elem.elements;
+var data = smartShape.elem.customData;
+var dom = fw.getDocumentDOM();
+var operation = new Object();
+
+
+operation.InsertSmartShapeAt = function(){
+	Update();
+}
+
+operation.EndDragControlPoint = function(){
+	if (smartShape.ctrlCmdKeyDown) return Update();
+	var desc = "%N File Name\t%D Date\t%T Time\t%L Layers\n%F Frames\t%W Width\t%H Height\t%R Resolution\n%U Units\t%P Platform\t%FW Fireworks Version\r\\r New line";
+	var format = (data.custom_string) ? data.custom_string : default_string;
+	format = format.replace( /\r/g, "\\r" );
+	var custom_format = prompt(desc, format);
+	if (custom_format){
+		custom_format = custom_format.replace( /\\r/g, "\r" );
+		data.custom_string = custom_format;
+		Update();
+	}
+}
+
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+
+GetDate = function() {
+	var d = new Date();
+	return (1 + d.getMonth()) +"/"+ d.getDate() +"/"+ (1900 + d.getYear());
+}
+
+GetTime = function() {
+	var d = new Date();
+	var hours = d.getHours();
+	var meridian = " AM";
+	if (hours > 12){
+		hours -= 12;
+		meridian = " PM";
+	}else if (!hours) hours = 12;
+	var minutes = d.getMinutes();
+	if (minutes < 10) minutes = "0"+minutes;
+	var seconds = d.getSeconds();
+	if (seconds < 10) seconds = "0"+seconds;
+	return hours +":"+ minutes +":"+ seconds + meridian;
+} 
+Update = function(auto){
+	var text = (data.custom_string) ? data.custom_string : default_string;
+	text = text.replace( /%D/g, GetDate() );
+	text = text.replace( /%T/g, GetTime() );
+	var name = dom.docTitleWithoutExtension;
+	if (!name) name = "Untitled";
+	text = text.replace( /%N/g, name );
+	text = text.replace( /%L/g, dom.layers.length-1 ); // minus web
+	text = text.replace( /%FW/g, dom.pngText.Software ); // before %F
+	text = text.replace( /%F/g, dom.frames.length );
+	text = text.replace( /%W/g, dom.width );
+	text = text.replace( /%H/g, dom.height );
+	text = text.replace( /%R/g, dom.resolution );
+	text = text.replace( /%U/g, dom.resolutionUnits );
+	text = text.replace( /%P/g, fw.platform.toUpperCase() );
+
+	var txtColor = "#ffffff";
+	if (elems[0]) txtColor = elems[0].textRuns.initialAttrs.fillColor;
+		elems[0] = new Text();	elems[0].orientation = "horizontal left to right";
+	elems[0].autoExpand = true;
+	elems[0].textRuns = { initialAttrs:{ alignment:"left", antiAliasSharpness:192, antiAliasStrength:64, baselineShift:0, bold:false, face:"Verdana", fillColor:txtColor, horizontalScale:1, italic:false, leading:1, leadingMode:"percentage", overSample:8, paragraphIndent:0, paragraphSpacingAfter:0, paragraphSpacingBefore:0, rangeKerning:0, size:"10pt", underline:false }, textRuns:[ { changedAttrs:{  }, characters:text } ] };
+	elems[0].rawLeft = dom.left + 5;
+	elems[0].rawTop = dom.top + dom.height - elems[0].rawHeight - 5;
+	
+	var pAttrs = { brush:null, brushColor:"#000000", brushPlacement:"center", brushTexture:{ name:"Grain" }, fill:{ category:"fc_Linear", ditherColors:[ "#000000", "#000000" ], edgeType:"antialiased", feather:0, gradient:{ name:"cn_BlackWhite", nodes:[ { color:"#000000", isOpacityNode:false, position:0 }, { color:"#000000", isOpacityNode:false, position:0.99444442987442017 } ], opacityNodes:[ { color:"#000000b2", isOpacityNode:true, position:0 }, { color:"#000000b2", isOpacityNode:true, position:0.99444442987442017 } ] }, name:"Linear Smooth", pattern:null, shape:"linear", stampingMode:"blend opaque", textureBlend:0, webDitherTransparent:false }, fillColor:"#ffffff", fillHandle1:{ x:0, y:0 }, fillHandle2:{ x:10, y:0 }, fillHandle3:{ x:0, y:10 }, fillOnTop:false, fillTexture:{ name:"Grain" } }
+	if (elems[1]) pAttrs = elems[1].pathAttributes;
+	elems[1] = new Path();
+	elems[1].contours[0] = new Contour();
+	var ns = elems[1].contours[0].nodes;
+	ns.length = 4;
+	elems[1].pathAttributes.brush = pAttrs.brush;
+	elems[1].pathAttributes.fill = pAttrs.fill;
+	
+	SetNodePosition(ns[0], {x: dom.left, y: elems[0].rawTop-5});
+	SetNodePosition(ns[1], {x: dom.left+dom.width, y: elems[0].rawTop-5});
+	SetNodePosition(ns[2], {x: dom.left+dom.width, y: dom.top + dom.height});
+	SetNodePosition(ns[3], {x: dom.left, y: dom.top + dom.height});
+	
+	CreateCP();
+	return true;
+}
+CreateCP = function(){
+	cps.length = 1;
+	cps[0].x = elems[0].rawLeft + elems[0].rawWidth + 5;
+	cps[0].y = elems[1].top + elems[1].height/2;
+	cps[0].toolTip = "Change Format";
+}
+
+//~ INVOKE
+if (operation[smartShape.operation]) operation[smartShape.operation]();

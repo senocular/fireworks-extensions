@@ -1,0 +1,267 @@
+﻿// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// variable determining the number of sides for the polygon, 5 = pentagon
+var polySides = 5;
+
+// variable for the starting angle for drawing the shape, -Math.PI/2 = straight up
+var startAngle = -Math.PI/2;
+
+// variable for the starting radius of the shape
+var startRadius = 30;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+
+	// create 2 new control points in the control points array
+	cps.length = 2;
+	
+	// set the first control point to the position of the mouse
+	// with the name "Center" and tool tip "Change Color"
+	SetControlPoint(cps[0], mouse, "Center", "Change Color");
+		
+	// set the second control point to be startRadius pixels away from the mouse at
+	// startAngle (straight up) with the name "Scaler" and tool tip "Scale and Rotate"
+	SetControlPoint(cps[1], PointFromVector(mouse, startAngle, startRadius), "Scaler", "Scale and Rotate");
+	
+	// create new path as first element in elements array
+	smartShape.elem.elements[0] = new Path();
+	
+	// create new contour as first contour in contours array
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	
+	// set the contour to be a closed contour
+	smartShape.elem.elements[0].contours[0].isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// create nodes in the contour based on polySides variable
+	nods.length = polySides;
+	
+	// angleOffset represents the angle between each point in the shape
+	// (full rotation of 2*Math.PI radians divided by number of sides)
+	var angleOffset = 2*Math.PI/polySides;
+	
+	// loop for each side in the shape
+	for (var i=0; i<polySides; i++){
+	
+		// create a point using PointFromVector extending outward from the mouse (center)
+		// at an angle specified by startAngle with a distance of startRadius
+		var pt = PointFromVector(mouse, startAngle, startRadius);
+		
+		// set the position of the current node in the loop to the calculated point around center
+		SetNodePosition(nods[i], pt);
+		
+		// increase the startAngle by angleOffset so that the next point created will be positioned
+		// around the center point by an additional angleOffset radians. When the loop is
+		// complete, a cull rotation would have been made creating the full shape
+		startAngle += angleOffset;
+	}
+	
+	// create another contour for the interior polygon
+	smartShape.elem.elements[0].contours[1] = new Contour();
+	
+	// set the contour to be a closed contour
+	smartShape.elem.elements[0].contours[1].isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[1].nodes;
+	
+	// create nodes in the contour based on polySides variable
+	nods.length = polySides;
+	
+	// angleOffset represents the angle between each point in the shape
+	// (full rotation of 2*Math.PI radians divided by number of sides)
+	var angleOffset = 2*Math.PI/polySides;
+	
+	// loop for each side in the shape
+	for (var i=0; i<polySides; i++){
+	
+		// create a point using PointFromVector extending outward from the mouse (center)
+		// at an angle specified by startAngle with a distance of half the startRadius
+		// - since this is the interior contour, it will need to be smaller
+		var pt = PointFromVector(mouse, startAngle, startRadius/2);
+		
+		// set the position of the current node in the loop to the calculated point around center
+		SetNodePosition(nods[i], pt);
+		
+		// increase the startAngle by angleOffset so that the next point created will be positioned
+		// around the center point by an additional angleOffset radians. When the loop is
+		// complete, a cull rotation would have been made creating the full shape
+		startAngle += angleOffset;
+	}
+	
+	
+	// assign a short variable to represent the shape element's pathAttributes object
+	var attrs = smartShape.elem.elements[0].pathAttributes;
+	
+	// set the fill color to be a kind of blue green
+	attrs.fillColor = "#0099CC";
+	
+	// set the fill to be a solid (with related properties)
+	attrs.fill = {
+		category:"fc_Solid",
+		name:"Solid",
+		ditherColors:[ "#000000", "#000000" ],
+		edgeType:"antialiased",
+		feather:0, gradient:null,
+		pattern:null,
+		shape:"solid",
+		stampingMode:"blend opaque",
+		textureBlend:50,
+		webDitherTransparent:false
+	}
+	
+	// set the texture to be "Grid 7" (textures are generic objects with a texture name)
+	attrs.fillTexture = {name: "Grid 7"};
+	
+	// add to the shape's effectList a drop shadow effect
+	smartShape.elem.elements[0].effectList = {
+		category:"UNUSED",
+		name:"UNUSED",
+		effects: [
+			{
+				category:"Shadow and Glow",
+				name:"Drop Shadow",
+				EffectIsVisible:true,
+				EffectMoaID:"{a7944db8-6ce2-11d1-8c76000502701850}",
+				ShadowAngle:315,
+				ShadowBlur:4,
+				ShadowColor:"#000000a5",
+				ShadowDistance:7,
+				ShadowType:0
+			} 
+		]
+	};
+	
+	// brush color and style  will be based on current document brush
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// if the name of the current control point is "Scaler"
+	if (smartShape.currentControlPointName == "Scaler"){
+
+		// define a variable to hold a default RegisterMoveParms object
+		var parms = smartShape.GetDefaultMoveParms();
+		
+		// create an origin point variable that is the location of the
+		// Center control point
+		var origin = {x:cps[0].x, y:cps[0].y};
+		
+		// set control point 1 to move with RegisterPolygonMove around
+		// the origin point with default move parameters (parms)
+		cps[1].RegisterPolygonMove(origin, parms);
+		
+		// assign a short variable to represent the contours array
+		var conts = smartShape.elem.elements[0].contours;
+		
+		// loop through each contour in the contours (conts) array
+		for (var c=0; c<conts.length; c++){
+
+			// assign a short variable to represent the nodes array
+			var nods = conts[c].nodes;
+			
+			// loop through each node in the nodes (nods) array
+			for (var n=0; n<nods.length; n++){
+			
+				// assign the current node in the loop to move with a RegisterPolygonMove
+				// like that of the control point
+				nods[n].RegisterPolygonMove(origin, parms);
+			}
+		}
+	}
+}
+
+// define an EndDragControlPoint event handler that will be called
+// as a result of releasing the mouse after clicking a control point
+operation.EndDragControlPoint = function(){
+
+	// if the name of the current control point is "Center"
+	if (smartShape.currentControlPointName == "Center"){
+		
+		// assign a short variable to represent the current fill color
+		var currColor = smartShape.elem.elements[0].pathAttributes.fillColor;
+		
+		// use Fireworks's popupColorPickerOverMouse function to get
+		// a color selection from the user and assign it to newColor
+		var newColor = fw.popupColorPickerOverMouse(currColor, false, false);
+		
+		// if new color has a valid value
+		if (newColor){
+		
+			// assign the new color fo the shape's fill color
+			smartShape.elem.elements[0].pathAttributes.fillColor = newColor;
+		}
+	}
+}
+// end event handlers
+
+// custom functions:
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+
+/**
+ * PointFromVector returns a point extending outward from the point origin at the
+ * angle angle (radians) with a distance of power
+*/
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}; // use sine and cosine to determine new point locations
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

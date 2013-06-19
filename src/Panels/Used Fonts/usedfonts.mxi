@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Used Fonts" version="0.9.0" type="commandpanel" requires-restart ="true">
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" version="7" required="true" />
+	</products>
+	<description>
+		<![CDATA[
+		Used Fonts<br>
+		www.senocular.com<br><br>
+		
+		Provides a simple readout of the fonts listed in the current document.  Selecting a font listed will change the current selection to that font.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open Used Fonts from the Windows menu.]]>
+	</ui-access>
+	<files>
+		<file source="Used Fonts.swf" destination="$fireworks/Configuration/Command Panels" />
+	</files>
+</macromedia-extension>

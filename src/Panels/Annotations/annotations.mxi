@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Annotations" version="0.8.1" type="commandpanel" requires-restart="false">
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[
+		Annotations<br>
+		www.senocular.com<br><br>
+		
+		This Annotations panel lets you view and edit simple text annotations for any fireworks PNG document and any individual object within it. When an object is selected annotations are displayed for that object.  When no object is selected, document annotations are shown.<br><br>
+		The Plus icon [+] saves an annotation*<br>
+		The Minus icon [-] clears the current annotation<br><br>
+		
+		*Note: annotations can only be added to a single selection or no selection (document) and not multiple selections.<br><br>
+		
+		** Warning: With auto update applied (annotations update for selections as they are selected, FMX 2004) you may experience problems when working with some tools.  The option for disabling this has been added to help get around those issues.  With auto update off, you can manually obtain a selection's annotations using the Update button.<br><br>
+		Version History:<br>
+		- 0.8.1: Added update control to prevent unexpected results from selection events.
+		- 0.8.0: Initial public release.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open Annotations from the Window > Annotations menu.]]>
+	</ui-access>
+	<files>
+		<file source="Annotations.swf" destination="$fireworks/Configuration/Command Panels" />
+	</files>
+</macromedia-extension>

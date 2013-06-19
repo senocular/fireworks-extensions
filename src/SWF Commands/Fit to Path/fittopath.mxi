@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Fit to Path" version="0.9.0" type="command" requires-restart="false">
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[
+		Fit to Path<br>
+		www.senocular.com<br><br>
+		
+		Fit to Path allows you to duplicate a selected element and have that duplication be fit within 4 consectutive points within a path. Before using Fit to Path, select exactly one Path element and exactly one other element (of any type) you wish to duplicate to fit within the path.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open Stoke Path from the Commands > Paths menu.]]>
+	</ui-access>
+	<files>
+		<file source="Fit to Path.swf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Fit to Path.jsf.inc" destination="$fireworks/Configuration/Commands/Paths" />
+	</files>
+</macromedia-extension>

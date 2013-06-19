@@ -1,41 +1,30 @@
-// ver 1.2
+// ver 1.1
 
 function exportFullSlices(){
 	var dom = fw.getDocumentDOM();
-	
 	var webLayerNum = dom.layers.length-1;
-	var webLayer = dom.frames[dom.currentFrameNum].layers[webLayerNum];
-	
+	var webLayer = dom.layers[webLayerNum].frames[dom.currentFrameNum];
 	var slicesCount = webLayer.elements.length;
 	if (!slicesCount) return alert("Error: Document contains 0 slices.  No slices were exported.");
-	
-	var filepath = fw.browseForFileURL("save");
+	var filepath = fw.browseForFolderURL("Choose Folder To Export Slices", dom.lastExportDirectory);
 	if (filepath == null) return false;
-	var defaultname = Files.getFilename(filepath);
-	filepath = Files.getDirectory(filepath);
-	
-	var sXO = dom.exportOptions;
-	var oldcrop = sXO.crop;
-	sXO.crop = true;
-	
-	var i, slice, name, filename, counter = 1;
+	dom.lastExportDirectory = filepath;
+	var i, slice, name, filename, sXO;
 	for (i=0; i<slicesCount; i++){
 		slice = webLayer.elements[i];
-		if (!slice.visible) continue;
 		name = slice.baseName;
-		if (name == null) name = defaultname + counter++;
+		if (name == null) name = "slice_"+i;
 		filename = filepath + "/" + name;
-		sXO = slice.exportOptions ? slice.exportOptions : dom.exportOptions;
+		sXO = slice.exportOptions;
+		if (sXO == null) sXO = dom.exportOptions;
 		sXO.crop = true;	
 		sXO.cropLeft = slice.left - dom.left;
 		sXO.cropRight = slice.left + slice.width - dom.left;
 		sXO.cropTop = slice.top - dom.top;
 		sXO.cropBottom = slice.top + slice.height - dom.top;
 		fw.exportDocumentAs(dom, filename, sXO);
+		sXO.crop = false;	
 	}
-	
-	dom.lastExportDirectory = filepath;
-	sXO.crop = oldcrop;
 	return true;
 }
 exportFullSlices();

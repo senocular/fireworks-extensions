@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Doc Center" version="1.0" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7"  />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Document Center
+		www.senocular.com
+		<br>	
+		Drag the Doc Center shape from the Shapes panel to your document to have a crosshair created in the center of your document.<br>
+]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Doc Center Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Doc Center.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Doc Center.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

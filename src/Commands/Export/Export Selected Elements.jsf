@@ -1,45 +1,33 @@
-// ver 1.2
+// ver 1.1
 
 function exportSelectedElements(){
-	if (!fw.selection.length) return false;
-	var dom = fw.getDocumentDOM();
-	var filepath = fw.browseForFileURL("save");
-	if (filepath == null) return false;
-	var defaultname = Files.getFilename(filepath);
-	filepath = Files.getDirectory(filepath);
-	if (filepath == null) return false;
+  if (!fw.selection.length) return false;
+  var dom = fw.getDocumentDOM();
+  var filepath = fw.browseForFolderURL("Choose Folder To Export Slices", dom.lastExportDirectory);
+  if (filepath == null) return false;
 
-	var elems = new Array().concat(fw.selection);
-	dom.selectNone();
-
-	var sXO = dom.exportOptions;
-	var oldcrop = sXO.crop;
-	sXO.crop = true;
-  
-	var n = elems.length;
-	for (i=0; i<n; i++) elems[i].visible = false;
-
-	var elem, rect, name, filename, counter = 1;
-	for (i=0; i<n; i++) {
-		elem = elems[i];
-		rect = elem.pixelRect;
-		elem.visible = true;
-		name = elem.name;
-		if (name == null) name = defaultname + counter++;
-		filename = filepath + "/" + name;
-		sXO.cropLeft = rect.left;
-		sXO.cropRight = rect.right;
-		sXO.cropTop = rect.top;
-		sXO.cropBottom = rect.bottom;
-		fw.exportDocumentAs(dom, filename, sXO);
-		elem.visible = false;
-	}
-	
-	for (i=0; i<n; i++) elems[i].visible = true;
-	
-	sXO.crop = oldcrop;
-	dom.lastExportDirectory = filepath;
-	fw.selection = elems;
-	return true;
+  var elems = new Array();
+  for (var i=0; i<fw.selection.length; i++){ elems[i] = fw.selection[i]; }
+  dom.selectNone();
+  for (i=0; i<elems.length; i++){ elems[i].visible = false; }
+  var elem, name, filename, sXO;
+  for (i=0; i<elems.length; i++){
+    elem = elems[i];
+    elem.visible = true;
+    name = elem.name;
+    if (name == null) name = "image_"+i;
+    filename = filepath + "/" + name;
+    sXO = dom.exportOptions;
+    sXO.crop = true;	
+    sXO.cropLeft = elem.left - dom.left;
+    sXO.cropRight = elem.left + elem.width - dom.left;
+    sXO.cropTop = elem.top - dom.top;
+    sXO.cropBottom = elem.top + elem.height - dom.top;
+    fw.exportDocumentAs(dom, filename, sXO);
+    sXO.crop = false	
+    elem.visible = false;
+  }
+  for (i=0; i<elems.length; i++){ elems[i].visible = true; }
+  return true;
 }
 exportSelectedElements();

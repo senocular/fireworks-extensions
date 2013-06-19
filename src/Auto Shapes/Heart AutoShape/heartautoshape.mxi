@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Heart" version="0.9.0" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Heart Auto Shape<br>
+		by senocular<br><br>
+		
+		The Heart auto shape lets you create a heart in Fireworks with 4 points of control.]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Heart Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Heart.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Heart.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

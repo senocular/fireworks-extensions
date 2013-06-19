@@ -1,0 +1,211 @@
+﻿// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+	
+	// create new path as first element in elements array
+	smartShape.elem.elements[0] = new Path();
+	
+	// create new contour as first contour in contours array
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	
+	// set the contour to be a closed contour
+	smartShape.elem.elements[0].contours[0].isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// create 12 nodes in the contour by altering the nodes array (nods) length
+	nods.length = 12;
+	
+	// set the position of the 12 nodes to make up the cross shape.  The first node starts
+	// with the inner top-left corner point and continues around the shape clockwise from there
+	SetNodePosition(nods[0], AddPoints(mouse, {x:-15, y:-15}));
+	SetNodePosition(nods[1], AddPoints(mouse, {x:-15, y:-30}));
+	SetNodePosition(nods[2], AddPoints(mouse, {x:15, y:-30}));
+	SetNodePosition(nods[3], AddPoints(mouse, {x:15, y:-15}));
+	SetNodePosition(nods[4], AddPoints(mouse, {x:30, y:-15}));
+	SetNodePosition(nods[5], AddPoints(mouse, {x:30, y:15}));
+	SetNodePosition(nods[6], AddPoints(mouse, {x:15, y:15}));
+	SetNodePosition(nods[7], AddPoints(mouse, {x:15, y:30}));
+	SetNodePosition(nods[8], AddPoints(mouse, {x:-15, y:30}));
+	SetNodePosition(nods[9], AddPoints(mouse, {x:-15, y:15}));
+	SetNodePosition(nods[10], AddPoints(mouse, {x:-30, y:15}));
+	SetNodePosition(nods[11], AddPoints(mouse, {x:-30, y:-15}));
+	
+	
+	// create 2 new control points in the control points array
+	cps.length = 2;
+	
+	// set the first control point to a position on the right side of the shape
+	// with the name "Outer" and the toolTip "Reach"	
+	SetControlPoint(cps[0], AddPoints(mouse, {x:30, y:0}), "Outer", "Reach");
+	
+	// set the second control point to a location of the 7th node (inner bottom-right)
+	// with the name "Inner" and the toolTip "Inner Corners"	
+	SetControlPoint(cps[1], nods[6], "Inner", "Inner Corners");
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+
+	// assign a short variable to represent the currently clicked control point
+	var cp = smartShape.currentControlPoint;
+	
+	// if the current control point name is "Outer"
+	if (cp.name == "Outer"){
+	
+		// set delta parms to allow normal 1:1 movement with the x movement 
+		// but disable y movement by making the movement ratio 1:0
+		parms.deltaXtoX = 1;
+		parms.deltaYtoY = 0;
+		
+		// set the current control point, nodes 4 and 5 to move only with the
+		// x direction of the mouse (since deltaYtoY for parms is 0)
+		// This moves the right side with the mouse
+		cp.RegisterMove(parms);
+		nods[4].RegisterMove(parms);
+		nods[5].RegisterMove(parms);
+		
+	
+		// set delta parms to allow normal 1:-1 movement with the x movement 
+		// but disable y movement by making the movement ratio 1:0
+		parms.deltaXtoX = -1;
+		parms.deltaYtoY = 0;
+		
+		// set nodes 10 and 11 to move only the opposite of only the
+		// x direction of the mouse (since deltaYtoY for parms is 0)
+		// This moves the left side opposite the right side (opposite the mouse)
+		nods[10].RegisterMove(parms);
+		nods[11].RegisterMove(parms);
+	
+		// set delta parms for both x and y movement to have a 1:0 ratio
+		// disabling movement of the mouse
+		parms.deltaXtoX = 0;
+		parms.deltaYtoY = 0;
+		
+		// instead, movement will move for y but only opposite that of the movement 
+		// of x mouse movement making x mouse movement control the points' y movement
+		parms.deltaXtoY = 1;
+		
+		// set nodes 7 and 8 to move only along y and based on x mouse
+		// movement (based on parms) This moves the bottom down
+		nods[7].RegisterMove(parms);
+		nods[8].RegisterMove(parms);
+		
+		// switch movement for y to move opposite that of the x movement of the mouse
+		parms.deltaXtoY = -1;
+		
+		// set nodes 1 and 2 to move only along y and based on opposite x mouse
+		// movement (based on parms) This moves the top up	
+		nods[1].RegisterMove(parms);
+		nods[2].RegisterMove(parms);
+		
+	// otherwise if the current control point name is "Inner"
+	}else if (cp.name == "Inner"){
+		
+		// inner nodes (and the control point) dont move in reaction to 
+		// y motion at all so y movement is set to 1:0
+		parms.deltaYtoY = 0;
+		
+		// nodes instead move both x and y based only on x mouse movement
+		// this creates diagonal movement.  XtoX 1 and XtoY 1 creates
+		// movement moving down and right as the mouse moves right
+		parms.deltaXtoX = 1;
+		parms.deltaXtoY = 1;
+		
+		// set the inner control point and node 6 to move down and right
+		// when the mouse moves right
+		cp.RegisterMove(parms);
+		nods[6].RegisterMove(parms);
+		
+		// set x movement to be opposite the mouse.  This moves down
+		// and left as the mouse moves right
+		parms.deltaXtoX = -1;
+		parms.deltaXtoY = 1;
+		
+		// set node 9 to move down and left when the mouse moves right
+		nods[9].RegisterMove(parms);
+		
+		// set both x movement and y movement to be opposite the mouse.
+		// This moves up and left as the mouse moves right
+		parms.deltaXtoX = -1;
+		parms.deltaXtoY = -1;
+		
+		// set node 0 to move up and left when the mouse moves right
+		nods[0].RegisterMove(parms);
+		
+		
+		// set  x movement to move with the mouse and y movement to be opposite
+		// the mouse. This moves up and right as the mouse moves right
+		parms.deltaXtoX = 1;
+		parms.deltaXtoY = -1;
+		
+		// set node 3 to move up and right when the mouse moves right
+		nods[3].RegisterMove(parms);
+	}
+}
+// end event handlers
+
+// custom functions:
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

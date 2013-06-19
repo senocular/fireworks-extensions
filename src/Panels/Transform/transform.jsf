@@ -1,0 +1,244 @@
+
+var dom = fw.getDocumentDOM();
+var _pts = false;
+
+function GetSelectedPoints(){
+	if (_pts) return _pts;
+	_pts = new Array();
+	_pts.elements = new Array();
+	var s = fw.selection.length;
+	if (!s) return _pts;
+	var c, n, ns, pt;
+	while (s--){
+		_pts.elements[s] = new Array();
+		if (String(fw.selection[s]) != "[object Path]") continue;
+		c = fw.selection[s].contours.length;
+		while(c--){
+			ns = fw.selection[s].contours[c].nodes;
+			n = ns.length;
+			while(n--){
+				if (ns[n].isSelectedPoint){
+					pt = {r:ns[n], s:s, c:c, n:n};
+					_pts.push(pt);
+					_pts.elements[s].push(pt);
+				}
+			}
+		}
+	}
+	return _pts;
+}
+function GetPointsShape(pts){
+	var i = pts.length-1;
+	var pt = pts[i].r;
+	var shape = {width:0, height:0, left:pt.x, top:pt.y, right:pt.x, bottom:pt.y};
+	while(i--){
+		pt = pts[i].r;
+		if (pt.x > shape.right) shape.right = pt.x;
+		else if (pt.x < shape.left) shape.left = pt.x;
+		if (pt.y < shape.top) shape.top = pt.y;
+		else if (pt.y > shape.bottom) shape.bottom = pt.y;
+	}
+	shape.width = shape.right - shape.left;
+	shape.height = shape.bottom - shape.top;
+	return shape;
+}
+
+function RunOperation(op, point, arg, attributes, multiple){
+	var pts = GetSelectedPoints();
+	if (!pts.length){
+		dom.group("normal");
+		var grp = fw.selection[0];
+		if (multiple){
+			var i = grp.elements.length;
+			while(i--){
+				fw.selection = [ grp.elements[i] ];
+				op(point, arg, attributes);
+			}
+			fw.selection = [ grp ];
+		}else{
+			op(point, arg, attributes);
+		}
+		dom.ungroup();
+	}else{
+		op(point, arg, attributes, multiple);
+	}
+	return true;
+}
+
+function RotateSelection(point, angle, attributes, multiple){
+	if (!angle) return;
+	var pts = GetSelectedPoints();
+	if (pts.length){
+		RotatePointSelection(point, angle, multiple);
+	}else{
+		RotateObjectSelection(point, angle, attributes);
+	}
+}
+function RotateObjectSelection(point, angle, attributes){
+	OffsetForRotation(point, angle);
+	var props = (attributes) ? "autoTrimImages transformAttributes" : "autoTrimImages";
+	dom.rotateSelection(angle, props);
+}
+function OffsetForRotation(point, angle){
+	if (point == 4) return;
+	var toRads = Math.PI/180;
+	var cx = -(fw.selection[0].width/2) * (point%3 - 1);
+	var cy = -(fw.selection[0].height/2) * (Math.floor(point/3)%3 - 1);
+	var ca = Math.cos(angle*toRads), sa = Math.sin(angle*toRads);
+	var rx = cx*ca - cy*sa, ry = cx*sa + cy*ca;
+	dom.moveSelectionBy({x:rx - cx, y:ry - cy}, false, false);
+}
+function RotatePointSelection(point, angle, multiple){
+	var pts = GetSelectedPoints();
+	var base;
+	if (multiple){
+		var i = pts.elements.length;
+		while(i--){
+			base = GetPointsShape(pts.elements[i]);
+			RotatePoints(pts.elements[i], CalculateShape(point, base, base), angle);
+		}
+	}else{
+		base = GetPointsShape(pts);
+		RotatePoints(pts, CalculateShape(point, base, base), angle)
+	}
+}
+function RotatePoints(pts, calcShape, angle){
+	var n, x, y, i;
+	angle *= Math.PI/180;
+	var ca = Math.cos(angle), sa = Math.sin(angle);
+	i = pts.length;
+	while (i--){
+		n = pts[i];
+		x = n.r.x - calcShape.x; y = n.r.y - calcShape.y;
+		fw.selection[n.s].contours[n.c].nodes[n.n].x = calcShape.x + x*ca-y*sa;
+		fw.selection[n.s].contours[n.c].nodes[n.n].y = calcShape.y + x*sa+y*ca;
+		x = n.r.predX - calcShape.x; y = n.r.predY - calcShape.y;
+		fw.selection[n.s].contours[n.c].nodes[n.n].predX = calcShape.x + x*ca-y*sa;
+		fw.selection[n.s].contours[n.c].nodes[n.n].predY = calcShape.y + x*sa+y*ca;
+		x = n.r.succX - calcShape.x; y = n.r.succY - calcShape.y;
+		fw.selection[n.s].contours[n.c].nodes[n.n].succX = calcShape.x + x*ca-y*sa;
+		fw.selection[n.s].contours[n.c].nodes[n.n].succY = calcShape.y + x*sa+y*ca;
+	}
+}
+function ShapeSelection(point, shape, attributes, multiple){
+	var pts = GetSelectedPoints();
+	if (pts.length){
+		var base = GetPointsShape(pts);
+		ShapePointSelection(point, shape, base, multiple);
+	}else{
+		ShapeObjectSelection(point, CalculateShape(point, shape, fw.selection[0]), attributes);
+	}
+}
+function ShapeObjectSelection(point, calcShape, attributes){
+	var left = calcShape.x - (calcShape.width/2) * (point%3);
+	var top = calcShape.y - (calcShape.height/2) * (Math.floor(point/3)%3);
+	var props = (attributes) ? "autoTrimImages transformAttributes" : "autoTrimImages";
+	dom.setSelectionBounds({left:left, top:top, right:left + calcShape.width, bottom:top + calcShape.height}, props);
+}
+function ShapePointSelection(point, shape, base, multiple){
+	var pts = GetSelectedPoints();
+	if (multiple){
+		var i = pts.elements.length;
+		var base;
+		while(i--){
+			base = GetPointsShape(pts.elements[i]);
+			ShapePoints(pts.elements[i], CalculateShape(point, shape, base), CalculateShape(point, base, base), base);
+		}
+	}else{
+		ShapePoints(pts, CalculateShape(point, shape, base), CalculateShape(point, base, base), base);
+	}
+	return true;
+}
+function ShapePoints(pts, calcShape, calcBase, base){
+		var n, x, y, i;
+		var scaleX = (base.width) ? calcShape.width/base.width : 1;
+		var scaleY = (base.height) ?  calcShape.height/base.height : 1;
+		var dX = calcShape.x - calcBase.x;
+		var dY = calcShape.y - calcBase.y;
+		i = pts.length;
+		while (i--){
+			n = pts[i];
+			x = n.r.x - calcShape.x; y = n.r.y - calcShape.y;
+			fw.selection[n.s].contours[n.c].nodes[n.n].x = dX + calcShape.x + x*scaleX;
+			fw.selection[n.s].contours[n.c].nodes[n.n].y = dY + calcShape.y + y*scaleY;
+			x = n.r.predX - calcShape.x; y = n.r.predY - calcShape.y;
+			fw.selection[n.s].contours[n.c].nodes[n.n].predX = dX + calcShape.x + x*scaleX;
+			fw.selection[n.s].contours[n.c].nodes[n.n].predY = dY + calcShape.y + y*scaleY;
+			x = n.r.succX - calcShape.x; y = n.r.succY - calcShape.y;
+			fw.selection[n.s].contours[n.c].nodes[n.n].succX = dX + calcShape.x + x*scaleX;
+			fw.selection[n.s].contours[n.c].nodes[n.n].succY = dY + calcShape.y + y*scaleY;
+		}
+}
+function CalculateShape(point, targetshape, base){
+	var shape = new Object();
+	for (var p in targetshape) shape[p] = targetshape[p];
+	var pointX = base.left + (base.width/2)*(point%3);
+	var pointY = base.top + (base.height/2)*(Math.floor(point/3)%3);
+	if (shape.width == null) shape.width = base.width;
+	if (shape.height == null) shape.height = base.height;
+	if (shape.x == null) shape.x = pointX;
+	if (shape.y == null) shape.y = pointY;
+	if (shape.relative){
+		if (shape.units == "%"){
+			shape.width = base.width * shape.width/100;
+			shape.height = base.height * shape.height/100;
+			shape.x = pointX * shape.x/100;
+			shape.y = pointY * shape.y/100;
+		}else{
+			shape.width = base.width + shape.width;
+			shape.height = base.height + shape.height;
+			shape.x = pointX + shape.x;
+			shape.y = pointY + shape.y;
+		}
+	}
+	return shape;
+}
+
+function GetSelectionShape(point){
+	if (!fw.selection.length){
+		return "width=&height=&x=&y=&angle=";
+	}
+	var pts = GetSelectedPoints();
+	var base = (pts.length) ? GetFullPointsShape(pts) : GetFullSelectionShape();
+	var shape = "";
+	shape += "width=" + base.width + "&";
+	shape += "height=" + base.height + "&";
+	shape += "x=" + (base.left + (base.width/2)*(point%3)) + "&";
+	shape += "y=" + (base.top + (base.height/2)*(Math.floor(point/3)%3)) + "&";
+	shape += "angle=0&";
+	return shape;
+}
+function GetFullPointsShape(pts){
+	var i = pts.length-1;
+	var pt = pts[i].r;
+	var shape = {width:0, height:0, left:pt.x, top:pt.y, right:pt.x, bottom:pt.y};
+	while(i--){
+		pt = pts[i].r;
+		if (pt.x > shape.right) shape.right = pt.x;
+		else if (pt.x < shape.left) shape.left = pt.x;
+		if (pt.y < shape.top) shape.top = pt.y;
+		else if (pt.y > shape.bottom) shape.bottom = pt.y;
+	}
+	shape.width = shape.right - shape.left;
+	shape.height = shape.bottom - shape.top;
+	return shape;
+}
+function GetFullSelectionShape(){
+	var i = fw.selection.length-1;
+	var base, shape, right, bottom;
+	base = fw.selection[i];
+	shape = {width:base.width, height:base.height, left:base.left, top:base.top, right:base.left + base.width, bottom:base.top + base.height};
+	while (i--){
+		base = fw.selection[i];
+		right = base.left + base.width;
+		bottom = base.top + base.height;
+		if (right > shape.right) shape.right = right;
+		if (bottom > shape.bottom) shape.bottom = bottom;
+		if (base.left < shape.left) shape.left = base.left;
+		if (base.top < shape.top) shape.top = base.top;
+	}
+	shape.width = shape.right - shape.left;
+	shape.height = shape.bottom - shape.top;
+	return shape;
+}
+

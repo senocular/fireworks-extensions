@@ -1,0 +1,204 @@
+﻿// shortening variables:
+// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// shape variables:
+// variable to detwemine the angle of the arrow head in
+// reference to the arrow line
+var arrowSharp = .3;
+
+// variable of the arrow head lines' lengths in pixels
+var arrowLength = 10;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an BeginDragInsert event handler that will create the
+// shape for the BeginDragInsert event (click and drag)
+operation.BeginDragInsert = function(){
+
+	// create new path as first element in elements array
+	smartShape.elem.elements[0] = new Path();
+	
+	// create 2 new contours for the first element
+	smartShape.elem.elements[0].contours.length = 2;
+	
+	// create 2 nodes for the first contour
+	smartShape.elem.elements[0].contours[0].nodes.length = 2;
+
+	// create 2 nodes for the second contour
+	smartShape.elem.elements[0].contours[1].nodes.length = 3;
+	
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// set the default node positions to the mouse
+	SetNodePosition(nods[0], mouse);
+	SetNodePosition(nods[1], mouse);
+	
+	// set getsDragEvents to true so that the DragInsert event
+	// will run the Auto Shape script
+	smartShape.getsDragEvents = true;
+}
+
+// define an DragInsert event handler that will be called
+// everytime the mouse moves when the shape is created
+operation.DragInsert = function(){
+
+	// call Draw to draw the shape between the first node position
+	// and the current position of the mouse
+	Draw(PointFromNode(smartShape.elem.elements[0].contours[0].nodes[0]), mouse);
+}
+
+// define an EndDragInsert event handler that will be called
+// as a result of releasing the mouse after creating the shape
+operation.EndDragInsert = function(){
+
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// create 2 control points.  They are created now since they are not
+	// needed during drag and may get in the way of the location
+	// you might be placing your arrow
+	cps.length = 2;
+	
+	// set the two control points (End and Point) to the locations
+	// of the first contour's nodes marking the start and end of the arrow
+	SetControlPoint(cps[0], nods[0], "End", "End Point");
+	SetControlPoint(cps[1], nods[1], "Point", "Arrow Head");
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+	
+	// set the current control point to move with the mouse
+	// when clicked.  Nodes will be positioned using Draw
+	smartShape.currentControlPoint.RegisterMove(parms);
+	
+	// set getsDragEvents to be true so that the DragControlPoint event will
+	// run for the Auto Shape
+	smartShape.getsDragEvents = true;
+}
+
+// define an DragControlPoint event handler that will be called
+// everytime the mouse moves when dragging a control point
+operation.DragControlPoint = function(){
+
+	// call Draw to draw the arrow based on the positions of the control points
+	Draw(PointFromNode(cps[0]), PointFromNode(cps[1]));
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * Draw creates the Arrow shape based on the locations of the shape's control points
+ * Requires: SetNodePosition, AngleBetween, PointFromVector
+*/
+Draw = function(end, point){
+
+	// assign a short variable to represent the first contour (line) nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// set the nodes to the end and point locations as passed (these are
+	// typically the control points except when from DragInsert)
+	SetNodePosition(nods[0], end);
+	SetNodePosition(nods[1], point);
+
+	// assign a short variable to represent the first contour (arrow) nodes array
+	nods = smartShape.elem.elements[0].contours[1].nodes;
+	
+	// find the angle of the line of the arrow
+	var angle = AngleBetween(point, end);
+	
+	// get points from the point of the arrow line based on the angle
+	// and arrowSharp and arrowLength variables
+	var arrow1 = PointFromVector(point, angle + arrowSharp, arrowLength);
+	var arrow2 = PointFromVector(point, angle - arrowSharp, arrowLength);
+	
+	// assign locations for the second contour to form the head of the arrow
+	// based on the points calculated for the head and the end of the line
+	SetNodePosition(nods[0], arrow1);
+	SetNodePosition(nods[1], point);
+	SetNodePosition(nods[2], arrow2);
+}
+
+// (common functions)
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name
+*/
+SetControlPoint = function(cp, pt, name){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTipTracksDrag = true; // have tool tips follow mouse during drag
+}
+
+/**
+ * PointFromNode creates a generic point object from a ContourNode object
+*/
+PointFromNode = function(node){
+	return {x: node.x, y:node.y}; // copy x and y properties in returned object
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+
+/**
+ * AngleBetween returns the angle between two points pt1 and pt2 in radians
+*/
+AngleBetween = function(pt1, pt2){
+	return Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x); // use arc tangent 2 to get angle
+}
+
+/**
+ * PointFromVector returns a point extending outward from the point origin at the
+ * angle angle (radians) with a distance of power
+*/
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}; // use sine and cosine to determine new point locations
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

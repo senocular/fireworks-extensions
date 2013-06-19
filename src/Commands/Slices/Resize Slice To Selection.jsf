@@ -1,0 +1,23 @@
+function resizeSlice(){
+	var dom = fw.getDocumentDOM();
+	var sel = new Array().concat(fw.selection);
+	var slc = false;
+	var i = sel.length;
+	while (i--){
+		if (sel[i].__proto__ == SliceHotspot){
+			slc = sel.splice(0,1)[0];
+			fw.selection = sel;
+			break;
+		}
+	}
+	if (!slc || !fw.selection.length){
+		return alert("Error: please select one slice and one or more objects to set the slice with.");
+	}
+	dom.group("normal");
+	var rect = fw.selection[0].pixelRect;
+	dom.ungroup();
+	fw.selection = [slc];
+	dom.setHotspotRectangle(rect, false);
+}
+resizeSlice();
+delete resizeSlice;

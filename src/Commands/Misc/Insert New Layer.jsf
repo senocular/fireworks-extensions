@@ -1,0 +1,4 @@
+fw.getDocumentDOM().addNewLayer(null, false);
+nam = prompt("New Layer Name:", "Layer");
+if (nam) fw.getDocumentDOM().setLayerName(-1, nam);
+delete nam;

@@ -1,5 +1,3 @@
-﻿//--not for batch--
-
 GetElementPosition = function(elem){
 	if (!dom) var dom = fw.getDocumentDOM();
 	var f = dom.frames[dom.currentFrameNum];
@@ -16,16 +14,10 @@ GetElementPosition = function(elem){
 }
 
 Solidify = function(elem){
-
-	fw.runScript(Files.getLanguageDirectory() + "/JSFStrings/Solidify.jsf");
-	var t    = __tooltips;
-
-if(elem == null)
-      return alert(t.alrtmsg1);
 	if (!dom) var dom = fw.getDocumentDOM();
-	if (elem.__proto__ != Text.prototype) return alert(t.alrtmsg1);
+	if (elem.__proto__ != Text.prototype) return alert("Please select one Text object.");
 	var pos = GetElementPosition(elem);
-	if (!pos) return alert(t.alrtmsg2);
+	if (!pos) return alert("Error: unable to locate selected element within the document.");
 	dom.addNewLayer(null, false);
 	var newLayer = dom.currentLayerNum;
 	dom.moveSelectionToLayer(-1, false, "none", -1);
@@ -37,5 +29,4 @@ if(elem == null)
 	dom.moveSelectionToLayer(pos.layer, false, "none", pos.element);
 	dom.deleteLayer(newLayer);
 }
-
 Solidify(fw.selection[0]);

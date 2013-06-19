@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Extrude Path" version="0.9.0" type="command" requires-restart ="false">
+	<products>
+		<product name="Fireworks" version="7" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Extrude Path<br>
+		www.senocular.com<br><br>
+		
+		Extrudes a single selected vector path vertically at a specified height.  This does not alter the original path but, instead, creates 2 new objects representing the extrusion: 1) a copy of the original as the cap or top of the extrusion (the original remains in its place at the bottom of the extrusion) and 2) a group of paths making up the extrusion walls.<br>
+		Note: depth sorting for the extrusion wall paths is not perfect due to varying sizes of paths.  After extruding, you may need to manually adjust arrangement for more accurate results.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run Extrude Path from your Commands > Paths menu.]]>
+	</ui-access>
+	<files>
+		<file source="Extrude Path.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+	</files>
+</macromedia-extension>

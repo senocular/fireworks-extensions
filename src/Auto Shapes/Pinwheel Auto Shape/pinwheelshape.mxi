@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Pinwheel" version="0.9.9" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Pinwheel<br>
+		www.senocular.com<br><br>
+		
+		The Pinwheel Auto Shape creates a "Pinwheel" consisting of 2 to 16 consecutive spirals placed revolved around a common center. It consists of 5 control points to control size (inner and outer radius), rotation, spiral count, spiral style (solid, checker, and wire which can be cycled through by clicking the Style and Count control point) and spiral curvature.<br><br>
+		
+		As an additional feature, you can use the sub select tool to alter the path of the primary spiral (the one previewed when altering the shape that is formed between the control points) and have all other consecutive spirals mimic the change.  Altering the shape with control points after doing this will undo the effects.<br><br>
+		
+		Version History:
+		0.9.9: Added support for 'Circular' curves accessible by clicking on the 'Curve and Kind' control point (also allows for straight lines)
+		0.9.8: Initial public release]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Pinwheel Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Pinwheel.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Pinwheel.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

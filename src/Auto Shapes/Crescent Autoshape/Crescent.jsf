@@ -1,0 +1,173 @@
+﻿var MouseLoc = smartShape.currentMousePos
+var MouseX = smartShape.currentMousePos.x;
+var MouseY = smartShape.currentMousePos.y;
+var BCACONST =(Math.sqrt(2)-1)*4/3; // bezier curve approximation constant
+var rad90=Math.PI/2, rad180=Math.PI, rad270=(6*Math.PI)/4, rad360 =2*Math.PI;
+op = function(operation){
+	this.cp  = smartShape.elem.controlPoints;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function () {
+	this.setControlPoint(0, MouseLoc, false, false); // center
+	this.setControlPoint(1, {x:MouseX-50, y:MouseY-50}, true, true); // arc control (mirrored)
+	this.setControlPoint(2, {x:MouseX+25, y:MouseY}, true, true); // width or 3rd point
+	this.GenerateShape();
+}
+op.prototype.GenerateShape = function (){
+	var a1 = Math.atan2(this.cp[1].y-this.cp[0].y, this.cp[1].x-this.cp[0].x);
+	var a2 = 2*rad180-a1;
+	var d = distanceBetween(this.cp[0], this.cp[1]);
+
+	smartShape.elem.elements[0] = new Path();
+ 	smartShape.elem.elements[0].contours[0] = new Contour();
+ 	var contour = smartShape.elem.elements[0].contours[0];
+ 	ArcTo(contour, 0, this.cp[0], d, a1, a2, 1);
+	
+	var mirrPt = {x:this.cp[1].x, y:2*this.cp[0].y-this.cp[1].y}
+	var c = CircleFromThreePoints(this.cp[1], this.cp[2], mirrPt);
+	a1 = Math.atan2(this.cp[1].y-c.y, this.cp[1].x-c.x);
+	a2 = 2*rad180-a1;
+ 	ArcTo(contour, contour.nodes.length-1, {x:c.x, y:c.y}, c.radius, a2, a1, -1);
+	this.updateToolTips();
+}
+op.prototype.BeginDragControlPoint = function (){
+	smartShape.getsDragEvents = true;
+	var params = smartShape.GetDefaultMoveParms();
+	switch(smartShape.currentControlPointIndex){
+		case 1:
+			params.constrainAngles = true;
+			var d = distanceBetween(this.cp[0],this.cp[1]);
+			params.minAngle = {x:this.cp[2].x-2,y:this.cp[2].y-d}; // {x:this.cp[0].x+100,y:this.cp[0].y-1};
+			params.maxAngle = {x:this.cp[0].x-100,y:this.cp[0].y-1};
+			var d2 = 2+this.cp[2].x-this.cp[0].x;
+			
+			//~var ang = Math.atan2(this.cp[0].y-this.cp[1].y,this.cp[0].x-this.cp[1].x);
+			//~ params.maxY = this.cp[0].y-Math.sin(ang)*d;
+			var maxOuter = d-Math.abs(d2)
+			var maxInner = d*(this.cp[2].x-2-this.cp[1].x)/(this.cp[0].x-this.cp[1].x);
+			//alert(maxInner);
+			params.maxLinear = Math.min(maxInner,maxOuter);
+			//params.maxLinear = -d;
+			if (smartShape.ctrlCmdKeyDown) this.cp[1].RegisterLinearMove({x:this.cp[0].x, y:this.cp[0].y},params);
+			else this.cp[1].RegisterCircularMove({x:this.cp[0].x, y:this.cp[0].y},params);
+			break;
+		case 0:
+		case 2:
+			params.deltaXtoX = 1;
+			params.deltaYtoY = 0;
+			params.minX = this.cp[1].x+2;
+			params.maxX = this.cp[0].x+distanceBetween(this.cp[0],this.cp[1])-2;
+			this.cp[2].RegisterMove(params);
+			break;
+	}
+}
+op.prototype.DragControlPoint = op.prototype.EndDragControlPoint = function(){
+	var att = smartShape.elem.elements[0].pathAttributes;
+	this.GenerateShape();
+	smartShape.elem.elements[0].pathAttributes = att;
+}
+op.prototype.setControlPoint = function(index, pt, track, vis){
+	if (this.cp.length <= index)  this.cp.length = index+1;
+	this.cp[index].x = pt.x;
+	this.cp[index].y = pt.y;
+	this.cp[index].toolTipTracksDrag = track;
+	this.cp[index].visible = vis;
+}
+op.prototype.updateToolTips = function(){
+	var phrases = ["Arch: ","Radius: ","Hollow:"];
+	var rad = distanceBetween(this.cp[0], this.cp[1]);
+	if (!smartShape.ctrlCmdKeyDown){
+		this.cp[1].toolTip = phrases[0] + -Math.round(Math.atan2(this.cp[1].y-this.cp[0].y, this.cp[1].x-this.cp[0].x)*180/Math.PI)+"°";
+	}else{
+		this.cp[1].toolTip = phrases[1] + Math.round(rad);
+	}
+	this.cp[2].toolTip = phrases[2] + Math.floor(100*(this.cp[2].x-this.cp[1].x)/(this.cp[0].x-this.cp[1].x+rad))+"%";
+}
+function ArcTo(contour, nodeIndex, origin, radius, a1, a2, dir){
+	var angles = GetAnglesBetween(a1, a2, dir);
+	var currIndex, preva, nexta;
+	for (var i=0; i<angles.length; i++){
+		currIndex = nodeIndex+i;
+ 		if (currIndex >= contour.nodes.length) contour.nodes.length = currIndex+1;
+ 		nexta = (i < angles.length-1) ? (angles[i+1]>angles[i]) ? (angles[i+1]-angles[i]) : (rad360+angles[i+1]-angles[i]) : 0;
+		preva = (i > 0) ? (angles[i]>angles[i-1]) ? (angles[i]-angles[i-1]) : (rad360+angles[i]-angles[i-1])  : 0;
+		if (dir ==-1){
+			if (preva) preva = rad360 - preva;
+			if (nexta) nexta = rad360 - nexta;
+		}
+		var cosa = Math.cos(angles[i]), sina = Math.sin(angles[i]);
+		var n = contour.nodes[currIndex];
+		if (i || !currIndex){ // only for first node - may need to re-evaluate
+			n.x = origin.x+radius*cosa;
+			n.y = origin.y+radius*sina;
+		}
+		if (preva){
+			var radiusp = radius*BCACONST*dir*preva/rad90;
+			n.predX = n.x+radiusp*sina;
+			n.predY = n.y-radiusp*cosa;
+		}else if (!currIndex){ // only for first node - may need to re-evaluate
+			n.predX = n.x;
+			n.predY = n.y;
+		}
+		if (nexta){ // if false, node last and succPT set to node loc
+			var radiusn = radius*BCACONST*dir*nexta/rad90;
+			n.succX = n.x-radiusn*sina;
+			n.succY = n.y+radiusn*cosa;
+		}else{
+			n.succX = n.x;
+			n.succY = n.y;
+		}
+	}
+}
+function distanceBetween(p1, p2){
+	var dx = p2.x-p1.x;
+	var dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+function DefineNodes(contour, origin, count){
+	contour.nodes.length = count; // + 1; includes center?
+	var node =contour.nodes[0];
+	node.x = node.predX = node.succX = origin.x;
+	node.y = node.predY = node.succY = origin.y;
+	contour.isClosed = true;
+}
+function GetAnglesBetween(a1, a2, dir){
+	//~ a1 = ((a1+rad180)%rad360)-rad180; 
+	//~ a2 = ((a2+rad180)%rad360)-rad180; 
+	a1 %= rad360; a2 %= rad360;
+	if (a1 == a2) var diff = rad360;
+	else{
+		var diff = (a1>a2) ? (rad360+a2-a1) : Math.abs(a2-a1);
+		if (dir == -1) diff = rad360 - diff;
+	}
+	if (diff <= rad90)  return [a1, a2];
+	if (diff <= rad180) var segs = 2;
+	else if (diff <= rad270) var segs = 3;
+	else var segs = 4;
+	var inc = dir*diff/segs, a = [a1];
+	for (var i=1; i<segs; i++) {
+		a[i] = a[0]+i*inc;
+		if (a[i] >= rad360 ) a[i] -= rad360;
+	}
+	a[a.length] = a2;
+	//alert(a)
+	return a;
+}
+function CircleFromThreePoints(p1,p2,p3){
+	// does not account for 0/undefined slopes or large circles
+	var o = {x:0,y:0,radius:0}; // origin & circ props
+	var a = (p2.x*p2.x + p2.y*p2.y - p1.x*p1.x - p1.y*p1.y)/2;
+	var b = (p3.x*p3.x + p3.y*p3.y - p2.x*p2.x - p2.y*p2.y)/2;
+	var dx12 = p2.x - p1.x;
+	var dy12 = p2.y - p1.y;
+	var dx23 = p3.x - p2.x;
+	var dy23 = p3.y - p2.y;
+	o.x = (b*dy12/(dy23*dx12) - a/dx12)/(dx23*dy12/(dy23*dx12) - 1);
+	o.y = (a - o.x*dx12)/dy12;
+	var dxr = p1.x-o.x;
+	var dyr = p1.y-o.y;
+	o.radius = Math.sqrt(dxr*dxr+dyr*dyr);
+	return o;
+}
+// init
+new op(smartShape.operation);

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Path Commands" version="0.9.6" type="command" requires-restart ="false">
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<description>
+		<![CDATA[
+		Path Commands<br>
+		www.senocular.com
+		<br><br>		
+		A collection of rudimentary commands for Paths.
+		<br><br>
+		- Close: Closes all selected paths
+		- Invert: Inverts selected paths.  Inverting a path is similar to inverting a marquee selection.  In a path's case, a new path contour is created around the current path that's the size of the document effectively inverting the path
+		- Open: Opens all selected paths
+		- Round Points Positions: Rounds all the positions of the points on the path to the nearest whole number
+		- Round Points to Half: Rounds all the positions of the points on the path to the nearest .5 value
+		- Shift Points: Changes the location of the first point to be the next point in the path (used with open paths)
+		- Smooth: Smooths selected paths to not have any straight corners
+		- Straighten: Removes any curves from selected paths
+		- Straighten Ends: Removes curves extending from the selected paths' end points.
+		- Toggle Open or Closed: Opens all selected closed paths and closes all selected open paths
+		- Merge End Points: Merges the end points of all paths within a shape converting the ends into one joined point in a location between the original
+		- Mirror Horizontal/Vertical: Mirrors all points in a path adding them to the current path
+		- Revolve: Revolves all points in a path (first contour only) in a circluar manner a number of times indicated by the user adding them to the current path
+		<br><br>
+		Version History:
+		- 0.9.6: Added Merge End Points, Mirror, and Revolve
+		- 0.9.5: Added Straighten Ends
+		- 0.9.4: Made inverted paths closed
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run these commands from your Commands > Paths > ... menu]]>
+	</ui-access>
+	<files>
+		<file source="Close.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Invert.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Open.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Round Points Positions.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Round Points to Half.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Shift Points.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Smooth.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Straighten.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Straighten Ends.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Toggle Open or Closed.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+		<file source="Merge End Points.jsf" destination="$fireworks/Configuration/Commands/Paths" />
+	</files>
+</macromedia-extension>

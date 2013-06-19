@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Creating Fireworks Auto Shapes Tutorial Example Shapes" version="1.0.1" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[reating Fireworks Auto Shapes Tutorial Example Shapes<br>
+		www.senocular.com<br><br><br>
+		
+		Finalized Auto Shape examples from the Creating Fireworks Auto Shapes tutorial:
+		http://senocular.com/tutorials/tutorial/?about=autoshapes<br><br>
+		
+		Version History:
+		1.0.1: Fixed a bug where certain shapes were missing functions allowing for them only to work after other shapes had been added defining those functions for them
+		1.0.0: Initial public release 
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access these Auto Shapes from the Tools and Shapes panels.]]>
+	</ui-access>
+	<files>
+		<file source="Auto Shape Tools/Hollow Box 7.jsf" destination="$fireworks/Configuration/Auto Shape Tools/Hollow Box 7.jsf" />
+		<file source="Auto Shape Tools/Hollow box 7.png" destination="$fireworks/Configuration/Auto Shape Tools/Hollow box 7.png" />
+		<file source="Auto Shape Tools/Simple Arrow.jsf" destination="$fireworks/Configuration/Auto Shape Tools/Simple Arrow.jsf" />
+		<file source="Auto Shape Tools/Simple Arrow.png" destination="$fireworks/Configuration/Auto Shape Tools/Simple Arrow.png" />
+		<file source="Auto Shapes/Aqua button.gif" destination="$fireworks/Configuration/Auto Shapes/Aqua button.gif" />
+		<file source="Auto Shapes/Aqua Button.jsf" destination="$fireworks/Configuration/Auto Shapes/Aqua Button.jsf" />
+		<file source="Auto Shapes/Asterisk 3.gif" destination="$fireworks/Configuration/Auto Shapes/Asterisk 3.gif" />
+		<file source="Auto Shapes/Asterisk 3.jsf" destination="$fireworks/Configuration/Auto Shapes/Asterisk 3.jsf" />
+		<file source="Auto Shapes/Chained Selection 2.gif" destination="$fireworks/Configuration/Auto Shapes/Chained Selection 2.gif" />
+		<file source="Auto Shapes/Chained Selection 2.jsf" destination="$fireworks/Configuration/Auto Shapes/Chained Selection 2.jsf" />
+		<file source="Auto Shapes/Circle Segment.gif" destination="$fireworks/Configuration/Auto Shapes/Circle Segment.gif" />
+		<file source="Auto Shapes/Circle Segment.jsf" destination="$fireworks/Configuration/Auto Shapes/Circle Segment.jsf" />
+		<file source="Auto Shapes/Cross.gif" destination="$fireworks/Configuration/Auto Shapes/Cross.gif" />
+		<file source="Auto Shapes/Cross.jsf" destination="$fireworks/Configuration/Auto Shapes/Cross.jsf" />
+		<file source="Auto Shapes/Curve 2.gif" destination="$fireworks/Configuration/Auto Shapes/Curve 2.gif" />
+		<file source="Auto Shapes/Curve 2.jsf" destination="$fireworks/Configuration/Auto Shapes/Curve 2.jsf" />
+		<file source="Auto Shapes/Element Matcher.gif" destination="$fireworks/Configuration/Auto Shapes/Element Matcher.gif" />
+		<file source="Auto Shapes/Element Matcher.jsf" destination="$fireworks/Configuration/Auto Shapes/Element Matcher.jsf" />
+		<file source="Auto Shapes/Figure Icon.gif" destination="$fireworks/Configuration/Auto Shapes/Figure Icon.gif" />
+		<file source="Auto Shapes/Figure Icon.jsf" destination="$fireworks/Configuration/Auto Shapes/Figure Icon.jsf" />
+		<file source="Auto Shapes/Pentagon 4.gif" destination="$fireworks/Configuration/Auto Shapes/Pentagon 4.gif" />
+		<file source="Auto Shapes/Pentagon 4.jsf" destination="$fireworks/Configuration/Auto Shapes/Pentagon 4.jsf" />
+		<file source="Auto Shapes/Play Button Triangle 4.gif" destination="$fireworks/Configuration/Auto Shapes/Play Button Triangle 4.gif" />
+		<file source="Auto Shapes/Play Button Triangle 4.jsf" destination="$fireworks/Configuration/Auto Shapes/Play Button Triangle 4.jsf" />
+		<file source="Auto Shapes/Rounded Polygon.gif" destination="$fireworks/Configuration/Auto Shapes/Rounded Polygon.gif" />
+		<file source="Auto Shapes/Rounded Polygon.jsf" destination="$fireworks/Configuration/Auto Shapes/Rounded Polygon.jsf" />
+		<file source="Auto Shapes/Text Wave.gif" destination="$fireworks/Configuration/Auto Shapes/Text Wave.gif" />
+		<file source="Auto Shapes/Text Wave.jsf" destination="$fireworks/Configuration/Auto Shapes/Text Wave.jsf" />
+		<file source="Patterns/Aqua Button End.png" destination="$fireworks/Configuration/Patterns/Aqua Button End.png" />
+		<file source="Patterns/Aqua Button Mid.png" destination="$fireworks/Configuration/Patterns/Aqua Button Mid.png" />
+		<file source="Patterns/Aqua Button Start.png" destination="$fireworks/Configuration/Patterns/Aqua Button Start.png" />
+	</files>
+</macromedia-extension>

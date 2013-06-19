@@ -1,0 +1,77 @@
+Manual installation instructions
+================================
+
+If you do not have permissions to install the Scale-3 and Scale-9 Component Auto Shapes using the MXP and the Macromedia Extension Manager, you can install the extension manually.
+
+
+
+Configuration Locations
+-----------------------
+There are three folder locations used by the extension.  One is for the shapes themselves (shape code and preview images seen in the Shapes panel), another is for the dialogs and documentation, and the last for the Copy Component Skin command.  Shapes exist in the Fireworks AutoShapes folder:
+[Fireworks 8 Configuration]/AutoShapes
+
+Dialogs and help files exist in a folder named Scale Components which is typically created by the mxp installer within the Shared directory:
+[Fireworks 8 Configuration]/Shared/senocular/Scale Components
+
+The Copy Component Skin exists within the Commands Folder
+[Fireworks 8 Configuration]/Commands
+
+The default Fireworks 8 Configuration folder exists within your Fireworks installation directory (Fireworks 8/Configuration). However, many configuration files are also kept in the user level.  The user equivalent is:
+
+Windows:
+C:\Documents and Settings\[USER]\Application Data\Macromedia\Fireworks 8
+
+Mac:
+Macintosh HD/Users/[USER]/Library/Application Support/Macromedia/Fireworks 8
+
+Note that there is no Configuration subfolder, it is just Fireworks 8.
+
+These folders exist in hidden directories so it they may need to be revealed to open.  The easiest way to open the folders, however, is using Run or Go.
+
+Windows:
+Open the Run dialog using Windows Key + R. Run the following path:
+%HOMEPATH%\Application Data\Macromedia\Fireworks 8
+
+Mac:
+Open the Go dialog using Option + Shift + G in Finder. Go to the following folder:
+~/Library/Application Support/Macromedia/Fireworks 8
+
+
+
+Installation
+------------
+In the AutoShapes folder
+C:\Documents and Settings\[USER]\Application Data\Macromedia\Fireworks 8\AutoShapes
+or
+Macintosh HD/Users/[USER]/Library/Application Support/Macromedia/Fireworks 8/AutoShapes
+place the following files:
+
+Scale-3 Component.jsf
+Scale-3 Component.gif
+Scale-9 Component.jsf
+Scale-9 Component.gif
+
+
+In /Shared/senocular/Scale Components folder (you may have to create the directory structure)
+C:\Documents and Settings\[USER]\Application Data\Macromedia\Fireworks 8\Shared\senocular\Scale Components
+or
+Macintosh HD/Users/[USER]/Library/Application Support/Macromedia/Fireworks 8/Shared/senocular/Scale Components
+place the following files:
+
+Define Slice.swf
+Options-3.swf
+Options-9.swf
+Help.html
+Help Files/
+
+
+In the Commands folder
+C:\Documents and Settings\[USER]\Application Data\Macromedia\Fireworks 8\Commands
+or
+Macintosh HD/Users/[USER]/Library/Application Support/Macromedia/Fireworks 8/Commands
+place the following files:
+
+Copy Component Skin.jsf
+
+
+Restart Fireworks and installation is complete. To uninstall, simply manually delete the files.

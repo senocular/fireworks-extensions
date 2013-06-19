@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Swipe" version="0.8.8" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Swipe Auto Shape<br>
+		by senocular<br><br>
+		
+		The Swipe Auto Shape creates a "swipe" or a continous (optionally segmented) bar which can be bent and be given stripes of differing color.<br><br>
+		There are 2 kinds of handles in the Swipe auto shape; segment handles and stripe handles.<br>
+		Segment handles are yellow.  There are atleast 4 segment handles at any given time to make a complete Swipe shape. Two kinds of segment handles define a Swipe.  The first is a position handle.  These are located in the center of the swipe along its edge or at a fold. These handles can be moved to control the locations of the endpoints and the folds of the Swipe. Holding ALT or OPTION (Mac) while clicking and dragging on a position handle will duplicate it making a fold in (or extending the end of) the Swipe.  To delete a position handle, hold CTRL or COMMAND (Mac) + SHIFT while clicking on the handle.<br>
+With each position handle comes a rotation/size handle.  This handle branches off of a position handle and determines the size and angle of that particular position in the Swipe.<br><br>
+The other kind of Swipe Auto Shape handle is a stripe handle.  Stripe handles are blue handles that always exit between the first two sets of position/rotation handles and control the striping within a Swipe.  Initially there is one "stripe" in a Swipe auto shape defined by the 2 primary handles.  Additional stripes can be added using the bottom-most of those handles.  To do so, hold ALT while clicking and dragging up on that handle bringing a new stripe handle into the Swipe auto shape. New stripe handles can also be derived from existing stripe handles using the same method, but that is not the case with the top-most primary handle.  To change the color of a stripe, hold CTRL or COMMAND (Mac) and click on the handle beneath the stripe (handles exist below the stripes they represent).  This will bring up the color picker allowing you to change the stripe's color.  If a fill color is applied directly to the whole Swipe auto shape, all stripes will assume that color and lose their individual colors so be careful of that. Any stripe handles you create can also be deleted using CTRL or COMMAND (Mac) + SHIFT while clicking on the handle. 
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Swipe Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Swipe.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Swipe.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

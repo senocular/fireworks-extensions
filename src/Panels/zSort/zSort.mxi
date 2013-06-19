@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="zSort" version="0.0.9" type="commandpanel" requires-restart ="true">
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[zSort<br>
+		by senocular<br><br>
+		
+		zSort provides a method of arranging elements in a layer based on screen position or size.]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open zSort from the Windows menu.]]>
+	</ui-access>
+	<files>
+		<file source="zSort.swf" destination="$fireworks/Configuration/Command Panels" />
+		<file source="zSort.jsf.inc" destination="$fireworks/Configuration/Command Panels" />
+	</files>
+</macromedia-extension>

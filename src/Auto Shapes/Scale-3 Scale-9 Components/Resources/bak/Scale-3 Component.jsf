@@ -1,0 +1,481 @@
+﻿
+var autoshapename = "Scale-3 Component";
+var version = "0.6.2";
+
+var defaultHeight = 20;
+var defaultWidth = 20;
+var cpOffsetX = -7;
+var cpOffsetY = -7;
+
+var defaultText = "Sample";
+var quadScript = fw.appDir +"/Configuration/Shared/senocular/ComponentShapes/Define%20Quadrant.swf";
+var optionsScript = fw.appDir +"/Configuration/Shared/senocular/ComponentShapes/Options-3.swf";
+
+var mouse = smartShape.currentMousePos;
+mouse.x = Math.round(mouse.x);
+mouse.y = Math.round(mouse.y);
+var cps = smartShape.elem.controlPoints;
+var debug = "";
+
+/* ****************************************
+SMARTSHAPE EVENTS
+**************************************** */
+operation = new Object();
+operation.InsertSmartShapeAt = function(){
+
+	var pt, elem;
+	var w2 = defaultWidth/2;
+	var h2 = defaultHeight/2;
+	
+	smartShape.elem.elements[0] = new Group();
+	smartShape.elem.elements[0].elements[0] = new Group(); // reserved for text if added
+	var opt = smartShape.elem.elements[0];
+	opt.customData.optionsObj = new Object();
+	opt.customData.optionsObj.orientation = (smartShape.ctrlCmdKeyDown) ? "vert" : "horz"; // vert = vertical, horz = horizontal
+	opt.customData.optionsObj.usetext = "0"; // 0 = false, 1 = true 
+	opt.customData.optionsObj.version = version;
+	opt.customData.optionsObj.autoshapename = autoshapename;
+	
+	
+	SetControlPoint(0, AddPoints(mouse, {x:cpOffsetX-w2, y:cpOffsetY-h2}), "Options", "Options");
+	cps[0].type = "defaultInverted";
+	
+	smartShape.elem.elements[1] = new Path();
+	elem = smartShape.elem.elements[1];
+	DefineQuadrantObj(elem, w2, h2, 1);
+	SetControlPoint(1, mouse, "quad1", "Left; CTRL+Click to Edit");
+	DrawElem(elem);
+	
+	smartShape.elem.elements[2] = new Path();
+	elem = smartShape.elem.elements[2];
+	DefineQuadrantObj(elem, w2, h2, 2);
+	SetControlPoint(2, mouse, "quad2", "Middle; CTRL+Click to Edit");
+	DrawElem(elem);
+	
+	smartShape.elem.elements[3] = new Path();
+	elem = smartShape.elem.elements[3];
+	DefineQuadrantObj(elem, w2, h2, 3);
+	SetControlPoint(3, mouse, "quad3", "Right; CTRL+Click to Edit");
+	DrawElem(elem);
+	
+	RedrawShape();
+	
+}
+
+operation.BeginDragControlPoint = function(){
+	AsureUniqueCustomData();
+	var cp = smartShape.currentControlPoint;
+	
+	if (cp.name == "Options"){
+		if (smartShape.ctrlCmdKeyDown){
+			RedrawShape();
+			return;
+		}
+		MMNotes.ComponentAutoShapeChannel = SerializeOptionsObj();
+		if ( RunFlashScript(optionsScript, false) ) RedrawShape();
+		return;
+	}
+	
+	if (smartShape.ctrlCmdKeyDown){
+		var elem = smartShape.elem.elements[cp.index];
+		MMNotes.ComponentAutoShapeChannel = SerializeQuadrantObj( elem.customData.quadrantObj );
+		if ( RunFlashScript(quadScript, smartShape.shiftKeyDown) ) RedrawShape();
+		return;
+	}
+	
+	UpdateTextLocation();
+	
+	var elems = smartShape.elem.elements;
+	var parms = smartShape.GetDefaultMoveParms();
+	
+	// orientation-specific
+	var mid = smartShape.elem.elements[2].contours[0];
+	var opt = smartShape.elem.elements[0];
+	switch(opt.customData.optionsObj.orientation){
+		case "horz":
+			var minLin = elems[1].contours[0].nodes[1].x - elems[3].contours[0].nodes[0].x;
+			var maxLin = elems[3].contours[0].nodes[0].x - elems[1].contours[0].nodes[1].x;
+			var midminLin = cps[2].x - elems[3].contours[0].nodes[0].x;
+			var midmaxLin = elems[3].contours[0].nodes[0].x - cps[2].x;
+			var offset = {x:100, y:0};
+			var mid1 = 0;
+			var mid2 = 3;
+			var mid3 = 1;
+			var mid4 = 2;
+			break;
+		case "vert":
+			var minLin = elems[1].contours[0].nodes[3].y - elems[3].contours[0].nodes[0].y;
+			var maxLin = elems[3].contours[0].nodes[0].y - elems[1].contours[0].nodes[3].y;
+			var midminLin = cps[2].y - elems[3].contours[0].nodes[0].y;
+			var midmaxLin = elems[3].contours[0].nodes[0].y - cps[2].y;
+			var offset = {x:0, y:100};
+			var mid1 = 0;
+			var mid2 = 1;
+			var mid3 = 2;
+			var mid4 = 3;
+			break;
+	}
+	
+	switch(cp.name){
+		case "quad1":
+			parms.maxLinear = maxLin;
+			RegisterLinearMovePoint(cp, offset, parms);
+			RegisterLinearMovePoint(cps[0], offset, parms); // options
+			RegisterLinearMovePoint(mid.nodes[mid1], offset, parms);
+			RegisterLinearMovePoint(mid.nodes[mid2], offset, parms);
+			RegisterLinearMoveRect( elems[1], offset, parms );
+			parms.deltaLinearToLinear = .5;
+			parms.maxLinear = midmaxLin;
+			RegisterLinearMovePoint(cps[2], offset, parms);
+			break;
+			
+		case "quad3":
+			parms.minLinear = minLin;
+			RegisterLinearMovePoint(cp, offset, parms);
+			RegisterLinearMovePoint(mid.nodes[mid3], offset, parms);
+			RegisterLinearMovePoint(mid.nodes[mid4], offset, parms);
+			RegisterLinearMoveRect( elems[3], offset, parms );
+			parms.deltaLinearToLinear = .5;
+			parms.minLinear = midminLin;
+			RegisterLinearMovePoint(cps[2], offset, parms);
+			break;
+	}
+}
+
+operation.EndDragControlPoint = function(){
+	UpdateAllPatternHandles();
+	UpdateControlPoints();
+	UpdateText();
+}
+
+/* ****************************************
+INTERACTING
+**************************************** */
+RegisterLinearMoveRect = function(elem, offset, parms){
+	var nods = elem.contours[0].nodes;
+	nods[0].RegisterLinearMove( AddPoints(nods[0], offset), parms );
+	nods[1].RegisterLinearMove( AddPoints(nods[1], offset), parms );
+	nods[2].RegisterLinearMove( AddPoints(nods[2], offset), parms );
+	nods[3].RegisterLinearMove( AddPoints(nods[3], offset), parms );
+}
+RegisterLinearMovePoint = function(nod, offset, parms){
+	nod.RegisterLinearMove( AddPoints(nod, offset), parms );
+}
+RunFlashScript = function(script, applyAll){
+	if (Files.exists(script)){
+		fw.runScript(script);
+		return UpdateFromFlash(script, applyAll);
+	}
+	alert("Error: Unable to locate dialog.\nMake sure you have the Scale-3 Auto Shape installed.");
+	return false;
+}
+SerializeQuadrantObj = function(quadrantObj){
+	var str = "";
+	str += escape(quadrantObj.name);
+	str += "," + quadrantObj.filename;
+	str += "," + quadrantObj.color;
+	str += "," + quadrantObj.px;
+	str += "," + quadrantObj.py;
+	str += "," + quadrantObj.width;
+	str += "," + quadrantObj.height;
+	str += "," + quadrantObj.pwidth;
+	str += "," + quadrantObj.pheight;
+	str += "," + quadrantObj.rotate;
+	return str;
+}
+SerializeOptionsObj = function(){
+	var opt = smartShape.elem.elements[0];
+	var str = "";
+	str += opt.customData.optionsObj.version;
+	str += "," + opt.customData.optionsObj.usetext;
+	str += "," + opt.customData.optionsObj.orientation;
+	return str;
+}
+AsureUniqueCustomData = function(){
+	var elems = smartShape.elem.elements;
+	elems[0].customData.optionsObj = ObjectCopy(elems[0].customData.optionsObj);
+	elems[1].customData.quadrantObj = ObjectCopy(elems[1].customData.quadrantObj);
+	elems[2].customData.quadrantObj = ObjectCopy(elems[2].customData.quadrantObj);
+	elems[3].customData.quadrantObj = ObjectCopy(elems[3].customData.quadrantObj);
+}
+
+/* ****************************************
+UPDATING
+**************************************** */
+UpdatePatternHandles = function(elem){
+	var attrs = elem.pathAttributes;
+	if (!attrs.fill) return;
+	if (!attrs.fill.pattern) return;
+	var quadrantObj = elem.customData.quadrantObj;
+	var reg = PointFromObj(elem.contours[0].nodes[0]);
+	attrs.fillHandle1 = AddPoints(reg, {x:quadrantObj.px, y:quadrantObj.py});
+	
+	var pt2 = {x:quadrantObj.pwidth, y:0};
+	var pt3 = {x:0, y:-quadrantObj.pheight};
+	pt2 = RotatePointAroundPoint(pt2, {x:0, y:0}, quadrantObj.rotate* Math.PI/180);
+	pt3 = RotatePointAroundPoint(pt3, {x:0, y:0}, quadrantObj.rotate* Math.PI/180);
+
+	attrs.fillHandle2 = AddPoints(attrs.fillHandle1, pt2);
+	attrs.fillHandle3 = AddPoints(attrs.fillHandle1, pt3);
+}
+UpdateAllPatternHandles = function(){	
+	UpdatePatternHandles(smartShape.elem.elements[1]);
+	UpdatePatternHandles(smartShape.elem.elements[2]);
+	UpdatePatternHandles(smartShape.elem.elements[3]);
+}
+UpdateControlPoints = function(){
+	CenterControlPoint(1, smartShape.elem.elements[1]);
+	CenterControlPoint(2, smartShape.elem.elements[2]);
+	CenterControlPoint(3, smartShape.elem.elements[3]);
+}
+UpdateFromFlash = function( whichScript, applyAll ){
+	if (!MMNotes.ComponentAutoShapeChannel) return false;
+	var opt = smartShape.elem.elements[0];
+	switch(whichScript){
+		case quadScript:
+			var cp = smartShape.currentControlPoint;
+			if (applyAll && fw.yesNoDialog("Are you sure you want to apply these settings to all quadrants?")){
+				var elems = [
+					smartShape.elem.elements[1],
+					smartShape.elem.elements[2],
+					smartShape.elem.elements[3]
+				];
+			}else{
+				var elems = [ smartShape.elem.elements[cp.index] ];
+			}
+			var i = elems.length;
+			while(i--){
+				CopyProperties(MMNotes.ComponentAutoShapeChannel, elems[i].customData.quadrantObj);
+				if (MMNotes.ComponentAutoShapeChannel.name){
+					elems[i].customData.quadrantObj.name = unescape(elems[i].customData.quadrantObj.name);
+				}
+			}
+			break;
+	
+		case optionsScript:
+			CopyProperties(MMNotes.ComponentAutoShapeChannel, opt.customData.optionsObj);
+			break;
+	}
+	
+	// for all scripts
+	delete MMNotes.ComponentAutoShapeChannel;
+	return true;
+}
+CenterControlPoint = function(cpNum, elem){
+	var cp = cps[cpNum];
+	var nods = elem.contours[0].nodes;
+	var loc = PointAverage(nods[0], nods[2]);
+	cp.x = loc.x;
+	cp.y = loc.y;
+}
+UpdateText = function(){
+	var i = smartShape.elem.elements[0].elements.length;
+	var elems = smartShape.elem.elements;
+	var left = elems[1].contours[0].nodes[0].x;
+	var right = elems[1].contours[0].nodes[1].x;
+	right = Math.max(right, elems[2].contours[0].nodes[1].x);
+	right = Math.max(right, elems[3].contours[0].nodes[1].x);
+	var elem;
+	while (i--){
+		elem = smartShape.elem.elements[0].elements[i];
+		if (elem.customData.padding){
+			elem.rawTop = elems[1].contours[0].nodes[0].y + elem.customData.padding.top;
+			switch(elem.textRuns.initialAttrs.alignment){
+				case "center":
+					elem.rawLeft = left + ((right-left)/2) - (elem.rawWidth/2);
+					break;
+				case "right":
+					elem.rawLeft = right - (elem.rawWidth + elem.customData.padding.right);
+					break;
+				default:
+					elem.rawLeft = left + elem.customData.padding.left;
+			}
+		}
+	}
+}
+UpdateTextLocation = function(){
+	var i = smartShape.elem.elements[0].elements.length;
+	var elems = smartShape.elem.elements;
+	var left = elems[1].contours[0].nodes[0].x;
+	var right = elems[1].contours[0].nodes[1].x;
+	right = Math.max(right, elems[2].contours[0].nodes[1].x);
+	right = Math.max(right, elems[3].contours[0].nodes[1].x);
+	var elem;
+	while (i--){
+		elem = smartShape.elem.elements[0].elements[i];
+		elem.customData.padding = {
+			top:elem.rawTop - elems[1].contours[0].nodes[0].y,
+			left:elem.rawLeft - left,
+			right:right - (elem.rawLeft + elem.rawWidth),
+		}
+	}
+}
+AddText = function(newText){
+	if (newText){
+		if (smartShape.elem.elements[0].elements.length) return;
+		smartShape.elem.elements[0].elements[0] = new Text();
+		var elem = smartShape.elem.elements[0].elements[0];
+		elem.antiAliased = false;
+		elem.autoExpand = true;
+		elem.autoKern = false;
+		elem.orientation = "horizontal left to right";
+		elem.rawLeft = 3 + cps[0].x-cpOffsetX;
+		elem.rawTop = 3 + cps[0].y-cpOffsetY;
+		var pathattrs = { fill:{ category:"fc_Solid", ditherColors:[ "#000000", "#000000" ], edgeType:"hard", feather:0, gradient:null, name:"fn_Normal", pattern:null, shape:"solid", stampingMode:"blend opaque", textureBlend:0, webDitherTransparent:false }, fillColor:"#000000", fillHandle1:{ x:49, y:122 }, fillHandle2:{ x:98, y:122 }, fillHandle3:{ x:49, y:106 }, fillOnTop:false, fillTexture:null };
+		CopyProperties(pathattrs, elem.pathAttributes);
+		elem.textRuns = { initialAttrs:{ alignment:"left", antiAliasSharpness:192, antiAliasStrength:64, baselineShift:0, bold:false, face:"Arial", fillColor:"#000000", horizontalScale:1, italic:false, leading:1, leadingMode:"percentage", overSample:8, paragraphIndent:0, paragraphSpacingAfter:0, paragraphSpacingBefore:0, rangeKerning:0, size:"12pt", underline:false }, textRuns:[ { changedAttrs:{  }, characters:"Sample" } ] };
+		UpdateTextLocation();
+	}else{
+		smartShape.elem.elements[0].elements.length = 0;
+	}
+}
+
+/* ****************************************
+DEFINING
+**************************************** */
+DefineQuadrantObj = function(elem, offx, offy, index){
+	var quadrantObj = new Object();
+	quadrantObj.name = "";
+	quadrantObj.filename = "";
+	quadrantObj.color = "#808080";
+	quadrantObj.width = defaultWidth;
+	quadrantObj.height = defaultHeight;
+	quadrantObj.px = 0;
+	quadrantObj.py = 0;
+	quadrantObj.pwidth = defaultWidth;
+	quadrantObj.pheight = defaultHeight;
+	quadrantObj.rotate = 0;
+	// not sent to flash
+	quadrantObj.x = offx;
+	quadrantObj.y = offy;
+	quadrantObj.index = index;
+	elem.customData.quadrantObj = quadrantObj;
+}
+DrawElem = function(elem){
+	var quadrantObj = elem.customData.quadrantObj;
+	if (!elem.contours[0].nodes.length){
+		// use offset values in relation to relavant cp if no nodes yet drawn for path
+		var reg = AddPoints( PointFromObj(cps[quadrantObj.index]), {x:-quadrantObj.x, y:-quadrantObj.y} );
+	}else{
+		var reg = PointFromObj(elem.contours[0].nodes[0]);
+	}
+	DrawRect(elem, reg, AddPoints(reg, {x:quadrantObj.width, y:quadrantObj.height}));
+	var attrs = elem.pathAttributes;
+	attrs.brush = null;
+	if (!quadrantObj.color){
+		attrs.fill = null;
+		attrs.fillColor = "#FFFFFF";
+	}else{
+		attrs.fill = new Fill();
+		attrs.fillColor = quadrantObj.color;
+		if (quadrantObj.name){
+			attrs.fill.pattern = {
+				image: null,
+				name: quadrantObj.name
+			}
+			UpdatePatternHandles(elem);
+		}
+	}
+}
+DrawRect = function(elem, p1, p2){
+	var path = elem.contours[0];
+	if (path.nodes.length != 4) path.nodes.length = 4;
+	SetNodePosition(path.nodes[0], p1);
+	SetNodePosition(path.nodes[1], {x:p2.x, y:p1.y});
+	SetNodePosition(path.nodes[2], p2);
+	SetNodePosition(path.nodes[3], {x:p1.x, y:p2.y});
+	path.isClosed = true;
+}
+RedrawShape = function(){
+	// assume all elements have been drawn
+	
+	var elems = smartShape.elem.elements;
+	var reg = AddPoints(cps[0], {x:-cpOffsetX, y:-cpOffsetY});
+	SetNodePosition(elems[1].contours[0].nodes[0], reg);
+	DrawElem(elems[1]);
+	var opt = smartShape.elem.elements[0]
+	switch(opt.customData.optionsObj.orientation){
+		case "horz":
+			var offset = elems[2].contours[0].nodes[1].x - elems[2].contours[0].nodes[0].x; // current width
+			offset = {x:offset, y:0};
+			SetNodePosition(elems[2].contours[0].nodes[0], elems[1].contours[0].nodes[1]);
+			DrawElem(elems[2]);
+			SetNodePosition(elems[2].contours[0].nodes[1], AddPoints(elems[2].contours[0].nodes[0], offset));
+			SetNodePosition(elems[2].contours[0].nodes[2], AddPoints(elems[2].contours[0].nodes[3], offset));
+			SetNodePosition(elems[3].contours[0].nodes[0], elems[2].contours[0].nodes[1]);
+			DrawElem(elems[3]);
+			
+			cps[1].toolTip = "Left; CTRL+Click to Edit";
+			cps[3].toolTip = "Right; CTRL+Click to Edit";
+			break;
+			
+		case "vert":
+			var offset = elems[2].contours[0].nodes[3].y - elems[2].contours[0].nodes[0].y; // current height
+			offset = {x:0, y:offset};
+			SetNodePosition(elems[2].contours[0].nodes[0], elems[1].contours[0].nodes[3]);
+			DrawElem(elems[2]);
+			SetNodePosition(elems[2].contours[0].nodes[2], AddPoints(elems[2].contours[0].nodes[1], offset));
+			SetNodePosition(elems[2].contours[0].nodes[3], AddPoints(elems[2].contours[0].nodes[0], offset));
+			SetNodePosition(elems[3].contours[0].nodes[0], elems[2].contours[0].nodes[3]);
+			DrawElem(elems[3]);
+			
+			cps[1].toolTip = "Top; CTRL+Click to Edit";
+			cps[3].toolTip = "Bottom; CTRL+Click to Edit";
+			break;
+	}
+	UpdateControlPoints();
+	AddText(opt.customData.optionsObj.usetext);
+}
+
+/* ****************************************
+BASIC OPERATIONS
+**************************************** */
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt);
+}
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; 
+	node.x		= pt.x;	node.y		= pt.y; 
+	node.succX	= pts.x;	node.succY	= pts.y;
+}
+SetControlPoint = function(cpnum, pt, name, toolTip){
+	cps[cpnum] = new ControlPoint();
+	var cp = cps[cpnum];
+	cp.x = pt.x;
+	cp.y = pt.y;
+	cp.name = name;
+	cp.toolTip = toolTip;
+}
+SetHiddenControlPoint = function(cpnum, pt, name){
+	cps[cpnum] = new ControlPoint();
+	var cp = cps[cpnum];
+	cp.x = pt.x;
+	cp.y = pt.y;
+	cp.name = name;
+	cp.visible = false;
+}
+PointFromObj = function(o){
+	return {x:o.x, y:o.y};
+}
+PointAverage = function(p1, p2){
+	return {x:(p1.x + p2.x)/2, y:(p1.y + p2.y)/2};
+}
+RotatePointAroundPoint = function(pt, origin, angle){
+	var ca = Math.cos(angle),	sa = Math.sin(angle);
+	var dx = pt.x - origin.x,	dy = pt.y - origin.y;
+	return {x:origin.x + dx*ca - dy*sa, y:origin.y + dx*sa + dy*ca};
+}
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y};
+}
+CopyProperties = function(from, to){
+	for (var p in from) to[p] = from[p];
+}
+ObjectCopy = function(obj){
+	var o;
+	eval("o = "+obj.toSource());
+	return o;
+}
+
+if (operation[smartShape.operation]) operation[smartShape.operation]();
+if (debug) alert(debug);

@@ -1,0 +1,61 @@
+function namedSelectionMatch(txt){
+	var id = 0;
+	var name;
+	var layername;
+	var foundElements = new Array();
+	var dom = fw.getDocumentDOM();
+	var fn = dom.frames.length;
+	var ln = dom.layers.length;
+	var en,elems;
+	var i,j,k;
+	for (i=0; i<fn; i++){
+		for (j=0; j<ln; j++){
+			if (!i || dom.layers[j].sharing == "not shared"){
+				elems = dom.frames[i].layers[j].elements;
+				en = elems.length;
+				for (k=0; k<en; k++){
+					id++;
+					elems[k].customData.namedSelectionID = id;
+					name = (String(elems[k]) == "[object SliceHotspot]") ? elems[k].baseName : elems[k].name;
+					if (name && name.indexOf(txt) >= 0) foundElements.push(escape(dom.frames[i].name) +","+ escape(dom.layers[j].name) +","+ escape(name) +","+ id);
+				}
+			}
+		}
+	}
+	return foundElements.join("|");
+}
+
+function namedSelectionSelect(idString){
+	if (!idString){
+		fw.selection = [];
+		return false;
+	}
+	idString = unescape(idString);
+	var foundElements = new Array();
+	var id;
+	var dom = fw.getDocumentDOM();
+	var fn = dom.frames.length;
+	var ln = dom.layers.length;
+	var currframe = dom.currentFrameNum;
+	var lastframe = -1;
+	var en,elems;
+	var i,j,k;
+	for (i=0; i<fn; i++){
+		for (j=0; j<ln; j++){
+			elems = dom.frames[i].layers[j].elements;
+			en = elems.length;
+			for (k=0; k<en; k++){
+				if (elems[k].customData.namedSelectionID){
+					id = elems[k].customData.namedSelectionID;
+					if (idString.indexOf(","+id+",") >= 0){
+						lastframe = i;
+						if (currframe == lastframe) currframe = -1;
+						foundElements.push(elems[k]);
+					}
+				}
+			}
+		}
+	}
+	if (currframe >= 0) dom.currentFrameNum = lastframe;
+	fw.selection = foundElements;
+}

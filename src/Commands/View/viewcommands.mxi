@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="View Commands" version="0.8.1" type="command" requires-restart ="false">
+	<description>
+		<![CDATA[View commands<br>
+		www.senocular.com<br><br>
+		
+		Commands to manage viewing aspects within Fireworks.<br><br>
+		
+		- Collapse All Layers: Collapses all layers in the Layers panel
+		- Collapse Other Layers: Collapses all layers other than the current in the Layers panel
+		- Expand All Layers: Expands all layers in the Layers panel
+		- Expand Other Layers: Expands all layers other than the current in the Layers panel
+		- Show and Select All: Unlocks and reveals all layers and elements and selects them
+		- Show Only Selection: Hides all other elements in the document not currently selected
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run these commands from your Commands > View menu.]]>
+	</ui-access>
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<files>
+		<file source="Collapse All Layers.jsf" destination="$fireworks/Configuration/Commands/View" />
+		<file source="Collapse Other Layers.jsf" destination="$fireworks/Configuration/Commands/View" />
+		<file source="Expand All Layers.jsf" destination="$fireworks/Configuration/Commands/View" />
+		<file source="Expand Other Layers.jsf" destination="$fireworks/Configuration/Commands/View" />
+		<file source="Show and Select all.jsf" destination="$fireworks/Configuration/Commands/View" />
+		<file source="Show Only Selection.jsf" destination="$fireworks/Configuration/Commands/View" />
+	</files>
+</macromedia-extension>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Named Selection" version="0.9.5" type="command panel">
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" primary="true" />
+	</products>
+	<description><![CDATA[Named Selection<br>
+		www.senocular.com<br><br>
+		
+		Named Selection is a panel that lets you find and select objects within your Fireworks document based on text contained within it's name. Using a consistent naming strategy, you can use this panel to quickly find related objects and perform tasks or apply styles to each of those objects with ease.<br><br>
+
+		Version History:
+		0.9.5: Fixed an error in finding objects whose names contained characters altered by escape()
+		0.9.4: Fixed a bug regarding unnamed elements
+		Added a Reselect button
+		Improved auto-frame selection (current frame now does not change if a selection exists within it)
+		Renamed Select on Find checkbox to "Auto" to streamline the interface
+		0.9.3: Avoided errors resulting in publishing to FP6 by publishing to FP7 (works only in FWMX04 or higher)
+		0.9.1: An empty selection is no longer added when a string is not found among named objects
+		0.9.0: Limited release
+		]]>
+	</description>
+	<ui-access><![CDATA[
+		Open Named Selection from your Windows menu
+	]]></ui-access>
+
+	<files>
+		<file source="Named Selection.swf" destination="$fireworks/Configuration/Command Panels" />
+	</files>
+</macromedia-extension>

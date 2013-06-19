@@ -1,0 +1,5 @@
+var dom = fw.getDocumentDOM();
+var b = dom.pathAttributes.brush;
+if (b && b.softness){
+	b.softness = Math.max(b.softness-5, 1);
+}

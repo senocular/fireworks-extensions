@@ -1,0 +1,13 @@
+function debug(msg){
+	var dom = fw.getDocumentDOM();
+	if (String(fw.selection[0]) != "[object Text]"){
+		dom.addNewText({left:0, top:0, right:300, bottom:300}, true);
+	}
+	var runs = fw.selection[0].textRuns;
+	if (!runs.textRuns){
+		runs.textRuns = [{changedAttrs:{}, characters:""}];
+	}
+	runs.textRuns[0].characters += msg + "\r";
+	dom.setTextRuns(runs);
+}
+debug("hello");

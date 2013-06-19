@@ -1,66 +1,37 @@
-// ver 1.7
+// ver 1.4
+
+function allVisible(bool){
+  var dom = fw.getDocumentDOM();
+  for (var L=0; L<dom.layers.length-1; L++) dom.setElementVisible(dom.currentFrameNum, L, -1, bool);
+}
 
 function exportAllElements(){
-	var dom = fw.getDocumentDOM();
-	var filepath = fw.browseForFileURL("save");
-	if (filepath == null) return false;
-	var defaultname = Files.getFilename(filepath);
-	filepath = Files.getDirectory(filepath);
-
-	var elems = new Array().concat(fw.selection);
-	dom.selectNone();
-
-	var sXO = dom.exportOptions;
-	var oldcrop = sXO.crop;
-	sXO.crop = true;
-  
-	var f = dom.currentFrameNum;
-	var n = dom.layers.length;
-	var i, j, m, elem;
-	
-	var visArr = new Array();
-	
-	for (i=0; i<n; i++){
-		if (dom.layers[i].layerType == "web" || dom.layers[i].frames[f].visible == false) continue;
-		m = dom.layers[i].frames[f].elements.length;
-		for (j=0; j<m; j++){
-			elem = dom.layers[i].frames[f].elements[j];
-			if (elem.visible) {
-				elem.visible = false;
-				visArr.push(elem);
-			}else{
-				visArr["_"+i+"_"+j] = true;
-			}
-		}
-	}
-	
-	var rect, name, filename, counter = 1;
-	for (i=0; i<n; i++){
-		if (dom.layers[i].layerType == "web" || dom.layers[i].frames[f].visible == false) continue;
-		m = dom.layers[i].frames[f].elements.length;
-		for (j=0; j<m; j++){
-			if (visArr["_"+i+"_"+j]) continue;
-			elem = dom.layers[i].frames[f].elements[j];
-			rect = elem.pixelRect;
-			elem.visible = true;
-			name = elem.name;
-			if (name == null) name = defaultname + counter++;
-			filename = filepath + "/" + name;
-			sXO.cropLeft = rect.left;
-			sXO.cropRight = rect.right;
-			sXO.cropTop = rect.top;
-			sXO.cropBottom = rect.bottom;
-			fw.exportDocumentAs(dom, filename, sXO);
-			elem.visible = false;
-		}
-	}
-	
-	i = visArr.length;
-	while (i--) visArr[i].visible = true;
-	
-	sXO.crop = oldcrop;
-	dom.lastExportDirectory = filepath;
-	fw.selection = elems;
-	return true;
+  var dom = fw.getDocumentDOM();
+  var filepath = fw.browseForFolderURL("Choose Folder To Export Slices",dom.lastExportDirectory);
+  if (filepath == null) return false;
+  dom.lastExportDirectory = filepath;
+  var i, elem, name, filename, sXO;
+  allVisible(false);
+  for (var L=0; L<dom.layers.length-1; L++){
+    for (var E=0; E<dom.layers[L].frames[dom.currentFrameNum].elements.length; E++){
+      elem = dom.layers[L].frames[dom.currentFrameNum].elements[E];
+      elem.visible = true;
+      name = elem.name;
+      if (name == null) name = dom.layers[L].name+"_"+E;
+      filename = filepath + "/" + name;
+      sXO = dom.exportOptions;
+      sXO.crop = true;	
+      sXO.cropLeft = elem.left - dom.left;
+      sXO.cropRight = elem.left + elem.width - dom.left;
+      sXO.cropTop = elem.top - dom.top;
+      sXO.cropBottom = elem.top + elem.height - dom.top;
+      fw.exportDocumentAs(dom, filename, sXO);
+      sXO.crop = false;	
+      elem.visible = false;
+    }
+  }
+  allVisible(true);
+  dom.selectNone();
+  return true;
 }
 exportAllElements();

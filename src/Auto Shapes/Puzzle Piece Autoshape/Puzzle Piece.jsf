@@ -1,0 +1,139 @@
+﻿var MouseLoc = smartShape.currentMousePos;
+var MouseX = MouseLoc.x;
+var MouseY = MouseLoc.y;
+op = function(operation){
+	this.cp  = smartShape.elem.controlPoints;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function(){
+	var size = 50;
+	smartShape.elem.elements[0] = new Path(); // piece
+	smartShape.elem.elements[0].contours[0] = new Contour(); 
+	SetNodePosition(smartShape.elem.elements[0].contours[0].nodes[0], {x:MouseX-size/2, y:MouseY-size/2});
+	smartShape.elem.elements[1] = new Path(); // data container
+	var cd = smartShape.elem.elements[1].customData;
+	cd.edges0 = -1; cd.edges1 = -1; cd.edges2 = -1; cd.edges3 = -1;
+	this.DrawPiece(size);
+	this.updateControlPoints(size,MouseLoc);
+	this.updateToolTips(size);
+}
+op.prototype.BeginDragControlPoint = function (){
+	if (smartShape.currentControlPointIndex == 4){
+		var c = smartShape.currentControlPoint;
+		var n = smartShape.elem.elements[0].contours[0].nodes[0];
+		smartShape.getsDragEvents = true;
+		var params = smartShape.GetDefaultMoveParms();
+		params.maxLinear = DistanceBetween(c,n)-25;
+		params.deltaXtoX = 1;
+		params.deltaYtoY = 1;
+		c.RegisterLinearMove({x:n.x, y:n.y}, params);
+	}
+}
+op.prototype.DragControlPoint = function(){
+	var n = smartShape.elem.elements[0].contours[0].nodes[0];
+	var size = this.cp[4].x - n.x;
+	this.DrawPiece(size);
+	this.updateControlPoints(size, PointBetween(this.cp[4],n) );
+	this.updateToolTips(size);
+}
+op.prototype.EndDragControlPoint = function(){
+	var cd = smartShape.elem.elements[1].customData;
+	var i = smartShape.currentControlPointIndex;
+	if (i <4){
+		cd["edges"+i]++;
+		if (cd["edges"+i] > 1) cd["edges"+i] =-1;
+	}
+	this.DragControlPoint(); // refreshes
+
+}
+op.prototype.DrawPiece = function(size){
+	smartShape.elem.elements[0].contours[0].nodes.length = 1;
+	for (var i=0; i<4; i++) this.DrawEdge(size, i);
+}
+op.prototype.DrawEdge = function(size, side){
+	var a, b;
+	var nodes = smartShape.elem.elements[0].contours[0].nodes;
+	var edge = smartShape.elem.elements[1].customData["edges"+side];
+	if (side%2){ a = "x"; b = "y"; }
+	else{ a = "y"; b = "x"; }
+	var dir = (side < 2) ? 1 : -1;
+	var n, pt = {};
+	var base = nodes[nodes.length-1];
+	var span = size*dir;
+	if (edge){
+		edge *= span;
+		var points = [
+			[{x:.4,y:.1},{x:.4,y:.1},{x:.5,y:0}],
+			[{x:.2,y:-.2},{x:.5,y:-.2},{x:.8,y:-.2}],
+			[{x:.5,y:0},{x:.6,y:.1},{x:.6,y:.1}]
+		];
+		var pa = {}, pb = {}, pc = {};
+		for (var i=0; i<points.length;i++){
+			n =SetNewNode(nodes);
+			pa[a] = base[a]+edge*points[i][0].y;
+			pa[b] = base[b]+span*points[i][0].x;
+			pb[a] = base[a]+edge*points[i][1].y;
+			pb[b] = base[b]+span*points[i][1].x;
+			pc[a] = base[a]+edge*points[i][2].y;
+			pc[b] = base[b]+span*points[i][2].x;
+			SetBezierNodePosition(n.curr,pa,pb,pc);
+		}
+	}
+	// last point
+	n =SetNewNode(nodes);
+	pt[a] = base[a];
+	pt[b] = base[b]+span;
+	SetNodePosition(n.curr, pt);
+}
+op.prototype.updateToolTips = function(size){
+	var msg = " (Click to Toggle)";
+	var types = ["Male"+msg, "Female"+msg, "Flat"+msg];
+	var cd = smartShape.elem.elements[1].customData;
+	this.cp[0].toolTip = (cd.edges0) ? ((cd.edges0 == 1) ? types[0] : types[1]) : types[2];
+	this.cp[1].toolTip = (cd.edges1) ? ((cd.edges1 == 1) ? types[1] : types[0]) : types[2];
+	this.cp[2].toolTip = (cd.edges2) ? ((cd.edges2 == 1) ? types[0] : types[1]) : types[2];
+	this.cp[3].toolTip = (cd.edges3) ? ((cd.edges3 == 1) ? types[1] : types[0]) : types[2];
+	size = Math.round(size);
+	this.cp[4].toolTip = "Resize: ("+size+" x "+size+")";
+}
+op.prototype.updateControlPoints = function(size, center){
+	var inset = 4;
+	var halfsize = size/2;
+	var bounds = [{x:center.x-halfsize,y:center.y-halfsize}, {x:center.x+halfsize,y:center.y+halfsize}];
+	this.setControlPoint(0, bounds[0].x+halfsize, bounds[0].y+inset, false); // top
+	this.setControlPoint(1, bounds[1].x-inset, bounds[0].y+halfsize, false); // right
+	this.setControlPoint(2, bounds[0].x+halfsize, bounds[1].y-inset, false); // bottom
+	this.setControlPoint(3, bounds[0].x+inset, bounds[0].y+halfsize, false); // left
+	this.setControlPoint(4, bounds[1].x, bounds[1].y, true, true); // resize
+}
+op.prototype.setControlPoint = function(index, x, y, track){
+	if (index >= this.cp.length) this.cp.length = index+1;
+	this.cp[index].x = x;
+	this.cp[index].y = y;
+	this.cp[index].toolTipTracksDrag = track;
+}
+PointBetween = function(p1, p2){
+	return {x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2}
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x, dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+SetNewNode = function(ns){
+	var i = ns.length;
+	ns.length++;
+	var n = new Object();
+	n.prev = ns[i-1];
+	n.curr = ns[i];
+	return n;
+}
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX = ptp.x;	n.predY =ptp.y;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pts.x;	n.succY = pts.y;
+}
+// init
+new op(smartShape.operation);

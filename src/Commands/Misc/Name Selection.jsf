@@ -1,0 +1,17 @@
+// ver 1.0
+
+function NameSelection(){
+  if (!fw.selection.length || fw.selection.length > 1) return alert("You must select exactly one (1) object.");
+  var dom = fw.getDocumentDOM();
+  if (fw.selection[0].sliceID){
+    var name = prompt("Name Selected Slice", "name");
+    if (name == null) return false;
+    dom.setSliceFilename(name);
+  }else{
+    var name = prompt("Name Selected Element", "name");
+    if (name == null) return false;
+    dom.setElementName(name);
+  }
+  return 1;
+}
+NameSelection();

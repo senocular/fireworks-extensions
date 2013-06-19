@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="3D Box" version="0.9.6" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[3D Box Autoshape<br>
+		www.senocular.com<br><br><br>
+		
+		Creates an editable 3D box in your Fireworks document.<br>
+		Controls:<br><br>
+		
+		Crosshair Control Point:
+		- Normal drag: Rotate in x and y axes
+		- Ctrl/Cmd drag: Rotate in z axis
+		- Shift drag: adjust perspective (focal length)<br><br>
+		
+		Vertices Control Points:
+		- Click: Select
+		- Shift Click: Select multiple vertices
+		- Normal drag: Move selected vertices in x and y axes
+		- Ctrl/Cmd drag: Move selected vertices in z axis
+		- Shift drag: restrict normal drag to either x or y axis
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the 3D Box Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="3D Box.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="3D Box.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

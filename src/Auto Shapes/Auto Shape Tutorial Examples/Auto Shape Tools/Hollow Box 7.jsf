@@ -1,0 +1,366 @@
+﻿// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an BeginDragInsert event handler that will create the
+// shape for the BeginDragInsert event (click and drag)
+operation.BeginDragInsert = function(){
+
+	// call the InsertSmartShapeAt handler to create the shape
+	operation.InsertSmartShapeAt();
+	
+	// call RegisterBBoxMove which will register points for
+	// the shape with appropriate RegisterInsertBBoxMove functions
+	RegisterBBoxMove();
+}
+
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event (click no drag)
+operation.InsertSmartShapeAt = function(){
+	
+	// create new path as first element in elements array
+	smartShape.elem.elements[0] = new Path();
+	
+	// create new contour as first contour in contours array
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	
+	// set the contour to be a closed contour
+	smartShape.elem.elements[0].contours[0].isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// create 4 nodes in the contour by altering the nodes array (nods) length
+	nods.length = 4;
+	
+	// set the position of the 4 nodes in the first contour in a box shape
+	// each point is based around a zero location and then has added to it
+	// the position of the mouse using AddPoints. This makes the position of
+	// the points around the position of the mouse.
+	SetNodePosition(nods[0], AddPoints(mouse, {x:-25, y:-25}));
+	SetNodePosition(nods[1], AddPoints(mouse, {x:25, y:-25}));
+	SetNodePosition(nods[2], AddPoints(mouse, {x:25, y:25}));
+	SetNodePosition(nods[3], AddPoints(mouse, {x:-25, y:25}));
+	
+	// create new contour as second contour in contours array
+	smartShape.elem.elements[0].contours[1] = new Contour();
+	
+	// set the contour to be a closed contour
+	smartShape.elem.elements[0].contours[1].isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	nods = smartShape.elem.elements[0].contours[1].nodes;
+	
+	// create 4 nodes in the contour by altering the nodes array (nods) length
+	nods.length = 4;
+	
+	// set the position of the 4 nodes in the second contour in a box shape
+	// that lies within the box shape of the first contour also positioned
+	// around the location of the mouse
+	SetNodePosition(nods[0], AddPoints(mouse, {x:-15, y:-15}));
+	SetNodePosition(nods[1], AddPoints(mouse, {x:15, y:-15}));
+	SetNodePosition(nods[2], AddPoints(mouse, {x:15, y:15}));
+	SetNodePosition(nods[3], AddPoints(mouse, {x:-15, y:15}));
+	
+	// create a new control point in the first position of the control points array
+	cps.length = 3;
+	
+	// set the first control point to the position of the mouse with the name
+	// "Center" and the toolTip "Click Me." This will not be used for interaction
+	SetControlPoint(cps[0], mouse, "Center", "Click Me");
+	
+	// set the second control point to the position of the lower right corner of the
+	// inner rectangle with the name "Inner" and the toolTip "Resize Inner Rect"
+	SetControlPoint(cps[1], AddPoints(mouse, {x:15, y:15}), "Inner", "Resize Inner Rect");
+	
+	// set the third control point to the position of the lower right corner of the
+	// outer rectangle with the name "Outer" and the toolTip "Resize Shape"
+	SetControlPoint(cps[2], AddPoints(mouse, {x:25, y:25}), "Outer", "Resize Shape");
+
+	// The shape is created fully here in favor of using Draw because Draw relies
+	// on the current position of an existing node for scaling purposes
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+
+	// assign a short variable to represent the currently clicked control point
+	var cp = smartShape.currentControlPoint;
+	
+	// set getsDragEvents to be true so that the DragControlPoint event will
+	// run for the Auto Shape
+	smartShape.getsDragEvents = true;
+	
+	// if the current control point name is "Inner"
+	if (cp.name == "Inner"){
+	
+		// set min/max to restrict the contol point's movement to the lower
+		// right quadrant of the shape so it remains between the outer
+		// control point and the center control point
+		parms.minX = cps[0].x;
+		parms.maxX = cps[2].x;
+		parms.minY = cps[0].y;
+		parms.maxY = cps[2].y;
+		
+		// set constrain45Key to be the shift key so that the user can use
+		// shift to force the movement to be at 45 degrees
+		parms.constrain45Key = "shiftKey";
+		
+		// set register move for the current (inner) control point
+		cp.RegisterMove(parms);
+		
+	// otherwise if the current control point name is "Outer"
+	}else if (cp.name == "Outer"){
+	
+		// define the top left positions of both the inner and outer contours
+		var topLeftOuter = smartShape.elem.elements[0].contours[0].nodes[0];
+		var topLeftInner = smartShape.elem.elements[0].contours[1].nodes[0];
+		
+		// define a point to represent the size of the border of the shape
+		var border = SubtractPoints(topLeftInner, topLeftOuter);
+		
+		// adding the border size to the top left inner position will give
+		// a point from the top left of the shape that is the size of
+		// two borders.  This is the limit of movement for the outer control
+		// point when moved in that direction (minX and minY)
+		var min = AddPoints(topLeftInner, border);
+		
+		// set min x and y for the outer control point 
+		parms.minX = min.x;
+		parms.minY = min.y;
+		
+		// set constrain45Key to be the shift key so that the user can use
+		// shift to force the movement to be at 45 degrees
+		parms.constrain45Key = "shiftKey";
+		
+		// set register move for the outer control point
+		cps[2].RegisterMove(parms);
+		
+		// reset the min x and y values for the inner control point to the 
+		// top left of the inner contour 
+		parms.minX = topLeftInner.x;
+		parms.minY = topLeftInner.y;
+		
+		// set register move for the inner control point so it moves with the outer
+		cps[1].RegisterMove(parms);
+	}
+
+}
+
+// define an DragControlPoint event handler that will be called
+// everytime the mouse moves when dragging a control point
+operation.DragControlPoint = function(){
+
+	// refresh the shape by calling Draw
+	Draw();
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * RegisterBBoxMove defines all RegisterInsertBBoxMove functions for all
+ * points for the shape for a BeginDragInsert event
+*/
+RegisterBBoxMove = function(){
+	
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+	
+	// assign a short variable to represent the first (outer) contour's nodes array
+	nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// set delta X and Y ratios so that the first node (top left corner)
+	// doesn't move with the mouse at all applying it with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 0;
+	parms.deltaYtoY = 0;
+	nods[0].RegisterInsertBBoxMove(parms);
+	
+	// set delta X and Y ratios so that the second node (top right corner)
+	// only moves with the mouse x applying it with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 1;
+	parms.deltaYtoY = 0;
+	nods[1].RegisterInsertBBoxMove(parms);
+	
+	// set delta X and Y ratios so that the third node (bottom right corner)
+	// and the outer control point so it moves with the mouse applying it
+	// with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 1;
+	parms.deltaYtoY = 1;
+	cps[2].RegisterInsertBBoxMove(parms);
+	nods[2].RegisterInsertBBoxMove(parms);
+	
+	// set delta X and Y ratios so that the fourth node (bottom left corner)
+	// only moves with the mouse y applying it with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 0;
+	parms.deltaYtoY = 1;
+	nods[3].RegisterInsertBBoxMove(parms);
+	
+	// set delta X and Y ratios so that the central control point 
+	// moves half the distance of the mouse applying it with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 1/2;
+	parms.deltaYtoY = 1/2;
+	cps[0].RegisterInsertBBoxMove(parms);
+
+	// assign a short variable to represent the second (inner) contour's nodes array
+	nods = smartShape.elem.elements[0].contours[1].nodes;
+	
+	// set delta X and Y ratios so that the first node (top left corner)
+	// doesn't move with the mouse at all except based on 1/5 the distance
+	// that of the shortest side dragged (bringing it inwards by that amount)
+	// applying it with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 0;
+	parms.deltaYtoY = 0;
+	parms.deltaShortestSideToX = 1/5;
+	parms.deltaShortestSideToY = 1/5;
+	nods[0].RegisterInsertBBoxMove(parms);
+	
+	// set delta X and Y ratios so that the second node (top right corner)
+	// only moves with the mouse x normally but removing an additional 1/5
+	// of the shortest side from the x and setting y to move only 1/5 of
+	// the shortest side applying it with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 1;
+	parms.deltaYtoY = 0;
+	parms.deltaShortestSideToX = -1/5;
+	parms.deltaShortestSideToY = 1/5;
+	nods[1].RegisterInsertBBoxMove(parms);
+	
+	// set delta X and Y ratios so that the third node (bottom right corner)
+	// and inner control point so it moves with the mouse except subtracting
+	// from it 1/5 the distance that of the shortest side dragged applying
+	// it with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 1;
+	parms.deltaYtoY = 1;
+	parms.deltaShortestSideToX = -1/5;
+	parms.deltaShortestSideToY = -1/5;
+	cps[1].RegisterInsertBBoxMove(parms);
+	nods[2].RegisterInsertBBoxMove(parms);
+	
+	// set delta X and Y ratios so that the fourth node (bottom left corner)
+	// only moves with the mouse y normally but removing an additional 1/5
+	// of the shortest side from the y and setting x to move only 1/5 of
+	// the shortest side applying it with a RegisterInsertBBoxMove
+	parms.deltaXtoX = 0;
+	parms.deltaYtoY = 1;
+	parms.deltaShortestSideToX = 1/5;
+	parms.deltaShortestSideToY = -1/5;
+	nods[3].RegisterInsertBBoxMove(parms);
+}
+
+/**
+ * Draw creates the Box shape based on its current top left corner and the 
+ * position of its control points (actually positioing center first then using
+ * it to set node positions)
+*/
+Draw = function(){
+	
+	// find the top left corner of the from the first node of the first contour
+	// this will be the base from which the remaining shape will be drawn in 
+	// comparing positions with control points (since its used to position the center)
+	var topLeftOuter = smartShape.elem.elements[0].contours[0].nodes[0];
+	
+	// use PointBetween to set the center control point to be bettwen the third
+	// control point and the previously defined corner (center of the shape)
+	SetControlPoint(cps[0], PointBetween(cps[2], topLeftOuter), "Center", "Center");
+	
+	// assign a short variable to represent the outer contours nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// define "span" variables for x and y that represent half the shape's
+	// width and half the shape's height
+	var spanX = cps[2].x - cps[0].x;
+	var spanY = cps[2].y - cps[0].y;
+	
+	// from the center control point, set the locations of the outer nodes
+	// based on the previously calculated span variables
+	SetNodePosition(nods[0], AddPoints(cps[0], {x:-spanX, y:-spanY}));
+	SetNodePosition(nods[1], AddPoints(cps[0], {x:spanX, y:-spanY}));
+	SetNodePosition(nods[2], AddPoints(cps[0], {x:spanX, y:spanY}));
+	SetNodePosition(nods[3], AddPoints(cps[0], {x:-spanX, y:spanY}));
+	
+	// assign a short variable to represent the inner contours nodes array
+	nods = smartShape.elem.elements[0].contours[1].nodes;
+	
+	// define "span" variables for x and y that represent half the inner
+	// contour's width and half the inner contour's height
+	spanX = cps[1].x - cps[0].x;
+	spanY = cps[1].y - cps[0].y;
+	
+	// from the center control point, set the locations of the inner nodes
+	// based on the previously calculated span variables
+	SetNodePosition(nods[0], AddPoints(cps[0], {x:-spanX, y:-spanY}));
+	SetNodePosition(nods[1], AddPoints(cps[0], {x:spanX, y:-spanY}));
+	SetNodePosition(nods[2], AddPoints(cps[0], {x:spanX, y:spanY}));
+	SetNodePosition(nods[3], AddPoints(cps[0], {x:-spanX, y:spanY}));
+}
+
+// (common functions)
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+
+/**
+ * SubtractPoints subtracts two points pt1 and pt2 and returns the resulting point
+*/
+SubtractPoints = function(pt1, pt2){
+	return {x:pt1.x - pt2.x, y:pt1.y - pt2.y}; // subtract x and y properties in returned object
+}
+
+/**
+ * PointBetween returns a point location between points pt1 and pt2
+*/
+PointBetween = function(pt1, pt2){
+	return {x:(pt1.x + pt2.x)/2, y:(pt1.y + pt2.y)/2}; // return average point between 2 points
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

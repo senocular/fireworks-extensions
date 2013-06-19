@@ -1,0 +1,276 @@
+// VARIABLES
+var mouse = smartShape.currentMousePos;
+var cps = smartShape.elem.controlPoints;
+var elems = smartShape.elem.elements;
+var ccpi = smartShape.currentControlPointIndex;
+
+var BCACONST =(Math.sqrt(2)-1)*4/3; // bezier curve approximation constant
+var rad90=Math.PI/2, rad180=Math.PI, rad270=(6*Math.PI)/4, rad360 =2*Math.PI;
+
+
+// OPERATIONS
+var operation = new Object();
+operation.InsertSmartShapeAt = function(){
+	// setup 4 control points
+	SetControlPoint(0, "breadth", "default", SubtractPoints(mouse, Point(30,0)));
+	SetControlPoint(1, "cleft", "default", SubtractPoints(mouse, Point(0,5)));
+	SetControlPoint(2, "vertex", "default", AddPoints(mouse, Point(0,90)));
+	SetControlPoint(3, "vertex arc", "default", AddPoints(mouse, Point(0,65)));
+	
+	// setup only 1 contour
+	elems[0] = new Path();
+	elems[0].contours[0] = new Contour();
+	elems[0].contours[0].isClosed = true;
+	
+	Render();
+}
+operation.BeginDragControlPoint = function(){
+	var params = smartShape.GetDefaultMoveParms();
+	smartShape.getsDragEvents = true;
+	switch(ccpi){
+		case 0:
+			params.deltaXtoX = 1;
+			params.deltaYtoY = 0;
+			params.maxX = cps[1].x-1;
+			cps[ccpi].RegisterMove(params);
+			break;
+		case 1:
+			params.deltaXtoX = 0;
+			params.deltaYtoY = 1;
+			params.minY = cps[0].y-(cps[3].y-cps[0].y);
+			params.maxY = cps[0].y;
+			cps[1].RegisterMove(params);
+			break;
+		case 2:
+			params.deltaXtoX = 0;
+			params.deltaYtoY = 1;
+			var min = cps[0].y+(cps[0].y-cps[1].y);//AddPoints(cps[0], Point(0, DistanceBetween(cps[0], cps[1])));
+			params.minY = min + DistanceBetween(cps[2], cps[3]);
+			cps[2].RegisterMove(params);
+			
+			params = smartShape.GetDefaultMoveParms();
+			params.deltaXtoX = 0;
+			params.deltaYtoY = 1;
+			params.minY = min;
+			cps[3].RegisterMove(params);
+			break;
+		case 3:
+			params.deltaXtoX = 0;
+			params.deltaYtoY = 1;
+			var min = cps[0].y+(cps[0].y-cps[1].y);
+			params.minY = min;
+			params.maxY = cps[2].y-1;
+			cps[3].RegisterMove(params);
+			break;
+	}
+	Render();
+}
+operation.DragControlPoint = function(){
+	Render();
+}
+operation.EndDragControlPoint = function(){
+	Render();
+}
+
+
+// RENDER
+Render = function(){
+	var con = elems[0].contours[0];
+	con.nodes.length = 0;
+	
+	var chamberCircRadius = DistanceBetween(cps[0], cps[1]);
+	var intersectCircOrigin = PointBetween(cps[0], cps[3]);
+	var intersectCircRadius = DistanceBetween(cps[0], cps[3])/2;
+	
+	var tangent = CircleIntersects(cps[0], chamberCircRadius, intersectCircOrigin, intersectCircRadius);
+	if (!tangent) return (0);
+	tangent = (tangent[0].y > tangent[1].y) ? tangent[0] : tangent[1];
+	
+	var cleftAngle = AngleFrom(cps[0], cps[1]);
+	var tangentAngle = AngleFrom(cps[0], tangent);
+	
+	ArcTo(con, cps[0], chamberCircRadius, cleftAngle, tangentAngle, -1);
+	LineTo(con, cps[2]);
+	
+	var last = con.nodes.length-2;
+	var punch = PointBetween(cps[3], con.nodes[last]);
+	con.nodes[last].succX = punch.x;
+	con.nodes[last].succY = punch.y;
+	last++;
+	punch = PointBetween(cps[3], punch);
+	con.nodes[last].predX = punch.x;
+	con.nodes[last].predY = punch.y;
+	
+	MirrorShape(con, cps[2], false);
+	UpdateToolTips();
+}
+UpdateToolTips = function(){
+	cps[0].toolTip = "Breadth: "+Math.round(cps[1].x-cps[0].x);
+	cps[1].toolTip = "Cleft: "+Math.round(cps[0].y-cps[1].y);
+	cps[2].toolTip = "Vertex: "+Math.round(cps[2].y-cps[0].y);
+	cps[3].toolTip = "Vertex Arc: "+Math.round(cps[2].y-cps[3].y);
+}
+
+
+// GEOMETRY METHODS
+CircleIntersects = function (p1, r1, p2, r2) {
+        var dx = p2.x - p1.x;
+        var dy = p2.y - p1.y;
+        var c = Math.sqrt(dx*dx + dy*dy);
+	var dir = (p1.x < p2.x) ? 1 : -1;
+        var ac = Math.acos((r1*r1 + c*c - r2*r2)/(2*r1*c))*dir;
+        var a = Math.atan2(dy, dx);
+        dx = a + ac;
+        c = p1.x + Math.cos(dx) * r1;
+        if (isNaN(c)) return false;
+        dy = a - ac;
+	return [
+		Point(c,					p1.y+Math.sin(dx)*r1),
+		Point(p1.x+Math.cos(dy)*r1,		p1.y+Math.sin(dy)*r1)
+	];
+}
+
+
+// DRAWING FUNCTIONS
+LineTo = function(contour, pt){
+	var nodeIndex = (contour.nodes.length == 1) ? 0 : contour.nodes.length;
+	contour.nodes.length++;
+	SetNodePosition(contour.nodes[nodeIndex], pt);
+}
+ArcTo = function(contour, origin, radius, a1, a2, dir){
+	var nodeIndex = (contour.nodes.length == 1) ? 0 : contour.nodes.length;
+	var angles = __ArcAnglesBetween(a1, a2, dir);
+	var currIndex, preva, nexta;
+	for (var i=0; i<angles.length; i++){
+		currIndex = nodeIndex+i;
+ 		if (currIndex >= contour.nodes.length) contour.nodes.length = currIndex+1;
+ 		nexta = (i < angles.length-1) ? (angles[i+1]>angles[i]) ? (angles[i+1]-angles[i]) : (rad360+angles[i+1]-angles[i]) : 0;
+		preva = (i > 0) ? (angles[i]>angles[i-1]) ? (angles[i]-angles[i-1]) : (rad360+angles[i]-angles[i-1])  : 0;
+		if (dir ==-1){
+			if (preva) preva = rad360 - preva;
+			if (nexta) nexta = rad360 - nexta;
+		}
+		var cosa = Math.cos(angles[i]), sina = Math.sin(angles[i]);
+		var n = contour.nodes[currIndex];
+		if (i || !currIndex){ // only for first node - may need to re-evaluate
+			n.x = origin.x+radius*cosa;
+			n.y = origin.y+radius*sina;
+		}
+		if (preva){
+			var radiusp = radius*BCACONST*dir*preva/rad90;
+			n.predX = n.x+radiusp*sina;
+			n.predY = n.y-radiusp*cosa;
+		}else if (!currIndex){ // only for first node - may need to re-evaluate
+			n.predX = n.x;
+			n.predY = n.y;
+		}
+		if (nexta){ // if false, node last and succPT set to node loc
+			var radiusn = radius*BCACONST*dir*nexta/rad90;
+			n.succX = n.x-radiusn*sina;
+			n.succY = n.y+radiusn*cosa;
+		}else{
+			n.succX = n.x;
+			n.succY = n.y;
+		}
+	}
+}
+function __ArcAnglesBetween(a1, a2, dir){
+	a1 %= rad360; a2 %= rad360;
+	if (a1 == a2) var diff = rad360;
+	else{
+		var diff = (a1>a2) ? (rad360+a2-a1) : Math.abs(a2-a1);
+		if (dir == -1) diff = rad360 - diff;
+	}
+	if (diff <= rad90)  return [a1, a2];
+	if (diff <= rad180) var segs = 2;
+	else if (diff <= rad270) var segs = 3;
+	else var segs = 4;
+	var inc = dir*diff/segs, a = [a1];
+	for (var i=1; i<segs; i++) {
+		a[i] = a[0]+i*inc;
+		if (a[i] >= rad360) a[i] -= rad360;
+	}
+	a[a.length] = a2;
+	return a;
+}
+MirrorShape = function(contour, origin, dupEnd){
+	if (dupEnd == undefined) dupEnd = true;
+	var n = contour.nodes;
+	var i = n.length;
+	if (!dupEnd){
+		i--;
+		var mirP = MirrorPoint(Point(n[i].predX, n[i].predY), Point(origin.x, n[i].predY));
+		n[i].succX = mirP.x;
+		n[i].succY = mirP.y;
+	}
+	var nodeIndex;
+	while(i--){
+		nodeIndex = n.length;
+		n.length++;
+		MatchBezierNodePosition(n[nodeIndex], MirrorNodePointHorizontal(n[i], origin));	
+	}
+}
+
+
+// POINT METHODS
+Point = function(x,y){
+	return {x:x, y:y};
+}
+AddPoints = function(p1, p2){
+	return {x:p1.x+p2.x, y:p1.y+p2.y};
+}
+SubtractPoints = function(p1, p2){
+	return {x:p1.x-p2.x, y:p1.y-p2.y};
+}
+PointBetween = function(p1, p2){
+	return {x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2}
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x, dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+AngleFrom = function(p1, p2){
+	return Math.atan2(p2.y-p1.y, p2.x-p1.x);
+}
+MirrorPoint = function(pt, center){
+	return {x:2*center.x-pt.x,y:2*center.y-pt.y}
+}
+MirrorNodePointHorizontal = function(node, center){
+	var newNode = new Object();
+	SetBezierNodePosition(
+		newNode,
+		MirrorPoint(Point(node.succX, node.succY), Point(center.x, node.succY)),
+		MirrorPoint(Point(node.x, node.y), Point(center.x, node.y)),
+		MirrorPoint(Point(node.predX, node.predY), Point(center.x, node.predY))
+	);
+	return newNode;
+}
+
+
+// NODE/CP POSITIONING
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+MatchBezierNodePosition = function(n, match){
+	n.predX	= match.predX;	n.predY	= match.predY;
+	n.x		= match.x;		n.y		= match.y;
+	n.succX	= match.succX;	n.succY	= match.succY;
+}
+SetControlPoint = function(index, name, type, pt){
+	if (index >= cps.length) cps.length = index+1;
+	cps[index].name = name;
+	cps[index].type = type;
+	cps[index].x = pt.x;
+	cps[index].y = pt.y;
+	cps[index].toolTipTracksDrag = true;
+}
+
+
+// INVOKE OPERATION
+if (operation[smartShape.operation])
+	operation[smartShape.operation]();

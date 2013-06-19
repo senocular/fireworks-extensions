@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Repeat Last" version="0.9.8" type="command" requires-restart ="false">
+	<products>
+		<product name="Fireworks" version="7" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Repeat Last<br>
+		www.senocular.com<br><br>
+		
+		Repeats last command in your history that is not Repeat Last.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run Repeat Last from your Commands menu.]]>
+	</ui-access>
+	<files>
+		<file source="Repeat Last.jsf" destination="$fireworks/Configuration/Commands" />
+	</files>
+</macromedia-extension>

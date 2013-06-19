@@ -1,0 +1,222 @@
+﻿var MouseX = smartShape.currentMousePos.x;
+var MouseY = smartShape.currentMousePos.y;
+op = function(operation){
+	this.cp  = smartShape.elem.controlPoints;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function () {
+	var bounds = [{x:MouseX-50,y:MouseY-50}, {x:MouseX+50,y:MouseY+50}];
+	smartShape.elem.elements[0] = new Path();
+	smartShape.elem.elements[0].customData.type = 0;
+	this.cp.length = 4;
+	this.setControlPoint(0, bounds[0].x, bounds[0].y, false);
+	this.setControlPoint(1, bounds[0].x+25, bounds[0].y, true);
+	this.setControlPoint(2, bounds[0].x, bounds[0].y+25, true);
+	this.setControlPoint(3, bounds[1].x, bounds[1].y, true);
+	this.GenerateGrid(smartShape.elem.elements[0].customData.type);
+	this.updateToolTips();
+}
+op.prototype.BeginDragControlPoint = function (){
+	var c = smartShape.currentControlPoint;
+	var base = this.cp[0];
+	smartShape.getsDragEvents = true;
+	var params = smartShape.GetDefaultMoveParms();
+	params.deltaXtoX = 1;
+	params.deltaYtoY = 1;
+	switch (smartShape.currentControlPointIndex){
+		case 1: // width
+			if (smartShape.shiftKeyDown){
+				var limit = Math.min(this.cp[3].x-this.cp[0].x,this.cp[3].y-this.cp[0].y);
+				var pos = Math.min(limit,Math.max(this.cp[1].x-this.cp[0].x,this.cp[2].y-this.cp[0].y));
+				params.deltaYtoY = 0;
+				params.minX = base.x+5;
+				params.maxX = limit+this.cp[0].x;
+				c.x = pos+this.cp[0].x;
+				c.RegisterMove(params);
+				var params2 = smartShape.GetDefaultMoveParms();
+				params2.deltaYtoY = 0;
+				params2.deltaXtoX = 0;
+				params2.deltaXtoY = 1;
+				params2.minY = base.y+5;
+				params2.maxY = limit+this.cp[0].y;
+				this.cp[2].y = pos+this.cp[0].y;
+				this.cp[2].RegisterMove(params2);
+				break;
+			}
+			params.deltaYtoY = 0;
+			params.minX = base.x+5;
+			params.maxX = this.cp[3].x;
+			c.RegisterMove(params);
+			break;
+		case 2: // height
+			if (smartShape.shiftKeyDown){
+				var limit = Math.min(this.cp[3].x-this.cp[0].x,this.cp[3].y-this.cp[0].y);
+				var pos = Math.min(limit,Math.max(this.cp[1].x-this.cp[0].x,this.cp[2].y-this.cp[0].y));
+				params.deltaXtoX = 0;
+				params.minY = base.y+5;
+				params.maxY = limit+this.cp[0].y;
+				c.y = pos+this.cp[0].y;
+				c.RegisterMove(params);
+				var params2 = smartShape.GetDefaultMoveParms();
+				params2.deltaYtoY = 0;
+				params2.deltaXtoX = 0;
+				params2.deltaYtoX = 1;
+				params2.minX = base.x+5;
+				params2.maxX = limit+this.cp[0].x;
+				this.cp[1].x = pos+this.cp[0].x;
+				this.cp[1].RegisterMove(params2);
+				break;
+			}
+			params.deltaXtoX = 0;
+			params.minY = base.y+5;
+			params.maxY = this.cp[3].y;
+			c.RegisterMove(params);
+			break;
+		case 3: // size
+			params.minX = this.cp[1].x;
+			params.minY = this.cp[2].y;
+			c.RegisterMove(params);
+			break;
+	}
+}
+op.prototype.DragControlPoint = function(){
+	this.GenerateGrid(0);
+	this.updateToolTips();
+}
+op.prototype.EndDragControlPoint = function(){
+	var cd = smartShape.elem.elements[0].customData;
+	if (!smartShape.currentControlPointIndex) cd.type = (cd.type + 1) % 3;
+	else{
+		var cells = this.getCellCount(true); 
+		var cellwidth = this.cp[1].x - this.cp[0].x;
+		var cellheight = this.cp[2].y - this.cp[0].y;
+		var x = this.cp[0].x +cellwidth*cells[0];
+		var y = this.cp[0].y +cellheight*cells[1];
+		this.cp[3].x = x;
+		this.cp[3].y = y;
+	}
+	this.GenerateGrid(cd.type);
+	
+	this.updateToolTips();
+}
+op.prototype.GenerateGrid = function(type){
+	// type: 0 - line grid, 1 - filled square grid, 2 - checker
+	var co = smartShape.elem.elements[0].contours;
+	var cells = this.getCellCount(true);
+	var count = cells[0]*cells[1];
+	var maxCells = 400;
+	var cellwidth = this.cp[1].x - this.cp[0].x;
+	var cellheight = this.cp[2].y - this.cp[0].y;
+	var x,y,ul,br, i=0;
+	var pathAtts = smartShape.elem.elements[0].pathAttributes;
+	smartShape.elem.elements.length = 1;
+	if (type == 0){
+		var e = smartShape.elem.elements;
+		e.length = 1;
+		maxCells *= .25;
+		var fullwidth = cellwidth*cells[0];
+		var fullheight = cellheight*cells[1];
+		var i=0;
+		for (x=0; x<=cells[0]; x++){
+			ul = {x:this.cp[0].x+x*cellwidth, y:this.cp[0].y}
+			br = {x:ul.x, y:ul.y+fullheight}
+			if (!i){
+				var saveType = e[0].customData.type;
+				e[0] = new Path();
+				e[0].customData.type = saveType;
+			}else e[i] = new Path();
+			e[i].pathAttributes = pathAtts;
+			e[i].contours[0] = newLine(ul,br);
+			if (x > maxCells) break;
+			i++;
+		}
+		for (y=0; y<=cells[1]; y++){
+			ul = {x:this.cp[0].x, y:this.cp[0].y+y*cellheight}
+			br = {x:ul.x+fullwidth, y:ul.y}
+			e[i] = new Path();
+			e[i].pathAttributes = pathAtts;
+			e[i].contours[0] = newLine(ul,br);
+			if (y > maxCells) break;
+			i++;
+		}
+	}else{
+		co.length = 0;
+		var forChecker;
+		for (x=0; x<cells[0]; x++){
+			forChecker = x%2;
+			for (y=0; y<cells[1]; y++){
+				ul = {x:this.cp[0].x+x*cellwidth, y:this.cp[0].y+y*cellheight}
+				br = {x:ul.x+cellwidth, y:ul.y+cellheight}
+				if (type == 1 || (y + !forChecker)%2) co[i] = newSquare(ul,br);
+				i++;
+				if (i>maxCells) return 0;
+			}
+		}
+		if (type == 2){ 
+			var e = smartShape.elem.elements;
+			for (var i=1; i<5; i++){
+				e[i] = new Path();
+				e[i].pathAttributes = pathAtts;
+				e[i].contours.length = 1;
+			}
+			var fullwidth = cellwidth*cells[0];
+			var fullheight = cellheight*cells[1];
+			ul = {x:this.cp[0].x, y:this.cp[0].y}
+			br = {x:this.cp[0].x+fullwidth, y:this.cp[0].y+fullheight}
+			
+			e[1].contours[0] = newLine(ul, {x:ul.x+fullwidth, y:ul.y});
+			e[2].contours[0] = newLine({x:ul.x+fullwidth, y:ul.y}, br);
+			e[3].contours[0] = newLine(br, {x:ul.x, y:ul.y+fullheight});
+			e[4].contours[0] = newLine({x:ul.x,y:ul.y+fullheight},ul);
+		}
+	}
+}
+op.prototype.setControlPoint = function(index, x, y, track){
+	this.cp[index].x = x;
+	this.cp[index].y = y;
+	this.cp[index].toolTipTracksDrag = track;
+}
+op.prototype.updateToolTips = function(){
+	var types = ["Wireframe","Solid","Checker"];
+	var phrases = [": Click to Change", "Cell Width: ","Cell Height: ", "Resize Grid: ("];
+	this.cp[0].toolTip = types[smartShape.elem.elements[0].customData.type] + phrases[0];
+	this.cp[1].toolTip = phrases[1] + (this.cp[1].x-this.cp[0].x);
+	this.cp[2].toolTip = phrases[2] + (this.cp[2].y-this.cp[0].y);
+	var cells = this.getCellCount(true);
+	this.cp[3].toolTip = phrases[3] +cells[0]+" x "+cells[1]+")";
+}
+op.prototype.getCellCount = function(arrayInsteadOfNumber){
+	var x = Math.floor(((this.cp[3].x)-this.cp[0].x)/(this.cp[1].x-this.cp[0].x));
+	var y = Math.floor(((this.cp[3].y)-this.cp[0].y)/(this.cp[2].y-this.cp[0].y));
+	if (arrayInsteadOfNumber) return [x,y];
+	return x*y;
+}
+newLine = function(ul, br){
+	var c = new Contour();
+	var n = c.nodes;
+	n.length = 2;
+	SetNodePosition(n[0], ul);
+	SetNodePosition(n[1], br);
+	return c;
+}
+newSquare = function(ul, br){
+	var c = new Contour();
+	var n = c.nodes;
+	n.length = 4;
+	SetNodePosition(n[0], ul);
+	SetNodePosition(n[1], {x:br.x, y:ul.y});
+	SetNodePosition(n[2], br);
+	SetNodePosition(n[3], {x:ul.x, y:br.y});
+	c.isClosed = true;
+	return c;
+}
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX = ptp.x; n.predY = ptp.y;
+	n.x = pt.x; n.y = pt.y;
+	n.succX = pts.x; n.succY = pts.y;
+}
+// init
+new op(smartShape.operation);

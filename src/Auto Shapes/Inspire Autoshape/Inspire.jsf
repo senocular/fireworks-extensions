@@ -1,0 +1,71 @@
+﻿var mouse = smartShape.currentMousePos;
+var cps = smartShape.elem.controlPoints;
+var elems = smartShape.elem.elements;
+var ccpi = smartShape.currentControlPointIndex;
+var dom = fw.getDocumentDOM();
+
+var operation = new Object();
+operation.InsertSmartShapeAt = operation.EndDragControlPoint = function(){
+	Render();
+}
+Render = function(){
+	var bounds = {left:dom.left+dom.width*.1, top:dom.top+dom.height*.1, width:dom.width*.8, height:dom.height*.8};
+	var curvetype = RandomRange(0,2);
+	var elemNum = RandomRange(1,4);
+	if (elems.length > elemNum) elems.length = elemNum;
+	for (var i=0; i<elemNum; i++){
+		elems[i] = new Path();
+		elems[i].contours[0] = new Contour();
+		elems[i].contours[0].isClosed = true;
+		var nodeNum = RandomRange(3,7);
+		elems[i].contours[0].nodes.length =  nodeNum;
+		for (var k=0; k<nodeNum; k++){
+			var pt = RandomPoint(bounds);
+			if (!curvetype){
+				var pred = pt;
+				var succ = pt; 
+			}else if (curvetype == 1){
+				var pred = RandomPoint(bounds);
+				var succ = RandomPoint(bounds);
+			}else{
+				if (RandomRange(0,1)){
+					var pred = pt;
+					var succ = pt; 
+				}else{
+					var pred = RandomPoint(bounds);
+					var succ = RandomPoint(bounds);
+				}
+			}
+			SetBezierNodePosition(elems[i].contours[0].nodes[k], pred, pt, succ);
+		}
+	}
+	cps.length = 1;
+	cps[0].toolTip = "Click for a New Inspiration";
+	cps[0].x = (dom.left+dom.width)/2;
+	cps[0].y = (dom.top+dom.height)/2;
+}
+Point = function(x,y){
+	return {x:x, y:y};
+}
+SetNodePosition = function(n, pt){
+	n.predX = pt.x;	n.predY =pt.y;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pt.x;	n.succY = pt.y;
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+
+RandomPoint = function(bounds){
+	return Point(bounds.left + Math.random()*bounds.width, bounds.top + Math.random()*bounds.height);
+}
+
+RandomRange = function(min, max){
+	return Math.floor(Math.random()*(max-min+1)) + min;
+}
+
+// INVOKE OPERATION
+if (operation[smartShape.operation])
+	operation[smartShape.operation]();

@@ -1,0 +1,10 @@
+var dom = fw.getDocumentDOM();
+dom.setLayerLocked(-1, -1, false, true);
+dom.setLayerVisible(-1, -1, true, true);
+var layers = dom.frames[dom.currentFrameNum].layers;
+for (var i=0; i<layers.length;i++){
+	for (var j=0; j<layers[i].elements.length;j++){
+		if (!layers[i].elements[j].visible) layers[i].elements[j].visible = true;
+	}
+}
+dom.selectAll();

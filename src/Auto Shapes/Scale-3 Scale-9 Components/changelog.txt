@@ -1,0 +1,68 @@
+0.9.7:
+------
+- Fixed invalid variable referencing that occurred only in Mac installations.
+- Allowed shapes to recognize location of dialogs in user app directory in case shapes needed to be installed manually (i.e. if the user does not have access privilages to install in the install directory).
+- Prevented force redraw from updating slice pattern handles for stretched patterns.
+- Corrected issue involving duplicated shapes using shared object for pattern recognition when using Copy Component Skin
+
+0.9.6:
+------
+- Fixed pattern refresh bug.
+- Fixed copy slice to forcefully include pattern sizes when pattern changes.
+- Updated Help.
+
+0.9.5:
+------
+- Updated pattern selection to include all document-accessible patterns with option to specify the pattern preview file in the Define Slice dialog if using a pattern not installed in Fireworks's Patterns folder.
+- Removed Keep Current option from the drop down menu in the Define Slice dialog.
+- Included new bitmap with "No Preview Available" text when the pattern was not available to be loaded in the Define Slice dialog.
+- Changed Redraw behavior of Options control point (CTRL+click) to set the pattern size used by the shape based on the current sizes set by the fill handles of the individual elements in that current state.
+- Prevented shape redraw if Cancel was selected from a dialog
+- Changed the Options dialog to show versions for both the extension and the Auto Shape used to open the dialog.
+
+0.9.4:
+------
+- Slice control points are now on the edges of the slices as opposed to the center.
+- Fixed copied text in Copy Component from using document brush if original text had not brush.
+
+0.9.3:
+------
+- Ctrl/Cmd is no longer used to open the Define Slice dialog, instead clicking a control point without dragging opens it.  Ctrl/Cmd is now used, as it is with states, to copy changes across all slices within the state.
+- Copying settings from the current slice to all slices in the state now only pertains to settings that have changed during that edit.
+- States are hidden by default; an option to show or hide them is provided in the options dialog.
+- Edge type for slices now drawn with hard edges.
+
+0.9.2:
+------
+- Fixed error in Copy Component Skin command dealing with changes in 0.9.1 and later components.
+
+0.9.1:
+------
+- Changed some naming conventions (quadrant -> slice)
+- Changed the folder in which dialogs and help reside (ComponentShapes -> Scale Components)
+
+0.9.0:
+------
+- Allowed height and width to go beyond 100 (up to 9999)
+
+0.8.9:
+------
+- Fixed missing function in Scale-9 shape
+
+0.8.8:
+------
+- Added options for stretching (works on variable width/height slices)
+
+0.8.4:
+------
+- Included Copy Component Skin command (Commands > Auto Shapes > Copy Component Skin)
+
+0.8.2:
+------
+- Added Support for multiple states
+- Resizing now reflects shape size
+- Altered help to suggest the use of Import instead of Libraries for component management
+
+0.7.4:
+------
+- Limited release

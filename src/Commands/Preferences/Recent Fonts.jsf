@@ -1,0 +1,11 @@
+﻿function ModifyRecentFontsSetting(){
+	var prefKey = "RecentFontLimit";
+	var orig = fw.getPref(prefKey);
+	var input = prompt("How many recent fonts do you want displayed? (0 = disabled)", orig);
+	if (input == null || input == orig || isNaN(input)) return false;
+	if (input < 0) input = 0;
+	fw.setPref(prefKey, input);
+	alert("You will need to restart Fireworks for your changes to take effect.");
+	return true;
+}
+ModifyRecentFontsSetting();

@@ -1,0 +1,1 @@
+﻿fw.setPref("LayersList_ShowWebLayer", Number(fw.yesNoDialog("Do you want to utilize the Web Layer?\n(Restart required)")));

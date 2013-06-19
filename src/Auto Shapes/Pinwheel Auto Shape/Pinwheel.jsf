@@ -1,0 +1,374 @@
+// SPIRAL: radius = iniRadius*E^(curve*angle)
+
+//variables
+var mouse = smartShape.currentMousePos;
+var cps = smartShape.elem.controlPoints;
+var data = smartShape.elem.customData;
+
+var rad90 = Math.PI/2;
+var rad360 = Math.PI*2;
+var cpPad = 7;
+var maxNodes = 500;
+var maxSegments = 16;
+var minSpiral = .075; // > 0
+var maxSpiral = 1.5; // < rad90
+var minCircular = 0; //  0 = straight
+var maxCircular = rad90; // <= rad90
+
+// event handlers
+var operation = new Object();
+operation.InsertSmartShapeAt = function(){
+	cps.length  = 5;
+	SetControlPoint(cps[0], mouse, "Inner Radius", false);
+	SetControlPoint(cps[2], AddPoints(mouse, {x:60, y:0}), "Size and Rotation", true);
+	SetControlPoint(cps[1], PointBetween(cps[0], cps[2], .4), "Curve and Kind", true);
+	SetControlPoint(cps[3], mouse, "Inner Radius", true);
+	SetControlPoint(cps[4], AddPoints(mouse, {x:-60, y:0}), "Count and Style", true);
+	smartShape.elem.elements[0] = new Path();
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	smartShape.elem.elements[0].contours[0].isClosed = true;
+	data.style = 0; // 0:full, 1:checker, 2:wire
+	data.radial = 1; // 0:circular, 1:spiral
+	operation.EndDragControlPoint();
+}
+operation.BeginDragControlPoint = function(){
+	var i = smartShape.currentControlPointIndex;
+	var parms = smartShape.GetDefaultMoveParms();
+	smartShape.getsDragEvents = true;
+	var pad = PointFromVector({x:0, y:0}, AngleBetween(cps[0], cps[2]), cpPad);
+	var end = MirrorPoint(cps[2], cps[0]);
+	var angle = AngleBetween(cps[0], cps[2]);
+	if (i == 0 || i == 3){ // inner radius
+		if (i == 0) PositionControlPoint(cps[3], cps[0]);
+		parms.maxLinear = DistanceBetween(cps[3], cps[4]) - cpPad;
+		parms.minLinear = -DistanceBetween(cps[3], cps[0]);
+		cps[3].RegisterLinearMove(CPoint(cps[4]), parms);
+	}else if (i == 1){ // curve
+		parms.minLinear = cpPad - DistanceBetween(cps[1], cps[2]);
+		parms.maxLinear = DistanceBetween(cps[1], cps[0]) - cpPad;
+		cps[1].RegisterLinearMove(CPoint(cps[0]), parms);
+	}else if (i == 2){ // size rotation
+		data.curveRatio = RatioOfBetween(cps[1], AddPoints(cps[0], pad), SubtractPoints(cps[2], pad));
+		data.innerRatio = RatioOfBetween(cps[3], cps[0], AddPoints(cps[4], pad));
+		parms.minRadius = cpPad*3;
+		cps[2].RegisterPolygonMove(CPoint(cps[0]), parms);
+		cps[4].RegisterPolygonMove(CPoint(cps[0]), parms);
+	}else if (i == 4){ // count 
+		parms.minAngle = end;
+		parms.maxAngle = PointFromVector(cps[0], angle + rad360/maxSegments, 100);
+		cps[3].RegisterCircularMove(CPoint(cps[0]), parms);
+		cps[4].RegisterCircularMove(CPoint(cps[0]), parms);
+	}
+	smartShape.elem.elements[0].contours.length = 3;
+	smartShape.elem.elements[0].contours[1].isClosed = true;
+	smartShape.elem.elements[0].contours[2].isClosed = true;
+	PreviewCircles(GenerateShapeProps());
+}
+operation.DragControlPoint = function(){
+	var prop = GenerateShapeProps();
+	UpdateToolTips(prop);
+	Draw(prop);
+	PreviewCircles(prop);
+}
+operation.EndDragControlPoint = function(){
+	var i = smartShape.currentControlPointIndex;
+	var prop = GenerateShapeProps();
+	if (PointsEqual(mouse, smartShape.mouseDownPos)){
+		if (i == 1) data.radial = (data.radial + 1)%2;
+		if (i == 4) data.style = (data.style + 1)%3;
+	}
+	UpdateToolTips(prop);
+	Draw(prop);
+	CreateRotatedCopies(prop);
+	smartShape.elem.elements[0].contours.length = 1;
+}
+operation.SmartShapeEdited = function(){
+	CreateRotatedCopies(GenerateShapeProps());
+}
+
+// shape methods
+GenerateShapeProps = function(){
+	var prop = new Object();
+	prop.origin = CPoint(cps[0]);
+	var i = smartShape.currentControlPointIndex;
+	var pad = PointFromVector({x:0, y:0}, AngleBetween(cps[0], cps[2]), cpPad);
+	var curveRatio = RatioOfBetween(cps[1], AddPoints(cps[0], pad), SubtractPoints(cps[2], pad));
+	prop.spiralCurve = minSpiral + (maxSpiral - minSpiral) * curveRatio;
+	prop.circularCurve = minCircular + (maxCircular - minCircular) * curveRatio;
+	prop.angle = AngleBetween(cps[0], cps[2]);
+	prop.size = DistanceBetween(cps[2], cps[0]);
+	var countAngle = AngleBetween(cps[0], cps[4]);
+	var diff = countAngle - prop.angle;
+	if (diff < 0) diff += rad360;
+	prop.count = Math.round(rad360/diff);
+	if (i == 2){
+		if (PointsEqual(cps[0], cps[2])) PositionControlPoint(cps[2], smartShape.mouseDownPos);
+		PositionControlPoint(cps[1], PointBetween(AddPoints(cps[0], pad), SubtractPoints(cps[2], pad), data.curveRatio));
+		PositionControlPoint(cps[3], PointBetween(cps[0], AddPoints(cps[4], pad), data.innerRatio));
+	}else if (i == 4){
+		countAngle = prop.angle + rad360/prop.count;
+		PositionControlPoint(cps[3], PointFromVector(cps[0], countAngle, DistanceBetween(cps[3], cps[0])));
+		PositionControlPoint(cps[4], PointFromVector(cps[0], countAngle, prop.size));
+	}
+	prop.iniRadius = Math.max(1, DistanceBetween(cps[3], cps[0]));
+	prop.endRadius = DistanceBetween(cps[0], cps[2]);
+	prop.endAngle = Math.log(prop.endRadius/prop.iniRadius)/prop.spiralCurve;
+	prop.iniAngle = AngleBetween(cps[0], cps[2]) + rad360 - DecimalMod(prop.endAngle, rad360);
+	return prop;
+}
+UpdateToolTips = function(prop){
+	cps[0].toolTip = (PointsEqual(cps[0], cps[3])) ? "Inner Radius" : "Reset Inner Radius";
+	var ang = (rad360 - prop.angle)*180/Math.PI;
+	if (ang >= 360) ang -= 360;
+	cps[2].toolTip = cps[2].name + ": " + Math.round(prop.size) + "px, " + Math.round(ang) + "°";
+	cps[3].toolTip = cps[3].name + ": " + Math.round(prop.iniRadius) + "px";
+	var styles = ["Solid", "Checker", "Wire"];
+	var radials = ["Circular", "Spiral"];
+	if (data.radial == 1) cps[1].toolTip = cps[1].name + ": " + Math.round(10*prop.spiralCurve*180/Math.PI)/10 + "°, '" + radials[data.radial] + "'";
+	else cps[1].toolTip = cps[1].name + ": " + Math.round(10*prop.circularCurve*180/Math.PI)/10 + "°, '" + radials[data.radial] + "'";
+	cps[4].toolTip = cps[4].name + ": " + prop.count + ", '" + styles[data.style] + "'";
+}
+Draw = function(prop){
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	nods.length = 0;
+	var radius = prop.iniRadius;
+	
+	// initial curve
+	if (data.radial == 0){ // circular
+		prop.iniAngle = prop.endAngle = prop.angle;
+		if (prop.iniRadius == 1) prop.iniRadius = 0;
+		var startPt = PointFromVector(prop.origin, prop.angle, prop.iniRadius);
+		var endPt = PointFromVector(prop.origin, prop.angle, prop.endRadius);
+		var arcCos = (prop.endRadius - prop.iniRadius)/2;
+		var arcRadius = arcCos/Math.cos(prop.circularCurve);
+		prop.circularCurve = rad90 - prop.circularCurve;
+		var ratio = prop.circularCurve/rad90;
+		var cRadius = arcRadius*ratio*fw.ellipseBCPConst;
+		var perpRadius = ratio*arcCos;
+		var arcPt = PointFromVector(PointBetween(startPt, endPt, .5), prop.angle - rad90, perpRadius);
+		if (prop.circularCurve > Math.PI/4){
+			nods.length = 3;
+			SetBezierNodePosition(nods[0], startPt, startPt, PointFromVector(startPt, prop.angle - prop.circularCurve, cRadius));
+			SetBezierNodePosition(nods[1], PointFromVector(arcPt, prop.angle - Math.PI, cRadius), arcPt, PointFromVector(arcPt, prop.angle, cRadius));
+			SetBezierNodePosition(nods[2], PointFromVector(endPt, prop.angle - Math.PI + prop.circularCurve, cRadius), endPt, endPt);
+		}else{
+			nods.length = 2;
+			SetBezierNodePosition(nods[0], startPt, startPt, PointFromVector(startPt, prop.angle - prop.circularCurve, 2*cRadius));
+			SetBezierNodePosition(nods[1], PointFromVector(endPt, prop.angle - Math.PI + prop.circularCurve, 2*cRadius), endPt, endPt);
+		}
+	}else{ // spiral
+		var inc = rad90 - prop.spiralCurve;
+		var angle = prop.iniAngle;
+		prop.endAngle += prop.iniAngle;
+		var cAngleOff = rad90 - Math.atan(prop.spiralCurve);
+		inc = Math.max(inc, .3);
+		var curr, x, cx, y, cy, cAngle, cRadius;
+		if (prop.iniRadius == 1){
+			nods.length++;
+			SetNodePosition(nods[0], prop.origin);
+		}
+		for (var i=0; i<maxNodes; i++){
+			curr = nods.length;
+			nods.length++;
+			radius = prop.iniRadius*Math.exp((angle-prop.iniAngle)*prop.spiralCurve);
+			if (radius >= prop.endRadius){
+				var prev = nods[curr-1];
+				endInc = inc - (angle - prop.endAngle);
+				var succ = PointBetween(prev, {x:prev.succX, y:prev.succY}, endInc/inc);
+				prev.succX = succ.x; prev.succY = succ.y;
+				angle = prop.endAngle;
+				inc = endInc;
+				radius = prop.endRadius;
+			}
+			cRadius = radius*fw.ellipseBCPConst*(inc/rad90);
+			cAngle = angle + cAngleOff;
+			pt = {x:prop.origin.x + Math.cos(angle)*radius, y:prop.origin.y + Math.sin(angle)*radius};
+			cPt = {x:Math.cos(cAngle)*cRadius, y:Math.sin(cAngle)*cRadius};
+			if (radius < prop.endRadius){
+				SetBezierNodePosition(nods[curr], SubtractPoints(pt, cPt), pt, AddPoints(pt, cPt));
+				angle += inc;
+			}else{
+				SetBezierNodePosition(nods[curr], SubtractPoints(pt, cPt), pt, pt);
+				break;
+			}
+		}
+	} // end radial
+	
+	// complete segment
+	if (data.style < 2){ // not wire
+		var nCount = nods.length;
+		nods.length *= 2;
+		inc = rad360/prop.count;
+		if (prop.count < 4){ // need to divide the bottom and top for more accurate curvature
+			var cInc = inc/2;
+			nods.length += 2; // for bottom and top arcs
+			var copyStart = 2;
+		}else{
+			var cInc = inc;
+			var copyStart = 1;
+		}
+		
+		// finish opposite path side
+		var nEnd = nods.length - copyStart;
+		for (i=0; i<nCount; i++){
+			MatchRotatedBezierNodeR(nods[nEnd-i], nods[i], prop.origin, inc);
+		}
+		
+		// circular top
+		cRadius = prop.endRadius*fw.ellipseBCPConst*(cInc/rad90);
+		cAngle = prop.endAngle + cInc + rad90;
+		SetBezierNodeSucc(nods[nCount-1], PointFromVector(nods[nCount-1], prop.endAngle + rad90, cRadius));
+		if (prop.count < 4){
+			pt = PointFromVector(prop.origin, prop.endAngle + cInc, prop.endRadius);
+			cPt = {x:Math.cos(cAngle)*cRadius, y:Math.sin(cAngle)*cRadius};
+			SetBezierNodePosition(nods[nCount], SubtractPoints(pt, cPt), pt, AddPoints(pt, cPt));
+			SetBezierNodePred(nods[nCount+1], PointFromVector(nods[nCount+1], prop.endAngle + inc - rad90, cRadius));
+		}else{
+			SetBezierNodePred(nods[nCount], PointFromVector(nods[nCount], prop.endAngle + inc - rad90, cRadius));
+		}
+		
+		// circular bottom
+		if (prop.iniRadius > 1){
+			cRadius = prop.iniRadius*fw.ellipseBCPConst*(cInc/rad90);
+			cAngle = prop.iniAngle + cInc + rad90;
+			SetBezierNodePred(nods[0], PointFromVector(nods[0], prop.iniAngle + rad90, cRadius));
+			if (prop.count < 4){
+				pt = PointFromVector(prop.origin, prop.iniAngle + cInc, prop.iniRadius);
+				cPt = {x:Math.cos(cAngle)*cRadius, y:Math.sin(cAngle)*cRadius};
+				SetBezierNodePosition(nods[nods.length-1], AddPoints(pt, cPt), pt, SubtractPoints(pt, cPt));
+				SetBezierNodeSucc(nods[nods.length-2], PointFromVector(nods[nods.length-2], prop.iniAngle + inc - rad90, cRadius));
+			}else{
+				SetBezierNodeSucc(nods[nods.length-1], PointFromVector(nods[nods.length-1], prop.iniAngle + inc - rad90, cRadius));
+			}
+		}else if (prop.count < 4){
+			nods.length--; //dividing node for bottom unnecessary
+		}
+		smartShape.elem.elements[0].contours[0].isClosed = true;
+	}else{ //wire
+		smartShape.elem.elements[0].contours[0].isClosed = false;
+	}// end segment
+}
+PreviewCircles = function(prop){
+	DrawCircleContour(smartShape.elem.elements[0].contours[1], prop.origin, prop.iniRadius);
+	DrawCircleContour(smartShape.elem.elements[0].contours[2], prop.origin, prop.endRadius);
+}
+CreateRotatedCopies = function(prop){
+	var elems = smartShape.elem.elements;
+	if (data.style == 1){
+		var len = Math.ceil(prop.count/2);
+		var inc = rad360/(prop.count/2);
+	}else{
+		var len = prop.count;
+		var inc = rad360/prop.count;
+	}
+	if (elems.length > len) elems.length = len;
+	for (var e=1; e<len; e++){
+		if (elems.length <= e){
+			elems[e] = new Path();
+			elems[e].contours[0] = new Contour();
+		}
+		elems[e].contours[0].isClosed = elems[0].contours[0].isClosed;
+		var angle = e*inc;
+		var ns = elems[0].contours[0].nodes.length;
+		elems[e].contours[0].nodes.length = ns;
+		for (var n=0; n<ns; n++){
+			MatchRotatedBezierNode(elems[e].contours[0].nodes[n], elems[0].contours[0].nodes[n], prop.origin, angle);
+		}
+	}
+}
+
+// nodes/control points
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt);
+}
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y;
+	node.x		= pt.x;	node.y		= pt.y;
+	node.succX	= pts.x;	node.succY	= pts.y;
+}
+SetBezierNodePred = function(node, ptp){
+	node.predX = ptp.x;	node.predY = ptp.y;
+}
+SetBezierNodeSucc = function(node, pts){
+	node.succX = pts.x;	node.succY = pts.y;
+}
+SetControlPoint = function(cp, pt, name, toolTipTracksDrag){
+	PositionControlPoint(cp, pt);
+	cp.name = name;
+	cp.toolTip = name;
+	cp.toolTipTracksDrag = toolTipTracksDrag;
+}
+PositionControlPoint = function(cp, pt){
+	cp.x = pt.x;
+	cp.y = pt.y;
+}
+MatchRotatedBezierNode = function(node, match, origin, angle){
+	var ca = Math.cos(angle),				sa = Math.sin(angle);
+	var dpx = match.predX - origin.x,			dpy = match.predY - origin.y;
+	var dx = match.x - origin.x,				dy = match.y - origin.y;
+	var dsx = match.succX - origin.x,			dsy = match.succY - origin.y;
+	node.predX = origin.x + dpx*ca - dpy*sa;	node.predY = origin.y + dpx*sa + dpy*ca;
+	node.x = origin.x + dx*ca - dy*sa;			node.y = origin.y + dx*sa + dy*ca;
+	node.succX = origin.x + dsx*ca - dsy*sa;	node.succY = origin.y + dsx*sa + dsy*ca;
+}
+MatchRotatedBezierNodeR = function(node, match, origin, angle){
+	var ca = Math.cos(angle),				sa = Math.sin(angle);
+	var dpx = match.predX - origin.x,			dpy = match.predY - origin.y;
+	var dx = match.x - origin.x,				dy = match.y - origin.y;
+	var dsx = match.succX - origin.x,			dsy = match.succY - origin.y;
+	node.predX = origin.x + dsx*ca - dsy*sa;	node.predY = origin.y + dsx*sa + dsy*ca;
+	node.x = origin.x + dx*ca - dy*sa;			node.y = origin.y + dx*sa + dy*ca;
+	node.succX = origin.x + dpx*ca - dpy*sa;	node.succY = origin.y + dpx*sa + dpy*ca;
+}
+DrawCircleContour = function(cont, origin, radius){
+	var nods = cont.nodes;
+	nods.length = 4;
+	var cRadius = radius*fw.ellipseBCPConst;
+	SetBezierNodePosition(nods[0], AddPoints(origin, {x:-cRadius, y:-radius}), AddPoints(origin, {x:0, y:-radius}), AddPoints(origin, {x:cRadius, y:-radius}));
+	SetBezierNodePosition(nods[1], AddPoints(origin, {x:radius, y:-cRadius}), AddPoints(origin, {x:radius, y:0}), AddPoints(origin, {x:radius, y:cRadius}));
+	SetBezierNodePosition(nods[2], AddPoints(origin, {x:cRadius, y:radius}), AddPoints(origin, {x:0, y:radius}), AddPoints(origin, {x:-cRadius, y:radius}));
+	SetBezierNodePosition(nods[3], AddPoints(origin, {x:-radius, y:cRadius}), AddPoints(origin, {x:-radius, y:0}), AddPoints(origin, {x:-radius, y:-cRadius}));
+}
+
+// point/misc
+CPoint = function(cp){
+	return {x:cp.x, y:cp.y};
+}
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y};
+}
+SubtractPoints = function(pt1, pt2){
+	return {x:pt1.x - pt2.x, y:pt1.y - pt2.y};
+}
+PointsEqual = function(pt1, pt2){
+	return (pt1.x == pt2.x && pt1.y == pt2.y);
+}
+PointBetween = function(pt1, pt2, p){
+	return {x:pt1.x + (pt2.x - pt1.x)*p, y:pt1.y + (pt2.y - pt1.y)*p};
+}
+MirrorPoint = function(pt, origin){
+	return {x:origin.x - pt.x + origin.x, y:origin.y - pt.y + origin.y};
+}
+RatioOfBetween = function(pos, min, max){
+	return DistanceBetween(min, pos)/DistanceBetween(min, max);
+}
+DecimalMod = function(n, m){
+	return n - Math.floor(n/m)*m;
+}
+AngleBetween = function(pt1, pt2){
+	return Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
+}
+DistanceBetween = function(pt1, pt2){
+	var dx = pt2.x - pt1.x;
+	var dy = pt2.y - pt1.y;
+	return Math.sqrt(dx*dx + dy*dy);
+}
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}
+}
+
+// invoke operation
+if (operation[smartShape.operation]) operation[smartShape.operation]();

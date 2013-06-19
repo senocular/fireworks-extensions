@@ -1,0 +1,54 @@
+﻿function Mirror(){
+	if (fw.selection.length != 1 || fw.selection[0].__proto__ != Path.prototype) return alert("Error: Please select one path to mirror.");
+	var dom = fw.getDocumentDOM();
+	var c, ns, len, last, end, n;
+
+	// assume to use first contour's end as mirror point
+	ns = fw.selection[0].contours[0].nodes;
+	len = ns.length;
+	last = len-1;
+	end = {x:ns[last].x, y:ns[last].y};
+
+	// find rightmost end point if other contours' ends extend past the first
+	for (c=1; c<fw.selection[0].contours.length; c++){
+		ns = fw.selection[0].contours[c].nodes;
+		len = ns.length;
+		last = len-1;
+		if (ns[last].y > end.y) end = {x:ns[last].x, y:ns[last].y};
+	}
+
+	// add mirrored points
+	for (c=0; c<fw.selection[0].contours.length; c++){
+		ns = fw.selection[0].contours[c].nodes;
+		len = ns.length;
+		last = len-1;
+		if (ns[last].y == end.y) dom.modifyPointOnPath(c, last, {x:ns[last].predX, y:ns[last].predY}, end, {x:ns[last].predX, y:end.y + (end.y - ns[last].predY)}, false, true);
+		else{
+			last++;
+			fw.selection[0].contours[c].isClosed = true;
+		}
+		while (0 < last--){
+			n = ns[last];
+			// if the first point matches end.x, dont duplicate it
+			if (!last && n.y == end.y){
+				dom.modifyPointOnPath(
+					c, last,
+					{x:n.succX, y:end.y + (end.y - n.succY)},
+					{x:n.x, y:n.y},
+					{x:n.succX, y:n.succY},
+					false, true
+				);
+			}else{
+				dom.appendPointToPath(
+					c, len++,
+					{x:n.succX, y:end.y + (end.y - n.succY)},
+					{x:n.x, y:end.y + (end.y - n.y)},
+					{x:n.predX, y:end.y + (end.y - n.predY)}
+				);
+			}
+		}
+
+	}
+}
+Mirror();
+delete Mirror;

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Multiple Paste Inside" version="0.1" type="command" requires-restart ="false">
+	<description>
+		<![CDATA[Multiple Paste Inside<br>
+		by senocular<br><br>
+		
+		Multiple Paste Inside lets you perform a paste inside action on more than one item at a time.  Normally, paste inside is only optional when one item is selected.  Using Multiple Paste Inside, you can have multiple items selected and a paste inside operation will be performed on each.  This is helpful when you want to have multiple objects mask a similar image. An example of this would be in making a puzzle.  Simply lay out all your puzzle pieces over an image they are to be used for, copy the image, select each puzzle piece and then use Multiple Paste Inside to appropriately paste the image into each piece of the puzzle.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run Multiple Paste Inside from your Commands menu: Commands > Selection > Multiple Paste Inside]]>
+	</ui-access>
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<files>
+		<file source="Selection/Multiple Paste Inside.jsf" destination="$fireworks/Configuration/Commands/Selection" />
+	</files>
+</macromedia-extension>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Auto Shape Inspector POC ALPHA" version="0.0.1" type="commandpanel" requires-restart="true">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Auto Shape Inspector POC ALPHA<br>
+		by senocular<br><br>
+		
+		Proof of concept for an 'AutoShape Inspector' panel which allows you to alter autoshape parameters with controls outside those provided by the shapes own control points.<br>
+		
+		The AutoShape Inspector window is used to alter values in autoshapes created to utilize it (that is, only autoshapes created specifically to be used with the inspector panel can benefit from it).
+		]]>	
+	</description>
+	<ui-access>
+		<![CDATA[Access the ASI Square Auto Shape from the Shapes panel.  Alter the square's width using the ASInspector POC Alpha window from the Window menu..]]>
+	</ui-access>
+	<files>
+		<file source="ASI Square_a.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="ASI Square_a.gif" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="ASInspector POC Alpha.swf" destination="$fireworks/Configuration/Command Panels" />
+	</files>
+</macromedia-extension>

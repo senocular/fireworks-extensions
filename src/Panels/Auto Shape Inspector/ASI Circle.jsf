@@ -1,0 +1,130 @@
+﻿
+p = new Object(); // properties
+f = new Object(); // functions
+
+p.mouse = smartShape.currentMousePos;
+p.cps = smartShape.elem.controlPoints;
+p.elm = smartShape.elem;
+
+// OPERATIONS
+f.InsertSmartShapeAt = function(){
+	f.ASInspectorSetup([
+		["radius", 50],
+		["centerX", p.mouse.x],
+		["centerY", p.mouse.y]
+	]);
+
+	p.elm.elements[0] = new Path();
+	f.Draw();
+}
+f.SmartShapeEdited = function(){
+	f.DetectInspectorEdit(f.InspectorEdit, f.NormalEdit);
+}
+
+
+// SMARTSHAPE FUNCTIONS
+f.InspectorEdit = function(){
+	f.Draw();
+}
+f.NormalEdit = function(){
+	alert("Please don't edit me!");
+	f.Draw();
+}
+f.Draw = function(){
+	var loc = {x:f.GetASInspectorData("centerX"), y:f.GetASInspectorData("centerY")}
+	f.SetControlPoint(0, loc);
+	f.CreateCircleContour(p.cps[0], f.GetASInspectorData("radius"));
+}
+
+
+// NODE/CP POSITIONING
+f.SetNodePosition = function(n, pt){
+	f.SetBezierNodePosition(n, pt,pt,pt);
+}
+f.SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+f.SetControlPoint = function(index, pt){
+	if (index >= p.cps.length) p.cps.length = index+1;
+	p.cps[index].x = pt.x;	p.cps[index].y = pt.y;
+}
+
+f.AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y};
+}
+f.CreateCircleContour = function(origin, radius){
+	p.elm.elements[0].contours[0] = new Contour();
+	p.elm.elements[0].contours[0].isClosed = true;
+	var ns = p.elm.elements[0].contours[0].nodes;
+	ns.length = 4;
+	var cRadius = radius*fw.ellipseBCPConst;
+	f.SetBezierNodePosition(
+		ns[0],
+		f.AddPoints(origin, {x:-cRadius,	y:-radius}),
+		f.AddPoints(origin, {x:0,		y:-radius}),
+		f.AddPoints(origin, {x:cRadius, y:-radius})
+	);
+	f.SetBezierNodePosition(
+		ns[1],
+		f.AddPoints(origin, {x:radius,	y:-cRadius}),
+		f.AddPoints(origin, {x:radius,	y:0}),
+		f.AddPoints(origin, {x:radius,	y:cRadius})
+	);
+	f.SetBezierNodePosition(
+		ns[2],
+		f.AddPoints(origin, {x:cRadius,	y:radius}),
+		f.AddPoints(origin, {x:0,		y:radius}),
+		f.AddPoints(origin, {x:-cRadius,	y:radius})
+	);
+	f.SetBezierNodePosition(
+		ns[3],
+		f.AddPoints(origin, {x:-radius,	y:cRadius}),
+		f.AddPoints(origin, {x:-radius,	y:0}),
+		f.AddPoints(origin, {x:-radius,	y:-cRadius})
+	);
+}
+
+// INSPECTOR METHODS
+f.ASInspectorSetup = function(props_array){
+	var elm = smartShape.elem;
+	elm.customData.ASInspectorData = new Object();
+	elm.customData.ASInspectorData.edited = false;
+	elm.customData.ASInspectorData.data = new Object();
+	if (props_array){
+		var i, len = props_array.length;
+		for (i=0; i<len; i++) f.SetASInspectorData(props_array[i][0], props_array[i][1]);
+	}
+}
+f.DetectInspectorEdit = function(InspectorEditFunc, NormalEditFunc){
+	var elm = smartShape.elem;
+	if(elm.customData.ASInspectorData.edited !== false){
+		f.ASInspectorEditCleanup();
+		InspectorEditFunc();
+	}else if (NormalEditFunc) NormalEditFunc();
+}
+f.ASInspectorEditCleanup = function(){
+	var elm = smartShape.elem;
+	elm.customData.ASInspectorData.edited = false;
+	var n = elm.elements[0].contours[0].nodes[0];
+	n.x = n.x-1;
+}
+f.SetASInspectorData = function(prop, value){
+	var elm = smartShape.elem;
+	elm.customData.ASInspectorData.data[prop] = value;
+}
+f.GetASInspectorData = function(prop){
+	var elm = smartShape.elem;
+	return elm.customData.ASInspectorData.data[prop];
+}
+
+
+// INVOKE OPERATION
+if (f[smartShape.operation]) f[smartShape.operation]();
+
+// Cleanup
+f = undefined;
+delete f;
+p = undefined;
+delete p;

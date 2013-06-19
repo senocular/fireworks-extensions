@@ -1,0 +1,158 @@
+fw.selection[0].pathAttributes.brush
+
+
+
+blackness = blackness in color blending between hues
+"and blackness is the build-up of black pixels as some tools brush over the same spot repeatedly (like the felt tip)."
+"Color Darkening" ?
+
+concentration = ink
+feedback = build up; "brush": build up, "none": no buildup, "background": ?
+buildup - when on and ink is not 100%, overlapping lines will blend to get closer to 100%
+
+no spacing or flow for type: "simple" ?
+
+flowrate - bitmap brush tool only, time which the brush redraws itself over the current drawing while the mouse is down (even if its not moving)
+
+name - to change name in PI, "Custom..."
+
+Dynamic Size: +maxCount, +minSize sliders
+
+
+---
+from pathAttributes:
+---
+(brush object Brush object (see  Brush object on page 26).)
+
+brushColor string A color string that specifies the color that is used for rendering the Brush object, if any (see Color string data type on page 11).
+
+brushPlacement string Acceptable values are "inside", "center", and "outside".
+
+brushTexture object Texture object (see Texture object on page 44).
+
+fillOnTop Boolean If set to true, the fill is drawn on top of the brush; if set to false (the default), the fill is drawn beneath the brush.
+
+--------------------------
+OUTLINE
+--------------------------
+
+PRESETS:
+============
+list of presets (include by category?) [list]
+list of features to apply when selecting preset (size, softness, dynamics etc) [check]
+
+SHAPE:
+============
+angle [interactive preview]
+aspect [interactive preview]
+shape [buttons/check]
+diameter [slider]
+softness [slider]
+softenMode: "size", "linear" [drop/check]
+antiAliased [check]
+
+APPEARANCE:
+============
+brushColor (PathAttr) - extend color options based on selected? have variations next to selected color? [color picker]
+type: "simple", "natural" [drop/check]
+spacing [slider]
+flowRate [slider]
+feedback (buildup) [drop/check]
+blackness [slider]
+concentration (ink) [slider]
+
+fillOnTop (PathAttr) [check]
+brushPlacement: "inside", "center", and "outside". [drop/check]
+closed [check/button?]
+
+TEXTURE:
+=======
+brushTexture (PathAttr) [drop]
+textureBlend [slider]
+textureEdge [slider]
+alphaRemap: "none", "white neon", "harsh wet", "smooth neon", "wavy gravy", "white neon edge". [drop]
+
+
+DASHES:
+============
+numDashes [slider]
+dashOnSize1, dashOffSize1 [input/slider]
+dashOnSize2, dashOffSize2 [input/slider]
+dashOnSize3, dashOffSize3 [input/slider]
+
+TIPS:
+============
+tipCount [slider]
+tipSpacing [slider]
+tipSpacingMode: "random", "diagonal", "circular". [drop/check]
+tipColoringMode: "random", "uniform", "complementary", "hue", "shadow". [drop]
+
+DYNAMICS
+============
+[SIZE]
+sense_hdir_size [slider]
+sense_vdir_size [slider]
+sense_pressure_size [slider]
+sense_speed_size [slider]
+sense_random_size [slider]
+maxCount [slider]
+minSize [slider]
+
+[ANGLE]
+sense_hdir_angle [slider]
+sense_vdir_angle [slider]
+sense_pressure_angle [slider]
+sense_speed_angle [slider]
+sense_random_angle [slider]
+
+[SCATTER]
+sense_hdir_scatter [slider]
+sense_vdir_scatter [slider]
+sense_pressure_scatter [slider]
+sense_speed_scatter [slider]
+sense_random_scatter [slider]
+
+[INK]
+sense_hdir_opacity [slider]
+sense_vdir_opacity [slider]
+sense_pressure_opacity [slider]
+sense_speed_opacity [slider]
+sense_random_opacity [slider]
+
+[HUE]
+sense_hdir_hue [slider]
+sense_vdir_hue [slider]
+sense_pressure_hue [slider]
+sense_speed_hue [slider]
+sense_random_hue [slider]
+
+[SATURATION]
+sense_hdir_saturation [slider]
+sense_vdir_saturation [slider]
+sense_pressure_saturation [slider]
+sense_speed_saturation [slider]
+sense_random_saturation [slider]
+
+[LIGHTNESS]
+sense_hdir_lightness [slider]
+sense_vdir_lightness [slider]
+sense_pressure_lightness [slider]
+sense_speed_lightness [slider]
+sense_random_lightness [slider]
+
+[BLACKNESS]
+sense_hdir_blackness [slider]
+sense_vdir_blackness [slider]
+sense_pressure_blackness [slider]
+sense_speed_blackness [slider]
+sense_random_blackness [slider]
+
+
+
+
+[Auto] name
+[X] category
+
+
+Preferences:
+auto apply (warn about excessive history steps)

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Batch Complete Alert" version="0.8.0" type="command">
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" primary="true" />
+	</products>
+	<description><![CDATA[Batch Complete Alert<br>
+		www.senocular.com<br><br>
+		
+		This command, used in a Batch Process, provides you with an alert or gives you the option of launching an application to indicate the completion of the batch.
+		The indication will take place while the final file in the batch is being processed.  It is recommended you add this command to the bottom of those used within the batch so that it is run after settings are applied to that last file (thereby occuring closer to the actual end of the batch).<br><br>
+
+		Version History:
+		0.8.0: limited release
+		]]>
+	</description>
+	<ui-access><![CDATA[
+		Add Batch Complete Alert from the Commands list to settings used in a batch process. Options for this command will appear when you begin the batch.
+	]]></ui-access>
+
+	<files>
+		<file source="Batch Complete Alert.jsf" destination="$fireworks/Configuration/Commands/Batch Commands" />
+		<file source="dialog.swf" destination="$fireworks/Configuration/Shared/senocular/Batch Complete Alert" />
+		<file source="config.jsf" destination="$fireworks/Configuration/Shared/senocular/Batch Complete Alert" />
+	</files>
+</macromedia-extension>

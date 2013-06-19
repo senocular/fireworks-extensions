@@ -1,0 +1,23 @@
+﻿function MergeEndPoints(){
+	if (!fw.selection.length) return alert("Error: Please select at least one path to merge it's end points.");
+	var dom = fw.getDocumentDOM();
+	var s, c, ns, first, last;
+	for (s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ != Path.prototype) continue;
+		for (c=0; c<fw.selection[s].contours.length; c++){
+			ns = fw.selection[s].contours[c].nodes;
+			first = ns[0];
+			last = ns[ns.length-1];
+			dom.modifyPointOnPath(
+				c, 0,
+				{x:(first.predX + last.predX)/2, y:(first.predY + last.predY)/2},
+				{x:(first.x + last.x)/2, y:(first.y + last.y)/2},
+				{x:(first.succX + last.succX)/2, y:(first.succY + last.succY)/2},
+				false, true
+			);
+			fw.selection[s].contours[c].nodes.length--;
+		}
+	}
+}
+MergeEndPoints();
+delete MergeEndPoints;

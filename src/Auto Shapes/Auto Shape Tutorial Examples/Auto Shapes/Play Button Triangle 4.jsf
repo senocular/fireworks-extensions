@@ -1,0 +1,159 @@
+﻿// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+	
+	// create new path as first element in elements array
+	smartShape.elem.elements[0] = new Path();
+	
+	// create new contour as first contour in contours array
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	
+	// set the contour to be a closed contour
+	smartShape.elem.elements[0].contours[0].isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// create 3 nodes in the contour by altering the nodes array (nods) length
+	nods.length = 3;
+	
+	// set the position of the 3 nodes in the first contour in a triangle shape
+	// each point is based around the location of the mouse
+	SetNodePosition(nods[0], AddPoints(mouse, {x:-25, y:-25}));
+	SetNodePosition(nods[1], AddPoints(mouse, {x:25, y:0}));
+	SetNodePosition(nods[2], AddPoints(mouse, {x:-25, y:25}));
+	
+	// create 2 new control points in the control points array
+	cps.length = 2;
+	
+	// set the first control point to the position of the second node in nods
+	// with the name "Tip" and the toolTip "Move Tip"	
+	SetControlPoint(cps[0], nods[1], "Tip", "Move Tip");
+
+	// set the second control point to a position between the first and last nodes
+	// with the name "End" and the toolTip "Move End"		
+	SetControlPoint(cps[1], AddPoints(mouse, {x:-25, y:0}), "End", "Move End");
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+
+	// assign a short variable to represent the name of the currently clicked control point
+	var cpname = smartShape.currentControlPointName;
+	
+	// if the current control point name is "Tip"
+	if (cpname == "Tip"){
+		
+		// assign a minLinear property for the parms variable that will restrict the tip control
+		// point and node from going past the left side of the shape (past the other control point and nodes)
+		parms.minLinear = cps[1].x - cps[0].x;
+		
+		// create a new point variable that is directly to the right of the first
+		// control point - this will define a line from which it will move with RegisterLinearMove
+		var horiz = AddPoints(cps[0], {x:100, y:0});
+
+		// set the second path node and the first control point to move with a
+		// RegisterLinearMove type of movement with default properties specified in parms
+		// and a reference point of the previously defined horiz making it move linearly in a
+		// line moving left and right (0 degree angle)
+		cps[0].RegisterLinearMove(horiz, parms);
+		nods[1].RegisterLinearMove(horiz, parms);
+		
+	// otherwise, if the name is "End"
+	}else if (cpname == "End"){
+		
+		// assign a maxLinear property for the parms variable that will restrict the end control
+		// point and nodes from going past the right side of the shape (past the other control point and node)
+		parms.maxLinear = cps[0].x - cps[1].x;
+		
+		// create a new point variable that is directly to the right of the second
+		// control point - this will define a line from which it will move with RegisterLinearMove
+		var horiz = AddPoints(cps[1], {x:100, y:0});
+		
+		// set the second control point to move with a RegisterLinearMove type of movement
+		// with default properties specified in parms and a reference point of the previously
+		// defined horiz making it move linearly in a line moving left and right (0 degree angle)
+		cps[1].RegisterLinearMove(horiz, parms);
+		
+		// Redifine the horiz variable to be based directly right of the first node
+		horiz = AddPoints(nods[0], {x:100, y:0});
+		
+		// assign the first node a RegisterLinearMove type movement using the same parms
+		// object and the new horiz point so that it moves left and right relative to a point
+		// directly to the right of itself
+		nods[0].RegisterLinearMove(horiz, parms);
+		
+		// Redifine the horiz variable to be based directly right of the last node
+		horiz = AddPoints(nods[2], {x:100, y:0});
+		
+		// assign the last node a RegisterLinearMove type movement using the same parms
+		// object and the new horiz point so that it moves left and right relative to a point
+		// directly to the right of itself
+		nods[2].RegisterLinearMove(horiz, parms);
+	}
+}
+// end event handlers
+
+// custom functions:
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

@@ -1,0 +1,342 @@
+﻿// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){	
+	
+	// create new path as first element in elements array
+	smartShape.elem.elements[0] = new Path();
+	
+	// create new contour as first contour in contours array
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	
+	// set the contour to be a closed contour
+	smartShape.elem.elements[0].contours[0].isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	var nods = smartShape.elem.elements[0].contours[0].nodes;
+	
+	// create 10 nodes in the contour by altering the nodes array (nods) length
+	nods.length = 10;
+	
+	// create the body shape positioning points in the contour 
+	SetNodePosition(nods[0], AddPoints(mouse, {x:-30, y:-30})); // left shoulder
+	SetNodePosition(nods[1], AddPoints(mouse, {x:-30, y:-30}));
+	SetNodePosition(nods[2], AddPoints(mouse, {x:30, y:-30})); // right shoulder
+	SetNodePosition(nods[3], AddPoints(mouse, {x:30, y:-30}));
+	SetNodePosition(nods[4], AddPoints(mouse, {x:30, y:30})); // right hand
+	SetNodePosition(nods[5], AddPoints(mouse, {x:15, y:30}));
+	SetNodePosition(nods[6], AddPoints(mouse, {x:15, y:60})); // feet
+	SetNodePosition(nods[7], AddPoints(mouse, {x:-15, y:60}));
+	SetNodePosition(nods[8], AddPoints(mouse, {x:-15, y:30})); // left hand
+	SetNodePosition(nods[9], AddPoints(mouse, {x:-30, y:30}));
+	
+	// using CreateCircleContour creat a new circular contour in the
+	// shape to represent the figure's head
+	CreateCircleContour(smartShape.elem.elements[0], AddPoints(mouse, {x:0, y:-55}), 20);
+	
+	// create 2 control points
+	cps.length = 2;
+	
+	// set the first control point, Head, on top of the head contour 
+	SetControlPoint(cps[0], smartShape.elem.elements[0].contours[1].nodes[0], "Head", "Head Pointedness");
+	
+	// set the second control point, Shoulder, on the left shoulder
+	SetControlPoint(cps[1], nods[0], "Shoulder", "Shoulder Broadness");
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+
+	// assign a short variable to represent the currently clicked control point
+	var cp = smartShape.currentControlPoint;
+	
+	// if the current control point is the Head point 
+	if (cp.name == "Head"){
+	
+		// assign a short variable to represent the head's nodes array
+		var nods = smartShape.elem.elements[0].contours[1].nodes;
+		
+		// here, the top head point moves up with the mouse.  The only other 
+		// movement is for the successor on the left of the head and the
+		// predecessor on the right side. These only move with a 
+		// 1:fw.ellipseBCPConst ratio with the mouse to maintain 
+		// consistent curving respective to height
+		
+		// disable x movement
+		parms.deltaXtoX = 0;
+		
+		// dont let y movement to go below half the head
+		parms.maxY = nods[1].y;
+		
+		// move the control point and the top head node to match the mouse vertically
+		cp.RegisterMove(parms);
+		nods[0].RegisterMove(parms);
+		
+		// set y to move with 1:ellipseBCPConst ratio
+		parms.deltaYtoY = fw.ellipseBCPConst;
+		
+		// allow only the successor to move for the point 
+		parms.movePt = false;
+		parms.movePred = false;
+		parms.moveSucc = true;
+		
+		// register movement for the left node (its successor)
+		nods[3].RegisterMove(parms);
+		
+		// allow only the predecessor to move for the point 
+		parms.movePred = true;
+		parms.moveSucc = false;
+		
+		// register movement for the right node (its predecessor)
+		nods[1].RegisterMove(parms);
+		
+	// otherwise if the current control point is the Shoulder point 
+	}else if (cp.name == "Shoulder"){
+	
+		// assign a short variable to represent the body's nodes array
+		var nods = smartShape.elem.elements[0].contours[0].nodes;
+		
+		// here, 4 different points are moving in 2 different ways requiring
+		// 8 different calls to register move functions. Each shoulder consists
+		// of 2 nodes whose main point follows the mouse normally (1 which gets
+		// translated from horizontal to vertical) but whose predecessor or 
+		// successor needs to be moved with a 1:ellipseBCPConst ratio
+		
+		// disable y movement
+		parms.deltaYtoY = 0;
+		
+		// set min/max to prevent the control point to move outside
+		// the bounds of the shoulder
+		parms.minX = smartShape.elem.elements[0].contours[0].nodes[0].x;
+		parms.maxX = smartShape.elem.elements[0].contours[1].nodes[0].x;
+		
+		// create a radius variable that will help restrict movement
+		// for various control points since they will need to be restricted
+		// in areas different from the main points
+		var radius = parms.maxX - parms.minX;
+		
+		// move the control point 
+		cp.RegisterMove(parms);
+		
+		// don't allow the predecessor to move for the point
+		// (it will have its own register move settings/function call)
+		parms.movePt = true;
+		parms.movePred = false;
+		parms.moveSucc = true;
+		
+		// move the left top shoulder node 
+		nods[1].RegisterMove(parms);
+		
+		// set movement for control point at ellipseBCPConst ratio
+		parms.deltaXtoX = 1-fw.ellipseBCPConst;
+		
+		// use the radius variable to set a correct minX location
+		parms.maxX = parms.minX + radius*(1 - fw.ellipseBCPConst);
+		
+		// allow only the predecessor to move for the point 
+		parms.movePt = false;
+		parms.movePred = true;
+		parms.moveSucc = false;
+		
+		// move the left top shoulder node (predecessor)
+		nods[1].RegisterMove(parms);
+		
+		// disable x movement
+		parms.deltaXtoX = 0;
+		
+		// set y movement to the mouse x movement
+		parms.deltaXtoY = 1;
+		
+		// set min/max to prevent the point to moving outside
+		// the bounds of the shoulder
+		parms.maxX = smartShape.elem.elements[0].contours[0].nodes[3].x;
+		parms.minY = smartShape.elem.elements[0].contours[0].nodes[1].y;
+		parms.maxY = parms.minY + radius;
+		
+		// don't allow the successor to move for the point
+		// (it will have its own register move settings/function call)
+		parms.movePt = true;
+		parms.movePred = true;
+		parms.moveSucc = false;
+		
+		// move the left left shoulder node 
+		nods[0].RegisterMove(parms);
+		
+		// disable movement for successor but allow for predecessor
+		parms.movePred = false;
+		parms.moveSucc = true;
+		
+		// move the right right shoulder node (moves like left left)
+		nods[3].RegisterMove(parms);
+		
+		// set movement for control point at ellipseBCPConst ratio
+		parms.deltaXtoY = 1 - fw.ellipseBCPConst;
+		
+		// use the radius variable to set a correct maxY location
+		parms.maxY = parms.minY + radius*(1 - fw.ellipseBCPConst);
+		
+		// allow only the successor to move for the point 
+		parms.movePt = false;
+		parms.movePred = false;
+		parms.moveSucc = true;
+		
+		// move the left left shoulder node (successor)
+		nods[0].RegisterMove(parms);
+		
+		// disable movement for successor but allow for predecessor
+		parms.movePred = true;
+		parms.moveSucc = false;
+		
+		// move the right right shoulder node (predecessor; moves like left left)
+		nods[3].RegisterMove(parms);
+		
+		// move x opposite mouse movement
+		parms.deltaXtoX = -1;
+		
+		// remove y movement based on x movement
+		parms.deltaXtoY = 0;
+		
+		// set min/max to prevent the point to moving outside
+		// the bounds of the shoulder
+		parms.minX = smartShape.elem.elements[0].contours[1].nodes[0].x;
+		parms.maxX = smartShape.elem.elements[0].contours[0].nodes[3].x;
+		
+		// don't allow the successor to move for the point
+		// (it will have its own register move settings/function call)
+		parms.movePt = true;
+		parms.movePred = true;
+		parms.moveSucc = false;
+		
+		// move the right top shoulder node
+		nods[2].RegisterMove(parms);
+		
+		// set movement for control point at ellipseBCPConst ratio
+		parms.deltaXtoX = fw.ellipseBCPConst-1;
+		
+		// use the radius variable to set a correct minX location
+		parms.minX = parms.minX + radius*fw.ellipseBCPConst;
+		
+		// allow only the successor to move for the point 
+		parms.movePt = false;
+		parms.movePred = false;
+		parms.moveSucc = true;
+		
+		// move the right top shoulder node (successor)
+		nods[2].RegisterMove(parms);
+	}
+}
+
+// custom functions:
+/**
+ * CreateCircleContour creates a new contour in the passed element elem
+ * in a circular shape at the position origin with a radius radius
+ * Requires: SetBezierNodePosition, AddPoints
+*/
+CreateCircleContour = function(elem, origin, radius){
+
+	// the new contour will be created as the element's last
+	// so its index will be the current contours array length
+	var last = elem.contours.length;
+	
+	// create a new contour as the last
+	elem.contours[last] = new Contour();
+	
+	// make sure the contour is closed
+	elem.contours[last].isClosed = true;
+	
+	// assign a short variable to represent the nodes array
+	var nods = elem.contours[last].nodes;
+	
+	// create 4 new nodes
+	nods.length = 4;
+	
+	// get the length of control point arms using ellipseBCPConst
+	var cRadius = radius*fw.ellipseBCPConst;
+	
+	// set each 4 points around the circle at 90 degree intervals each
+	// using radius and cRadius for positioning the points and its
+	// control points
+	SetBezierNodePosition(
+		nods[0],
+		AddPoints(origin, {x:-cRadius,	y:-radius}),
+		AddPoints(origin, {x:0,			y:-radius}),
+		AddPoints(origin, {x:cRadius, 	y:-radius})
+	);
+	SetBezierNodePosition(
+		nods[1],
+		AddPoints(origin, {x:radius,	y:-cRadius}),
+		AddPoints(origin, {x:radius,	y:0}),
+		AddPoints(origin, {x:radius,	y:cRadius})
+	);
+	SetBezierNodePosition(
+		nods[2],
+		AddPoints(origin, {x:cRadius,		y:radius}),
+		AddPoints(origin, {x:0,			y:radius}),
+		AddPoints(origin, {x:-cRadius,	y:radius})
+	);
+	SetBezierNodePosition(
+		nods[3],
+		AddPoints(origin, {x:-radius,	y:cRadius}),
+		AddPoints(origin, {x:-radius,	y:0}),
+		AddPoints(origin, {x:-radius,	y:-cRadius})
+	);
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

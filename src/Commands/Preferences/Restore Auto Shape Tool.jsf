@@ -1,0 +1,1 @@
+﻿fw.setPref("SmartShapeToolRevertsToPointer", Number(fw.yesNoDialog("Should the Auto Shape tool automatically revert to a pointer when used?")));

@@ -1,0 +1,142 @@
+f = new Object();
+f.GetSingleFrameName = function(naming, frm){
+	switch(naming){
+		case "none": return "";
+		case "frameNumber": return "f"+frm+1;
+		case "number": return frm+1;
+		case "state":
+			var nam = ["","over","down","overdown"];
+			return nam[frm%4];
+		case "abbreviation":
+			var nam = ["","o","d","od"];
+			return nam[frm%4];
+		case "underscore": return "_";
+		case "period": return ".";
+		case "space": return " ";
+		case "hyphen": return "-";
+	}
+	return "";
+}
+f.GetFrameSuffix = function(namingSettings, frm){
+	if (!dom) var dom = fw.getDocumentDOM();
+	return f.GetSingleFrameName(namingSettings[0], frm) + f.GetSingleFrameName(namingSettings[1], frm);
+}
+f.GetSliceNumber = function(slice){
+	if (!dom) var dom = fw.getDocumentDOM();
+	var frm = dom.frames[dom.currentFrameNum];
+	var lyr = frm.layers[frm.layers.length-1];
+	var e = lyr.elements.length;
+	while (e--){
+		if (lyr.elements[e].customData == slice.customData) return e;
+	}
+	return -1;
+}
+f.GetSliceName = function(slice){
+	var name = slice.baseName;
+	if (name == null) name = "Slice" + (f.GetSliceNumber(slice) + 1);
+	return name;
+}
+f.GetSliceFileExtension = function(slice, defaults){
+	var extension;
+	if (slice.exportOptions) extension = (slice.exportOptions.exportFormat != "custom") ? slice.exportOptions.exportFormat : slice.exportOptions.macFileType;
+	else extension = (defaults.exportFormat != "custom") ? defaults.exportFormat : defaults.macFileType;
+	switch(extension){
+		case "TIFF": extension = "tif"; break;
+		case "JPEG": extension = "jpg"; break;
+		case "BMP ": extension = "bmp"; break;
+		default: extension = extension.toLowerCase();
+	}
+	return extension;
+}
+f.isValidUniqueSlice = function(slice){
+	return (slice.customData.uniqueExportOptions && slice.customData.uniqueExportOptions.path && slice.customData.uniqueExportOptions.path.length > 5);
+}
+f.ExportSlice = function(slice, iden, filename, defaults, replace){
+	if (!replace && Files.exists(filename)){
+		replace = confirm("Warning: "+ iden +" already exists.  Replace it and other existing files?");
+		if (!replace) return replace;
+	}
+	
+	var sXO = slice.exportOptions;
+	if (sXO == null) sXO = defaults;
+	sXO.crop = true;
+	sXO.cropLeft = slice.left - dom.left;
+	sXO.cropRight = slice.left + slice.width - dom.left;
+	sXO.cropTop = slice.top - dom.top;
+	sXO.cropBottom = slice.top + slice.height - dom.top;
+	fw.exportDocumentAs(dom, filename, sXO);
+	sXO.crop = false;
+	return replace;
+}
+f.ExportFullSlices = function(){
+	if (!dom) var dom = fw.getDocumentDOM();
+	var sel = fw.selection;
+	var xslices = new Array();
+	
+	var unknowns = false;
+	var replace = false;
+	
+	// selected slices
+	var n = sel.length;
+	for (var i=0; i<n; i++){
+		if (sel[i].__proto__ == SliceHotspot){
+			if (f.isValidUniqueSlice(sel[i])) xslices.push(sel[i]);
+			else if (!unknowns) unknowns = true;
+		}
+	}
+
+	// if no selected slices, export all slices
+	n = xslices.length;
+	if (!n){
+		var webLayerNum = dom.layers.length-1;
+		var webLayer = dom.layers[webLayerNum].frames[dom.currentFrameNum];
+		n = webLayer.elements.length;
+		for (i=0; i<n; i++){
+			if (webLayer.elements[i].__proto__ == SliceHotspot){
+				if (f.isValidUniqueSlice(webLayer.elements[i])) xslices.push(webLayer.elements[i]);
+				else if (!unknowns) unknowns = true;
+			}
+		}
+	}
+	
+	// if still no slices, exit
+	n = xslices.length;
+	if (!n) return alert("Error: No slices to export.");;
+
+	if (unknowns && !confirm("Warning: Some slices selected do not have unique export options defined for them. These will not be exported. Continue?")) return false;
+
+	var defaults = dom.exportOptions;
+	var namingSettings = [dom.exportSettings.sliceFrameNaming1, dom.exportSettings.sliceFrameNaming2];
+	dom.exportSettings.sliceFrameNaming1 = "none";
+	dom.exportSettings.sliceFrameNaming2 = "none";
+	var fLen = dom.frames.length;
+	var currFrm = dom.currentFrameNum;
+	var slice, name, filename, extension, frm, suf, sXO;
+	for (i=0; i<n; i++){
+		slice = xslices[i];
+		if (!slice.customData.uniqueExportOptions) continue;
+			
+		name = f.GetSliceName(slice);
+		filename = slice.customData.uniqueExportOptions.path + "/" + name;
+		extension = f.GetSliceFileExtension(slice, defaults);
+		if (slice.customData.uniqueExportOptions.exportFrames){
+			for (frm = 0; frm < fLen; frm++){
+				dom.currentFrameNum = frm;
+				suf = f.GetFrameSuffix(namingSettings, frm);
+				replace = f.ExportSlice(slice, name+suf+"."+extension, filename+suf+"."+extension, defaults, replace);
+			}
+			dom.currentFrameNum = currFrm;
+		}else{
+			replace = f.ExportSlice(slice, name+"."+extension, filename+"."+extension, defaults, replace);
+		}
+	}
+	dom.exportSettings.sliceFrameNaming1 = namingSettings[0];
+	dom.exportSettings.sliceFrameNaming2 = namingSettings[1];
+	return true;
+}
+
+// execute:
+var dom = fw.getDocumentDOM();
+f.ExportFullSlices();
+f = undefined;
+delete f;

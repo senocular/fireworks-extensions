@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Document Commands" version="0.7.2" type="command" requires-restart ="false">
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Document Commands<br>
+		www.senocular.com<br><br>
+		
+		- Canvas #x#: Sets the dimensions of the document canvas to the specified values (images not sized). If no document is present, one is created with the given dimensions.
+		- Center Document Origin: Sets the document 0,0 coordinates to be in the center of the document
+		- Pad: Pads the canvas from the center by input given in a dialog
+		- Reset Document Origin: Resets top left of a document to be coordinates 0,0
+		- Resize #x#: Sets the dimensions of the document canvas to the specified values (images sized)
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run Document Commands from your Commands > Document menu.]]>
+	</ui-access>
+	<files>
+		<file source="Canvas 320x240.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Canvas 640x480.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Canvas 800x600.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Canvas 1024x768.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Center Document Origin.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Pad.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Reset Document Origin.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Resize 320x240.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Resize 640x480.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Resize 800x600.jsf" destination="$fireworks/Configuration/Commands/Document" />
+		<file source="Resize 1024x768.jsf" destination="$fireworks/Configuration/Commands/Document" />
+	</files>
+</macromedia-extension>

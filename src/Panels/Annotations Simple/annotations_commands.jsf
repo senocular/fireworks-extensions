@@ -1,0 +1,60 @@
+function getElementType(){
+	if (fw.selection.length == 0){
+		return "Document";
+	}
+	if (fw.selection.length == 1){
+		var str = String(fw.selection[0]);
+		switch(str){
+			case "[object Group]":
+				if (elem.isSmartShape){
+					return "Auto Shape";
+				}else{
+					return "Group";
+				}
+			case "[object Image]":
+				return "Bitmap";
+			case "[object RectanglePrimitive]":
+				return "Rectangle";
+			case "[object Path]":
+				return "Path";
+			case "[object Instance]":
+				return "Symbol";
+			case "[object Text]":
+				return "Text";
+			case "[object SliceHotspot]":
+				return "Slice";
+			case "[object Hotspot]":
+				return "Hotspot";
+			default:
+				return "Unknown";
+		}
+	}
+	if (fw.selection.length > 1){
+		return "Multiple";
+	}
+}
+function getAnnotation(){
+	var dom = fw.getDocumentDOM();
+	if (fw.selection.length == 0){
+		if (dom.pngText.annotations){
+			return escape(dom.pngText.annotations);
+		}
+	}
+	if (fw.selection.length == 1){
+		if (fw.selection[0].customData.annotations){
+			return escape(fw.selection[0].customData.annotations);
+		}
+	}
+	return "";
+}
+function setAnnotation(escaped_txt){
+	var txt = unescape(escaped_txt);
+	var dom = fw.getDocumentDOM();
+	if (fw.selection.length == 0){
+		dom.pngText.annotations = txt;
+		dom.isDirty = true;
+	}else if (fw.selection.length == 1){
+		fw.selection[0].customData.annotations = txt;
+		dom.isDirty = true;
+	}
+}

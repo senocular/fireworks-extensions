@@ -1,5 +1,4 @@
-//--not for batch--
-for (var s=0; s<fw.selection.length; s++){
+﻿for (var s=0; s<fw.selection.length; s++){
 	if (fw.selection[s].__proto__ != Text.prototype) continue;
 	fw.selection[s].autoExpand = !fw.selection[s].autoExpand;
 }

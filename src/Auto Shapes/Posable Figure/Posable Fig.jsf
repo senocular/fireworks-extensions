@@ -1,0 +1,143 @@
+﻿var MouseLoc = smartShape.currentMousePos;
+var MouseX = MouseLoc.x;
+var MouseY = MouseLoc.y;
+var rad90 = Math.PI/2;
+var rad180 = Math.PI;
+var rad270 = 3*Math.PI/2;
+var rad90 = 2*Math.PI;
+//~ var distanceArray = ["list of values to represent distances limbs are from their parents to correct any rounding miscalculations - but when to use if to use at all?"];
+
+// torso, leftarm, rightarm, leftleg, rightleg
+var naming = [
+	"Figure","Torso","Head",
+	"Left Shoulder","Left Elbo","Left Wrist","Left Hand",
+	"Right Shoulder","Right Elbo","Right Wrist","Right Hand",
+	"Left Hip","Left Knee","Left Ankle","Left Foot",
+	"Right Hip","Right Knee","Right Ankle","Right Foot"
+];
+var originOffsets = [
+	{x:0,y:-1},{x:0,y:-2.75},{x:0,y:-4},
+	{x:-1,y:-2.5},{x:-1,y:-1},{x:-1,y:0},{x:-1,y:.666},
+	{x:1,y:-2.5},{x:1,y:-1},{x:1,y:0},{x:1,y:.666},
+	{x:-.5,y:0},{x:-.5,y:2},{x:-.5,y:4},{x:-1.333,y:4},
+	{x:.5,y:0},{x:.5,y:2},{x:.5,y:4},{x:1.333,y:4}
+];
+var children = [
+	[1,3,7,11,15], [2,3,7], [],
+	[4], [5], [6], [],
+	[8], [9], [10], [],
+	[12], [13], [14], [],
+	[16], [17], [18], []
+];
+var parentOf = [
+	null,0,1,
+	null,3,4,5,
+	null,7,8,9,
+	null,11,12,13,
+	null,15,16,17
+];
+
+op = function(operation){
+	this.cp  = smartShape.elem.controlPoints;
+	this.elems  = smartShape.elem.elements;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function(){
+	var origin = MouseLoc;
+	var head = 20; // size for measurement
+	for (var i=0; i<originOffsets.length;i++) this.setControlPoint(i, "p"+i, AddPoints(origin, MultiplyPoint(originOffsets[i],head)));
+	this.elems[0] = new Path(); // preview & data container
+	this.setToolTips();
+	this.Render();
+}
+op.prototype.BeginDragControlPoint = function (){
+	var index = smartShape.currentControlPointIndex;
+	var params = smartShape.GetDefaultMoveParms();
+	smartShape.getsDragEvents = true;
+	if (index==0){
+		for (var i=0;i<this.cp.length;i++) this.cp[i].RegisterMove(params);
+	}else{
+		if (parentOf[index] == null) return false;
+		this.setInMotion(index, LocationOf(this.cp[parentOf[index]]), params);
+	}
+}
+op.prototype.setInMotion = function(index, pt, params){
+	if (!pt) return false;
+	var childs = children[index];
+	for (var i=0; i<childs.length; i++) this.setInMotion(childs[i], pt, params);
+	this.cp[index].RegisterCircularMove(pt, params);
+}
+op.prototype.DragControlPoint = function(){
+	var index = smartShape.currentControlPointIndex;
+	this.Update(index, true);
+}
+op.prototype.EndDragControlPoint = function(){
+	this.DragControlPoint();
+}
+op.prototype.Render = function(){
+	for (var i=0;i<this.cp.length;i++){
+		this.elems[i+1] = new Path();
+		this.elems[i+1].pathAttributes.fill = null;
+		if (this.elems[i+1].pathAttributes.brush == null) this.elems[i+1].pathAttributes.brush = { alphaRemap:"none", angle:0, antiAliased:true, aspect:100, blackness:0, category:"bc_Basic", concentration:100, dashOffSize1:2, dashOffSize2:2, dashOffSize3:2, dashOnSize1:10, dashOnSize2:1, dashOnSize3:1, diameter:1, feedback:"brush", flowRate:0, maxCount:14, minSize:1, name:"bn_Soft Line", numDashes:0, shape:"square", softenMode:"bell curve", softness:50, spacing:6, textureBlend:0, textureEdge:0, tipColoringMode:"random", tipCount:1, tipSpacing:0, tipSpacingMode:"random", type:"simple" };
+		this.lineToChildrenIn(this.elems[i+1], i);
+	}
+}
+op.prototype.Update = function(index, init){
+	if (index && init && parentOf[index] == null) return false;
+	var childs = children[index];
+	for (var i=0;i<childs.length;i++) this.Update(childs[i],false);
+	if (index && init) this.UpdateLines(parentOf[index]);
+	this.UpdateLines(index);
+}
+op.prototype.UpdateLines = function(index, con){
+	var childs = children[index];
+	for (var i=0;i<childs.length;i++){
+		SetNodePosition(this.elems[index+1].contours[i].nodes[0], this.cp[index]);
+		SetNodePosition(this.elems[index+1].contours[i].nodes[1], this.cp[childs[i]]);
+	}
+}
+op.prototype.lineToChildrenIn = function(elem, index){
+	var childs = children[index]
+	elem.contours.length = childs.length;
+	for (var i=0; i<childs.length; i++){
+		elem.contours[i] = new Contour();
+		SetNodePosition(elem.contours[i].nodes[0], this.cp[index])
+		SetNodePosition(SetNewNode(elem.contours[i].nodes), this.cp[childs[i]])
+	}
+}
+op.prototype.setToolTips = function(){
+	for (var i=0;i<this.cp.length;i++) this.cp[i].toolTip = naming[i];
+}
+op.prototype.setControlPoint = function(index, name, pt){
+	if (index >= this.cp.length) this.cp.length = index+1;
+	this.cp[index].name = name;
+	this.cp[index].x = pt.x; this.cp[index].y = pt.y;
+	this.cp[index].toolTipTracksDrag = true;
+}
+LocationOf  = function(obj){
+	if (!obj) return false;
+	return {x: obj.x, y:obj.y};
+}
+AddPoints = function(p1, p2){
+	return {x:p1.x+p2.x, y:p1.y+p2.y};
+}
+MultiplyPoint = function(pt, by){
+	return {x:pt.x*by, y:pt.y*by};
+}
+SetNewNode = function(ns){
+	var i = ns.length;
+	ns.length++;
+	var n = ns[i];
+	return n;
+}
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX = ptp.x;	n.predY =ptp.y;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pts.x;	n.succY = pts.y;
+}
+
+// init
+new op(smartShape.operation);

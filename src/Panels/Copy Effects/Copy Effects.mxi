@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Copy Effects" version="0.9.2" type="command" requires-restart ="true">
+	<description>
+		<![CDATA[Copy Effects<br>
+		by senocular<br><br>
+		
+		- Copies Effects and/or brushes and fills from one selection to one or multiple other selection(s).<br>
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open Copy Effects from the Windows menu.]]>
+	</ui-access>
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<files>
+		<file source="Copy Effects.swf" destination="$fireworks/Configuration/Command Panels"  platform="win" />
+	</files>
+</macromedia-extension>

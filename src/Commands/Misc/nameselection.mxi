@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Name Selection" version="1.0" type="command" requires-restart ="false">
+	<description>
+		<![CDATA[Name Selection<br>
+		by senocular<br><br>
+		
+		- This command simply renames a selection, whether it be a bitmap, a shape or a slice.  Setting a hotkey to this command can help improve workflow when naming a large number of elements.<br>
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run this command from your Commands menu.]]>
+	</ui-access>
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" version="6" />
+	</products>
+	<files>
+		<file source="Name Selection.jsf" destination="$fireworks/Configuration/Commands" />
+	</files>
+</macromedia-extension>

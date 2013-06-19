@@ -1,0 +1,63 @@
+radius = 25;
+curve = 1.7;
+fwd = fw.getDocumentDOM();
+
+NPoint = function(node){
+	return {x: node.x, y:node.y};
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x, dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+AngleBetween = function(p1, p2){
+	return Math.atan2(p2.y-p1.y, p2.x-p1.x);
+}
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}
+}
+
+function Smooth(){
+	if (!fw.selection.length) return false;
+	var counter = 0;
+	var s, c, n, ns, p, pp, sp, dist1, dist2, ang1, ang2, reach1, reach2, predPt, succPt;
+	for (s=0; s<fw.selection.length; s++){
+		if (fw.selection[s].__proto__ == Path.prototype){
+			for (c=0; c<fw.selection[s].contours.length; c++){
+				ns = fw.selection[s].contours[c].nodes;
+				for (n=0; n<ns.length; n++){
+					if (ns[n].isSelectedPoint){
+						pp = (n == 0)  ? ns[ns.length-1] : ns[n-1];
+						sp = (n == ns.length-1)  ? ns[0] : ns[n+1];
+						dist1 = DistanceBetween(ns[n], pp);
+						dist2 = DistanceBetween(ns[n], sp);
+						// add if dist1 or dist 2 > radius then radius should be distance/2
+
+						ang1 = AngleBetween(ns[n], pp);
+						ang2 = AngleBetween(ns[n], sp);
+
+						predPt = PointFromVector(NPoint(ns[n]), ang1, radius);
+						succPt = PointFromVector(NPoint(ns[n]), ang2, radius);
+						px = ns[n].x
+						py = ns[n].y
+
+						// make new points before and after
+						fwd.appendPointToPath(0, n+counter, {x:predPt.x, y:predPt.y}, {x:predPt.x,y:predPt.y}, {x:predPt.x+((px-predPt.x)/curve),y:predPt.y+((py-predPt.y)/curve)});
+						fwd.appendPointToPath(0, n+2+counter, {x:succPt.x+((px-succPt.x)/curve),y:succPt.y+((py-succPt.y)/curve)}, {x:succPt.x, y:succPt.y}, {x:succPt.x,y:succPt.y});
+						
+						// delete existing point
+						fwd.deletePointOnPath(0, n+1+counter)
+
+						// need to fix n - its now 2 bigger
+						//n += counter; // doesnt work
+						counter++;
+					}
+				}
+			}
+		}
+	}
+}
+
+Smooth();

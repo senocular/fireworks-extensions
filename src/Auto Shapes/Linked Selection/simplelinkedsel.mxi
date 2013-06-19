@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Simple Linked Selection" version="0.8.1" type="commandpanel" requires-restart="true">
+	<products>
+		<product name="Fireworks" version="7" required="true" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[
+		Simple Linked Selection
+		www.senocular.com
+		
+		Simple Linked Selection adds simple linking functionality to Fireworks.  When you have multiple objects in a document selected, you can click on the link button to create a linked association with all those objects.  While the panel is open and enabled, any time you select one of these objects, all objects in the group when the linked button was used will be selected as well.  Use the unlink button to remove this property.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open Simple Linked Selection from the Windows menu.]]>
+	</ui-access>
+	<files>
+		<file source="Simple Linked Selection.swf" destination="$fireworks/Configuration/Command Panels" />
+	</files>
+</macromedia-extension>

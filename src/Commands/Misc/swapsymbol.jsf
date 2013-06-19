@@ -1,0 +1,19 @@
+function swapSymbol(){
+	if (!fw.selection.length) return alert("Please select an object to swap with a symbol");
+	var name = prompt("Symbol Name", "");
+	if (!name) return;
+	var dom = fw.getDocumentDOM();
+	var orig = fw.selection[0];
+	dom.selectNone();
+	dom.insertSymbolAt(name, {x:0, y:0});
+	if (fw.selection.length){
+		dom.setSelectionBounds(orig.pixelRect, "autoTrimImages transformAttributes");
+		swapped = fw.selection[0];
+		fw.selection = [orig];
+		dom.deleteSelection(false);
+		fw.selection = [swapped];
+		return true;
+	}
+	return false;
+}
+swapSymbol();

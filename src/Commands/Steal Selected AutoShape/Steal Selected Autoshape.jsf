@@ -1,0 +1,131 @@
+var dom = fw.getDocumentDOM();
+function copyPropsFrom(obj){
+	var copy = {};
+	for (var p in obj) copy[p] = obj[p];
+	return copy;
+}
+function copyPropsTo(obj, copy){
+	for (var p in copy) obj[p] = copy[p];
+	return obj;
+}
+function StealAutoShape(){
+	if (!fw.selection.length) {
+		alert("Please select an autoshape to steal.");
+		return (0);
+	}
+	if (!fw.selection[0].isSmartShape) {
+		alert("It appears your selection is not an autoshape.  Please select an autoshape to steal it.");
+		return (0);
+	}
+	var dir = fw.userSmartShapesDir+"/";
+	
+	if (!Files.exists(dir)){
+		alert("Sorry, I can't seem to find your Auto Shapes directory :(");
+		return (0);
+	}
+	if (!fw.selection[0].smartShapeCode){
+		alert("Error: Autoshape doesn't want to share its code.");
+		return (0);
+	}
+	
+	var name = prompt("Autoshape Name:", "Bob");
+	if (name == null) return (0);
+	if (!isValidFileName(name)){
+		alert("Error: Seems you've entered an invalide file name.\nJust use numbers, letters, spaces and/or underscores.");
+	}else if (Files.exists(dir+name+".jsf")){
+		alert("Error: This autoshape already exists!");
+	}else{
+		Files.createFile(dir+name+".jsf",".jsf","FWMX");
+		var JSFfile = Files.open(dir+name+".jsf",true);
+		if (JSFfile == null) {
+			alert("Error: Could not create new autoshape file.");
+		}else{
+			JSFfile.write(fw.selection[0].smartShapeCode);
+			JSFfile.close();
+			if (!Files.exists(dir+name+".gif")) ExportPreview(fw.selection[0], dir+name+".gif");
+		}
+	}
+}
+function isValidFileName(name){
+	var c, co, i = name.length;
+	if (i>27) return false;
+	while(i--){
+		c = name.charAt(i);
+		co = c.charCodeAt(0);
+		if (!isNaN(c)) continue;
+		if (c == " ") continue;
+		if (c == "_") continue;
+		if (co >= 65 && co <= 90) continue;
+		if (co >= 97 && co <= 122) continue;
+		return false;
+	}
+	return true
+}
+function ExportPreview(elem, path){
+	var layers = dom.frames[dom.currentFrameNum].layers;
+	var E, L, Elen, Llen = layers.length-1;
+	var visStates = new Array();
+	var origName = elem.name;
+	elem.name = "__TAGGED_FOR_EXPORT__";
+	ExportHideAll(visStates);
+	ExportWithOptions(elem, path);
+	ExportShowAll(visStates);
+	elem.name = origName;
+	dom.selectNone();
+}
+function ExportHideAll(visStates){
+	var layers = dom.frames[dom.currentFrameNum].layers;
+	var E, L, Elen, Llen = layers.length-1;
+	for (L = 0; L < Llen; L++){
+		Elen = layers[L].elements.length;
+		for (E = 0; E < Elen; E++){
+			visStates.push(layers[L].elements[E].visible);
+			if (layers[L].elements[E].name != "__TAGGED_FOR_EXPORT__"){
+				layers[L].elements[E].visible = false;
+			}
+		}
+	}
+}
+function ExportShowAll(visStates){
+	var layers = dom.frames[dom.currentFrameNum].layers;
+	var E, L, Elen, Llen = layers.length-1;
+	var visIndex = 0;
+	for (L = 0; L < Llen; L++){
+		Elen = layers[L].elements.length;
+		for (E = 0; E < Elen; E++){
+			layers[L].elements[E].visible = visStates[visIndex++];
+		}
+	}
+}
+function ExportWithOptions(elem, path){
+	var baseSize = 60;
+	var scale = 1;
+	var xdiff = 0, ydiff = 0;
+
+	if (elem.width > elem.height){
+		scale = baseSize/elem.width;
+		ydiff = (elem.width-elem.height)/2;
+	}else{
+		scale = baseSize/elem.height;
+		xdiff = (elem.height-elem.width)/2;
+	}
+
+	var exops = dom.exportOptions;
+	var origOptions = copyPropsFrom(exops);
+	
+	exops.exportFormat = "GIF";
+	exops.crop = true;
+	exops.cropLeft = (elem.left - dom.left - xdiff)*scale;
+	exops.cropRight = (elem.left + elem.width - dom.left + xdiff)*scale;
+	exops.cropTop = (elem.top - dom.top - ydiff)*scale;
+	exops.cropBottom = (elem.top + elem.height - dom.top + ydiff)*scale;
+
+	exops.percentScale = 100*scale;
+
+	dom.rebuildColorTable();
+	fw.exportDocumentAs(null, path, null);
+	
+	copyPropsTo(dom.exportOptions, origOptions);
+}
+
+StealAutoShape();

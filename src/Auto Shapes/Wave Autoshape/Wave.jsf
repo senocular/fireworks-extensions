@@ -1,0 +1,208 @@
+﻿var MouseLoc = smartShape.currentMousePos;
+var MouseX = MouseLoc.x;
+var MouseY = MouseLoc.y;
+var rad90 = Math.PI/2;
+var rad180 = Math.PI;
+var rad270 = 3*Math.PI/2;
+var rad360 = 2*Math.PI;
+var MINWAVELENGTH = 5;
+var CURVEOFFSET = 8
+op = function(operation){
+	this.cp = smartShape.elem.controlPoints;
+	this.elems = smartShape.elem.elements;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function(){
+	this.elems[0] = new Path(); // preview & data container
+	this.elems[1] = new Path(); // image
+	var origin = {x:MouseX, y:MouseY}
+	var length = 100;
+	var height = 20;
+	var wavelength = 20;
+	this.setControlPoint(0, origin);
+	this.setControlPoint(1, AddPoints(origin, {x:length,y:0}));
+	this.setControlPoint(2, AddPoints(origin, {x:0,y:-height}));
+	this.setControlPoint(3, AddPoints(origin, {x:wavelength,y:-height}));
+	this.setControlPoint(4, AddPoints(origin, {x:0,y:-CURVEOFFSET-height}));
+	this.setData();
+	this.Render();
+}
+op.prototype.BeginDragControlPoint = function (){
+	var cd = this.elems[0].customData;
+	this.setData();
+	var params = smartShape.GetDefaultMoveParms();
+	var index = smartShape.currentControlPointIndex;
+	smartShape.getsDragEvents = true;
+	switch (index){
+		case 1:
+			var origin = {x:this.cp[0].x, y:this.cp[0].y};
+			this.cp[1].RegisterMove(params);
+			this.cp[2].RegisterCircularMove(origin, params);
+			this.cp[3].RegisterCircularMove(origin, params);
+			this.cp[4].RegisterCircularMove(origin, params);
+			break;
+		case 2:
+			params.maxLinear = DistanceBetween(this.cp[2], this.cp[0])-1;
+			var origin = {x:this.cp[0].x, y:this.cp[0].y};
+			this.cp[2].RegisterLinearMove(origin, params);
+			this.cp[3].RegisterLinearMove(AddPoints(this.cp[0], Vector(cd.lineAngle, cd.wavelength)), params);
+			this.cp[4].RegisterLinearMove(AddPoints(this.cp[0], Vector(cd.lineAngle, cd.curvature)), params);
+			break;
+		case 3:
+			params.maxLinear = DistanceBetween(this.cp[3], this.cp[2])-MINWAVELENGTH;
+			var origin = {x:this.cp[2].x, y:this.cp[2].y};
+			this.cp[3].RegisterLinearMove(origin, params);
+			break;
+		case 4:
+			this.cp[4].RegisterLinearMove(AddPoints(this.cp[4], Vector(cd.lineAngle, 100)), params);
+			break;
+	}
+}
+op.prototype.DragControlPoint = function(){
+	var cd = this.elems[0].customData;
+	var index = smartShape.currentControlPointIndex;
+	switch(index){
+		case 1: // resize
+			cd.lineAngle = AngleBetween(this.cp[0], this.cp[1]);
+			break;
+		case 2: // height
+			cd.height = DistanceBetween(this.cp[0], this.cp[2]);
+			break;
+		case 3: // wavelength
+			cd.wavelength = DistanceBetween(this.cp[2], this.cp[3]);
+			break;
+		case 4: // curvature
+			var curveRef = AddPoints(this.cp[0], Vector(cd.lineAngle-rad90, cd.height+CURVEOFFSET));
+			var ang = AngleBetween(this.cp[4], this.cp[0]);
+			if (ang < cd.lineAngle) ang += rad360;
+			var curveDir = (Math.abs(cd.lineAngle-ang) < rad90) ? -1 : 1;
+			cd.curvature = Math.round(curveDir*DistanceBetween(this.cp[4], curveRef));
+			break;
+	}
+	this.Render();
+}
+op.prototype.EndDragControlPoint = function(){
+	this.updateControlPoints(); 
+	var ns = this.elems[1].contours[0].nodes;
+	var offset = PointFrom(ns[ns.length-1], AngleBetween(this.cp[0], this.cp[1]), 1); // 1 px offset to prevent round-down and chopping off a wave
+	this.setControlPoint(1, offset);
+	this.updateControlPoints();
+	this.setData();
+	this.Render();
+}
+op.prototype.Render = function(pos){
+	var cd = this.elems[0].customData;
+	this.elems[1].contours[0] = new Contour();
+	var ns = this.elems[1].contours[0].nodes;
+	var lineLength = DistanceBetween(this.cp[0], this.cp[1]);
+	var count = (lineLength <= cd.wavelength) ? 1 : Math.floor(lineLength/cd.wavelength);
+	var baseOffset = Vector(cd.lineAngle, cd.wavelength);
+	var baseOffsethalf = Vector(cd.lineAngle, -cd.wavelength/2);
+	var crestOffset = Vector(cd.lineAngle-rad90, cd.height);
+	var rad, p1, p2, cos = Math.cos(cd.lineAngle), sin = Math.sin(cd.lineAngle);
+	if (cd.curvature){
+		var curveOffset = Vector(cd.lineAngle, -cd.curvature)
+		var bez = AddPoints(this.cp[0], curveOffset);
+		SetBezierNodePosition(ns[0], bez, this.cp[0], MirrorPoint(this.cp[0], bez));
+		for (var i=1; i<count+1;i++){
+			rad = cd.wavelength*i
+			p2 = AddPoints(this.cp[0], {x: cos*rad, y: sin*rad});
+			p1 = AddPoints(crestOffset,AddPoints(p2, baseOffsethalf));
+			bez = AddPoints(p1, curveOffset);
+			SetBezierNodePosition(SetNewNode(ns), bez, p1, MirrorPoint(p1, bez));
+			bez = AddPoints(p2, curveOffset);
+			SetBezierNodePosition(SetNewNode(ns), bez, p2, MirrorPoint(p2, bez));
+		}
+	}else{
+		SetNodePosition(ns[0], this.cp[0]);
+		for (var i=1; i<count+1;i++){
+			rad = cd.wavelength*i
+			p2 = AddPoints(this.cp[0], {x: cos*rad, y: sin*rad});
+			p1 = AddPoints(crestOffset,AddPoints(p2, baseOffsethalf));
+			SetNodePosition(SetNewNode(ns), p1);
+			SetNodePosition(SetNewNode(ns), p2);
+		}
+	}
+	this.updateToolTips();
+}
+op.prototype.setData = function(index){
+	var cd = this.elems[0].customData;
+	cd.lineAngle = AngleBetween(this.cp[0], this.cp[1]);
+	cd.height = DistanceBetween(this.cp[0], this.cp[2]);
+	cd.wavelength = DistanceBetween(this.cp[2], this.cp[3]);
+	var curveRef = AddPoints(this.cp[0], Vector(cd.lineAngle-rad90, cd.height+CURVEOFFSET));
+	var ang = AngleBetween(this.cp[4], this.cp[0]);
+	if (ang < cd.lineAngle) ang += rad360;
+	var curveDir = (Math.abs(cd.lineAngle-ang) < rad90) ? -1 : 1;
+	cd.curvature = curveDir*DistanceBetween(this.cp[4], curveRef);
+}
+op.prototype.updateControlPoints = function(index){
+	var pt, cd = this.elems[0].customData;
+	pt = RotateVector({x:0, y:-cd.height}, cd.lineAngle);
+	this.setControlPoint(2, AddPoints(this.cp[0], pt));
+	pt = RotateVector({x:cd.wavelength,y:-cd.height}, cd.lineAngle);
+	this.setControlPoint(3, AddPoints(this.cp[0], pt));
+	pt = RotateVector({x:0,y:-CURVEOFFSET-cd.height}, cd.lineAngle);
+	this.setControlPoint(4, AddPoints(Vector(cd.lineAngle, cd.curvature), AddPoints(this.cp[0], pt)));
+}
+op.prototype.updateToolTips = function(){
+	var cd = this.elems[0].customData;
+	var lineLength = DistanceBetween(this.cp[0], this.cp[1]);
+	var count = (lineLength <= cd.wavelength) ? 1 : Math.floor(lineLength/cd.wavelength);
+	if (count > 1) count += " Segments";
+	else count += " Segment";
+	this.cp[0].toolTip = "Anchor";
+	this.cp[1].toolTip = "Resize; Rotation: "+Math.round(cd.lineAngle*180/Math.PI)+"° Length: "+Math.round(lineLength)+"px";
+	this.cp[2].toolTip = "Height: "+Math.round(cd.height)+"px";
+	this.cp[3].toolTip = "Wavelength: "+Math.round(cd.wavelength)+"px, "+count;
+	this.cp[4].toolTip = "Curvature: "+Math.round(cd.curvature)+"px";
+}
+op.prototype.setControlPoint = function(index, pt){
+	if (index >= this.cp.length) this.cp.length = index+1;
+	this.cp[index].x = pt.x;
+	this.cp[index].y = pt.y;
+	this.cp[index].toolTipTracksDrag = true;
+}
+PointFrom = function(origin, angle, radius){
+	return {x: origin.x+Math.cos(angle)*radius, y: origin.y+Math.sin(angle)*radius};
+}
+Vector = function(angle, radius){
+	return {x: Math.cos(angle)*radius, y: Math.sin(angle)*radius};
+}
+RotateVector = function(pt, angle){
+	var cos = Math.cos(angle), sin = Math.sin(angle);
+	return {x: cos*pt.x-sin*pt.y, y: sin*pt.x+cos*pt.y};
+}
+AngleBetween = function(p1, p2){
+	return Math.atan2(p2.y-p1.y, p2.x-p1.x);
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x;
+	var dy =  p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+MirrorPoint = function(center, end){
+	return {x:2*center.x-end.x,y:2*center.y-end.y}
+}
+AddPoints = function(p1, p2){
+	return {x:p1.x+p2.x, y:p1.y+p2.y};
+}
+SubtractPoints = function(p1, p2){
+	return {x:p1.x-p2.x, y:p1.y-p2.y};
+}
+SetNewNode = function(ns){
+	var i = ns.length;
+	ns.length++;
+	var n = ns[i];
+	return n;
+}
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX = ptp.x;	n.predY =ptp.y;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pts.x;	n.succY = pts.y;
+}
+// init
+new op(smartShape.operation);

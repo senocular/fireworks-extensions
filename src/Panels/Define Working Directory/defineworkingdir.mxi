@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Define Working Directory" version="0.7.3" type="command" requires-restart ="true">
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" version="7" required="true" />
+	</products>
+	<description>
+		<![CDATA[
+		Define Working Directory<br>
+		www.senocular.com<br><br>
+		
+		Provides a simple method of defining a default Save path for new documents.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open Define Working Directory from the Windows menu.]]>
+	</ui-access>
+	<files>
+		<file source="Define Working Directory.swf" destination="$fireworks/Configuration/Command Panels" />
+		<file source="WorkingDirectoryConfig/directories.txt" destination="$fireworks/Configuration/Command Panels/WorkingDirectoryConfig" />
+	</files>
+</macromedia-extension>

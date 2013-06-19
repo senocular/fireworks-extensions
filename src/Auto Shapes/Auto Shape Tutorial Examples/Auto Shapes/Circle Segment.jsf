@@ -1,0 +1,275 @@
+﻿// shortening variables:
+// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// shape variables:
+// variable for radius of circle segment
+var radius = 50;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+
+	// create 3 control points
+	cps.length = 3;
+	
+	// first control point set to center of circle
+	SetControlPoint(cps[0], mouse, "Center", "Center");
+	
+	// second control point, End1, to the left of the center
+	SetControlPoint(cps[1], AddPoints(mouse, {x:-radius, y:0}), "End1", "End 1");
+
+	// third control point, End2, to the right of the center
+	SetControlPoint(cps[2], AddPoints(mouse, {x:radius, y:0}), "End2", "End 2");
+	
+	// set the first element to a new path
+	smartShape.elem.elements[0] = new Path();
+	
+	// call Draw to create the shape in the path based on the control points
+	Draw();
+}
+
+// define an BeginDragControlPoint event handler that will initiate
+// register move calls to handle control point and node positioning
+// when the control point is moved.
+operation.BeginDragControlPoint = function(){
+
+	// define a variable to hold a default RegisterMoveParms object
+	var parms = smartShape.GetDefaultMoveParms();
+	
+	// move the current control point in a circular manner around
+	// the center point - this applies to both Ends and even the
+	// center point if dragged though it does nothing rotation
+	// rotating around itself
+	smartShape.currentControlPoint.RegisterCircularMove({x:cps[0].x, y:cps[0].y}, parms);
+	
+	// set getsDragEvents to be true so that the DragControlPoint event will
+	// run for the Auto Shape
+	smartShape.getsDragEvents = true;
+}
+
+// define an DragControlPoint event handler that will be called
+// everytime the mouse moves when dragging a control point
+operation.DragControlPoint = function(){
+
+	// redraw the shape
+	Draw();
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * Draw creates the circle segment around the Center control point between the two ends
+ * Requires: AngleBetween, AddCircleSegment
+*/
+Draw = function(){
+
+	// create a new first contour for the first element
+	smartShape.elem.elements[0].contours[0] = new Contour();
+	
+	// get the angle for the first control point (start of segment)
+	var angle1 = AngleBetween(cps[0], cps[1]);
+	
+	// get the angle for the second control point (end of segment)
+	var angle2 = AngleBetween(cps[0], cps[2]);
+	
+	// make sure angle 1 is always greater than angle 2 by adding a
+	// full rotation of the circle (2*Math.PI radians) if it is less
+	// than angle 2
+	if (angle1 < angle2) angle1 += 2*Math.PI;
+	
+	// call AddCircleSegment to draw the circle segment in the contour 
+	AddCircleSegment(smartShape.elem.elements[0].contours[0], {x:cps[0].x, y:cps[0].y}, radius, angle1, angle2);
+}
+
+// (common functions)
+/**
+ * AddCircleSegment adds a circular segment in the passed contour with a center
+ * of origin and a radius of radius starting at startAngle and ending at endAngle
+ * Requires: SetBezierNodePosition
+*/
+AddCircleSegment = function(contour, origin, radius, startAngle, endAngle){
+
+	// find the difference of the angles representing the arc
+	var arc = endAngle - startAngle;
+	
+	// if there is no difference between the angles, exit false
+	if (!arc) return false;
+	else if (arc < 0){ // if the arc is negative;
+	
+		// make the arc positive
+		arc = -arc;
+		
+		// switch the end angle value with start angle
+		var stored = endAngle;
+		endAngle = startAngle;
+		startAngle = stored;
+	}
+	
+	// assign pos representing the node position to start the 
+	// segment within the contour 
+	var pos = contour.nodes.length;
+	
+	// if the pos is 1, start the position at position 0
+	if (pos == 1) pos = 0;
+	
+	// create a variable to represent 90 degrees in radians
+	var rad90 = Math.PI/2;
+	
+	// div represents the division of the arc by 90 degrees
+	// 90 is used since 90 degrees is the difference in angle for
+	// the 4 nodes used to make a full circle
+	var div = arc/rad90;
+	
+	// steps is the number of nodes in the current segment
+	var steps = Math.floor(div);
+	
+	// rem is the remaining angle from the 90 degree steps that
+	// should be making up most of the segment (if larger)
+	var rem = arc - steps*rad90;
+	
+	// cRadius is the length of the control points for the current radius
+	var cRadius = radius*fw.ellipseBCPConst;
+	
+	// declare variables used within the loop
+	var angle, cAngle, x, cx, y, cy, pt, pred, succ;
+	
+	// loop through all the steps in the segment + 1
+	for (var i=0; i<=steps; i++){
+	
+		// create a new node for the current position in the contour
+		contour.nodes[pos+i] = new ContourNode();
+		
+		// define angles for the current angle along the arc (control
+		// angle is the node angle plus 90 degrees)
+		angle = startAngle + i*rad90;	cAngle = angle + rad90;
+		
+		// use cosine to get x values for node and node control point
+		x = Math.cos(angle)*radius;	cx = Math.cos(cAngle)*cRadius;
+		
+		// use sine to get y values for node and node control point
+		y = Math.sin(angle)*radius;	cy = Math.sin(cAngle)*cRadius;
+		
+		// create a point based on the origin and the x and y values calculated
+		pt = {x:origin.x + x, y:origin.y + y};
+		
+		// devise predecessor and successor points from main point position pt
+		// and the previously calculated control x and y 
+		pred = {x:pt.x - cx, y:pt.y - cy};
+		succ = {x:pt.x + cx, y:pt.y + cy};
+		
+		// if the segment has at least one step and the current
+		// loop is for the first node (i==0) set the node position 
+		// omitting predecessor point
+		if (steps && !i){ SetBezierNodePosition(contour.nodes[pos+i], pt, pt, succ);
+		
+		// if there are steps and the loop is less than the steps
+		// (i.e. not the last loop iteration) set the next node with 
+		// predecessor and successor
+		}else if (steps && i < steps){ SetBezierNodePosition(contour.nodes[pos+i], pred, pt, succ);
+		
+		// otherwise, if there are no steps or in the last iteration of the loop
+		}else{
+		
+			// if there is a remainder arc from those of 90 degrees
+			if (rem){
+			
+				// get length for control points for remainder
+				// (this will be smaller than 90 degree segments)
+				var remRadius = cRadius*rem/rad90;
+				
+				// get the x and y values for remainder control points
+				cx = Math.cos(cAngle)*remRadius;
+				cy = Math.sin(cAngle)*remRadius;
+				
+				// get successor point from previus calculations
+				succ = {x:pt.x + cx, y:pt.y + cy};
+				
+				// if there are steps in segment, create node with the predecessor
+				if (steps){ SetBezierNodePosition(contour.nodes[pos+i], pred, pt, succ);
+				
+				// if there are no steps, the segment is smaller than 90 degrees
+				// making this the first point so don't include predecessor
+				}else SetBezierNodePosition(contour.nodes[pos+i], pt, pt, succ);
+				
+				// automatically increment i to make it seem like the 
+				// next position in the loop
+				i++;
+				
+				// create a new node for the last point in the segment
+				contour.nodes[pos+i] = new ContourNode();
+				
+				// define angles for the current angle along the arc
+				angle += rem;				cAngle = angle + rad90;
+				
+				// use cosine to get x values for node and node control point
+				x = Math.cos(angle)*radius;	cx = Math.cos(cAngle)*remRadius;
+				
+				// use sine to get y values for node and node control point
+				y = Math.sin(angle)*radius;	cy = Math.sin(cAngle)*remRadius;
+				
+				// create a point based on the origin and the x and y values calculated
+				pt = {x:origin.x + x, y:origin.y + y};
+				
+				// get predecessor point from previus calculations
+				pred = {x:pt.x - cx, y:pt.y - cy};
+			}
+			
+			// set the last node with no successor
+			SetBezierNodePosition(contour.nodes[pos+i], pred, pt, pt);
+		}
+	}
+	
+	// return true to signify the successful completion of the function
+	return true;
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name
+*/
+SetControlPoint = function(cp, pt, name){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTipTracksDrag = true; // have tool tips follow mouse during drag
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+
+/**
+ * AngleBetween returns the angle between two points pt1 and pt2 in radians
+*/
+AngleBetween = function(pt1, pt2){
+	return Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x); // use arc tangent 2 to get angle
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

@@ -1,0 +1,82 @@
+﻿var dom = fw.getDocumentDOM();
+
+Point = function(x, y){
+	return {x:x, y:y};
+}
+SubtractPoints = function(p1, p2){
+	return {x:p1.x-p2.x, y:p1.y-p2.y};
+}
+AddPoints = function(p1, p2){
+	return {x:p1.x+p2.x, y:p1.y+p2.y};
+}
+PointDividePoint = function(p1, p2){
+	return {x:p1.x/p2.x, y:p1.y/p2.y};
+}
+PointMultiplyPoint = function(p1, p2){
+	return {x:p1.x*p2.x, y:p1.y*p2.y};
+}
+SelectElement = function(name){
+	dom.setElementVisibleByName(name, false);
+	dom.setElementVisibleByName(name, true);
+}
+HasContourWith4Nodes = function(elem){
+	var i = elem.contours.length;
+	while (i--){
+		if(elem.contours[i].nodes.length >= 4) return true;
+	}
+	return false;
+}
+FitToPath = function(){
+	var order = [0, 1];
+	if (fw.selection[0].__proto__ != Path.prototype) order.push(order.shift());
+	if (	fw.selection.length == 2 &&
+		fw.selection[order[0]].__proto__ == Path.prototype &&
+		HasContourWith4Nodes(fw.selection[order[0]])){
+		
+		var path = fw.selection[order[0]];
+		var img = fw.selection[order[1]];
+		var opts = "transformAttributes"; // "autoTrimImages transformAttributes";
+		var offset = 0; // inclusive between 0 and  nodes.length-4
+		var contour = 0; // 0 - contours.length-1 - IF contour has 4 nodes ^ check other contours in if
+		
+		var origName = img.name;
+		img.name = "__FIT_IN_PATH__";
+		SelectElement("__FIT_IN_PATH__");
+		img.name = origName;
+		dom.cloneSelection();
+		
+		var n = path.contours[contour].nodes;
+		var pos = Point(img.left, img.top);
+		
+		if (img.width > img.height){
+			var max = img.width;
+			var min = img.height;
+			pos = AddPoints(pos, Point(0, (min-max)/2));
+		}else{
+			var max = img.height;
+			var min = img.width;
+			pos = AddPoints(pos, Point((min-max)/2, 0));
+		}
+		
+		var size = Point(max, max);
+		var p = [
+			PointDividePoint(SubtractPoints(n[offset], pos), size),
+			PointDividePoint(SubtractPoints(n[offset+1], pos), size),
+			PointDividePoint(SubtractPoints(n[offset+2], pos), size),
+			PointDividePoint(SubtractPoints(n[offset+3], pos), size),
+		];
+		p.reverse();
+		p.push(p.shift())
+		dom.setQuadrangle(
+			p[0],
+			p[1],
+			p[2],
+			p[3],
+			opts
+		);		
+	}else{
+		alert("Select exactly 2 elements, one which must be a Path with 4 or more points.");
+		return (0);
+	}
+}
+FitToPath()

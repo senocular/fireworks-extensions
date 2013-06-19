@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Transform Panel" version="0.9.5" type="commandpanel" requires-restart="true">
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" version="7" required="true" />
+	</products>
+	<description>
+		<![CDATA[
+		Transform Panel
+		www.senocular.com
+		<br>		
+		A persistent panel for inspecting, resizing and rotating selected objects or selected vector points. Values can be specified as being absolute or relative. Objects can be transformed as a group or individually. Pressing ENTER while editing the panel will apply any changes.  Pressing ESCAPE while editing the panel will restore its previous values.  You can use the Up and Down arrow keys within selected fields to increment or decrement their value by 1.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open the Transform panel from the Windows menu.]]>
+	</ui-access>
+	<files>
+		<file source="Transform.swf" destination="$fireworks/Configuration/Command Panels" />
+	</files>
+</macromedia-extension>

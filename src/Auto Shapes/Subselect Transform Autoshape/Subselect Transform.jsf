@@ -1,0 +1,251 @@
+﻿// CAVEATS
+// no undo
+// cant select controlPoint if its over a path
+// selection is lost if mouse is released while over the path
+// Fiewoeks does not redraw the screen after editing
+
+var mouse = smartShape.currentMousePos;
+var cps = smartShape.elem.controlPoints;
+var ccpi = smartShape.currentControlPointIndex;
+var elems = smartShape.elem.elements;
+var data = smartShape.elem.customData;
+
+// OPERATIONS
+var operation = new Object();
+operation.InsertSmartShapeAt = function(){
+	data.isPointScaler = true;
+	data.nodeSelection = [];
+	data.hasDragged = false;
+	
+	elems.length = 1;
+	elems[0] = new Path();
+	
+	cps.length = 9;
+	cps[0].type = "crossHair";
+	var defaultBounds = {
+		left: mouse.x-50,
+		top: mouse.y-50,
+		right: mouse.x+50,
+		bottom: mouse.y+50
+	}
+	SetupControlPoints(defaultBounds);
+	SetBaseData();
+	SetToolTips();
+}
+
+operation.BeginDragControlPoint = function(){
+	smartShape.getsDragEvents = true;
+	data.nodes = GetSelectedNodes();
+	data.originLoc = CurrOLoc();
+	data.originLoc = CurrOLoc();
+	
+	
+	var params = smartShape.GetDefaultMoveParms();
+	switch (ccpi){
+		case 0:
+			for (var i=0; i<cps.length; i++){
+				cps[i].RegisterMove(params);
+			}
+			for (i=0; i<data.nodes.length; i++){
+				data.nodes[i].RegisterMove(params);
+			}
+			break;
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+			for (var i=1; i<cps.length; i++){
+				cps[i].RegisterCircularMove(CPoint(0), params);
+			}
+			for (i=0; i<data.nodes.length; i++){
+				data.nodes[i].RegisterCircularMove(CPoint(0), params);
+			}
+			break;
+			
+		default: //2, 4, 6, 8
+			
+			var prev = (ccpi-1-1)%8+1;
+			var next = (ccpi+1-1)%8+1;
+			var curro = (ccpi+4-1)%8+1
+			var prevo = (prev+6-1)%8+1
+			var nexto = (next+2-1)%8+1;
+			
+			cps[prev].RegisterLinearMove(CPoint(prevo), params);
+			cps[ccpi].RegisterLinearMove(CPoint(curro), params);
+			cps[next].RegisterLinearMove(CPoint(nexto), params);
+			
+			params.deltaLinearToLinear = -1;
+			cps[prevo].RegisterLinearMove(CPoint(prev), params);
+			cps[curro].RegisterLinearMove(CPoint(ccpi), params);
+			cps[nexto].RegisterLinearMove(CPoint(next), params);
+			
+			
+			for (i=0; i<data.nodes.length; i++){
+				var n = data.nodes[i];
+				var a = AngleBetween(n, cps[0]);
+				var aref = AngleBetween(cps[ccpi], cps[0]);
+				a -= aref;
+				var opp = Math.cos(a)*DistanceBetween(n, cps[0]);
+				
+				params.deltaLinearToLinear = opp/DistanceBetween(cps[ccpi], cps[0]);
+				n.RegisterLinearMove(PointFromVector(n, aref, 100), params);
+			}
+			
+			break;
+	}
+}
+
+operation.DragControlPoint = function(){
+	SetToolTips();
+}
+operation.EndDragControlPoint = function(){
+	if (!ccpi && data.originLoc == CurrOLoc()){
+		var nodes = GetSelectedNodes();
+		if (nodes.length > 1){
+			SetupControlPoints(GetNodesBounds(nodes));
+			SetBaseData();
+		}else{
+			var defaultBounds = {
+				left: mouse.x-50,
+				top: mouse.y-50,
+				right: mouse.x+50,
+				bottom: mouse.y+50
+			}
+			SetupControlPoints(defaultBounds);
+		}
+		SetToolTips();
+	}
+}
+
+
+SetBaseData = function(){
+	data.baseRotation = 0;
+	data.baseXScale = DistanceBetween(cps[8], cps[0]);
+	data.baseYScale = DistanceBetween(cps[6], cps[0]);
+}
+SetupControlPoints = function(bounds){
+	SetControlPoint(0, Point((bounds.right+bounds.left)/2, (bounds.bottom+bounds.top)/2));
+	SetControlPoint(1, Point(bounds.left, bounds.top));
+	SetControlPoint(3, Point(bounds.right, bounds.top));
+	SetControlPoint(5, Point(bounds.right, bounds.bottom));
+	SetControlPoint(7, Point(bounds.left, bounds.bottom));
+	UpdateControlPointsBetween();
+}
+UpdateControlPointsBetween = function(){
+	SetControlPoint(2, PointBetween(cps[1], cps[3]));
+	SetControlPoint(4, PointBetween(cps[3], cps[5]));
+	SetControlPoint(6, PointBetween(cps[5], cps[7]));
+	SetControlPoint(8, PointBetween(cps[7], cps[1]));
+}
+
+GetSelectedNodes = function(){
+	var sel = fw.selection;
+	var ss = sel.length;
+	if (ss < 2) return [];
+	var nodes = [];
+	var cs, ns;
+	while(ss--){
+		if(sel[ss].contours && !sel[ss].customData.isPointScaler){
+			cs = sel[ss].contours.length;
+			while (cs--){
+				ns = sel[ss].contours[cs].nodes.length;
+				while (ns--){
+					if (sel[ss].contours[cs].nodes[ns].isSelectedPoint){
+						nodes.push(sel[ss].contours[cs].nodes[ns]);
+					}
+				}
+			}
+		}
+	}
+	return nodes;
+}
+GetNodesBounds = function(nodes){
+	// get bounds
+	var ns = nodes.length-1;
+	var bounds = {
+		left: nodes[ns].x,
+		top: nodes[ns].y,
+		right: nodes[ns].x,
+		bottom: nodes[ns].y
+	}
+	while(ns--){
+		if (nodes[ns].x < bounds.left) bounds.left = nodes[ns].x;
+		else if (nodes[ns].x > bounds.right) bounds.right = nodes[ns].x;
+		if (nodes[ns].y < bounds.top) bounds.top = nodes[ns].y;
+		else if (nodes[ns].y > bounds.bottom) bounds.bottom = nodes[ns].y;
+	}
+	
+	var padding = 10;
+	bounds.left -= padding;
+	bounds.right += padding;
+	bounds.top -= padding;
+	bounds.bottom += padding;
+	return bounds;
+}
+
+CurrOLoc = function(){
+	return cps[0].x+","+cps[0].y;
+}
+
+// NODE/CP POSITIONING
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+SetControlPoint = function(index, pt){
+	if (index >= cps.length) cps.length = index+1;
+	cps[index].x = pt.x;	cps[index].y = pt.y;
+	cps[index].toolTipTracksDrag = true;
+}
+SetToolTips = function(){
+	var rnd = 10;
+	cps[0].toolTip = "Move (X: "+Math.round(cps[0].x)+", Y: "+Math.round(cps[0].y)+")";
+	var aref = AngleBetween(cps[0], cps[4]);
+	var newRot = (data.baseRotation-aref)*180/Math.PI;
+	var newXScale = 100*DistanceBetween(cps[8], cps[0])/data.baseXScale;
+	var newYScale = 100*DistanceBetween(cps[6], cps[0])/data.baseYScale;
+	cps[1].toolTip = cps[3].toolTip = cps[5].toolTip = cps[7].toolTip = "Rotate: "+Math.round(-newRot*rnd)/rnd+"°";
+	cps[4].toolTip = cps[8].toolTip = "XScale: "+Math.round(newXScale*rnd)/rnd;
+	cps[2].toolTip = cps[6].toolTip = "YScale: "+Math.round(newYScale*rnd)/rnd;
+}
+
+
+CPoint = function(index){
+	return {x: cps[index].x, y:cps[index].y};
+}
+
+Point = function(x,y){
+	return {x:x, y:y};
+}
+AddPoints = function(p1, p2){
+	return {x:p1.x+p2.x, y:p1.y+p2.y};
+}
+SubtractPoints = function(p1, p2){
+	return {x:p1.x-p2.x, y:p1.y-p2.y};
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x, dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+PointBetween = function(p1, p2){
+	return {x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2}
+}
+AngleBetween = function(p1, p2){
+	return Math.atan2(p2.y-p1.y, p2.x-p1.x);
+}
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}
+}
+
+
+
+// INVOKE OPERATION
+if (operation[smartShape.operation])
+	operation[smartShape.operation]();

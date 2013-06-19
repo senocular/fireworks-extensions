@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Command Prompt" version="2.0.1" type="command" requires-restart="true">
+	<description>
+		<![CDATA[
+		Command Prompt
+		www.senocular.com
+		<br><br>
+		The Command Prompt Provides a dialog for running Fireworks Javascript commands.
+		Keyboard Shortcuts:
+		F12: Execute
+		CTRL + N: New script (clears all text fields in the Command Prompt)
+		CTRL + O: Open script
+		CTRL + S: Save script
+		CTRL + Z: Undo (up to 20)*
+		CTRL + Y: Redo*
+		CTRL + T: Insert Tab*
+		* Must have the command field focused to function
+		<br><br>
+		Versions:
+		- 2.0.1: Added keyboard shortcuts
+		Command Prompt now remembers the last script used and reloads it when reopened
+		- 2.0.0: Updated to V2 components in Flash (for FW7+)
+		- 1.0.1: Last version 1 release
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Open Command Prompt from the Windows menu.]]>
+	</ui-access>
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" version="7" />
+	</products>
+	<files>
+		<file source="Command Prompt.swf" destination="$fireworks/Configuration/Command Panels" />
+		<file source="command.jsf" destination="$fireworks/Configuration/Shared/senocular/Command Prompt" />
+		<file source="result.jsf" destination="$fireworks/Configuration/Shared/senocular/Command Prompt" />
+	</files>
+</macromedia-extension>

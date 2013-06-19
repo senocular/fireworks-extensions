@@ -1,0 +1,37 @@
+function BatchCompleteAlertSettings(path){
+	if (!Files.exists(path)) return false;
+	fw.runScript(path);
+	if (this["BatchCompleteAlert_settings"]){
+		var settings = this["BatchCompleteAlert_settings"].split(",");
+		return {
+			type:	settings[0],
+			message:	unescape(settings[1]),
+			app:		unescape(settings[2]),
+			file:	unescape(settings[3])
+		};
+	}
+	return {type:"alert", message:"Batch Complete!", app:"", file:""};
+}
+function BatchCompleteAlert(){
+	var dialogPath = fw.appDir + "/Configuration/Shared/senocular/Batch Complete Alert/dialog.swf";
+	var settingsPath = fw.appDir + "/Configuration/Shared/senocular/Batch Complete Alert/config.jsf";
+
+	if (fw.progressCountCurrent == 1) fw.runScript(dialogPath);
+	if (fw.progressCountCurrent != fw.progressCountTotal) return false;
+	var settings = BatchCompleteAlertSettings(settingsPath);
+	if (!settings) return false;
+	switch(settings.type){
+		case "alert":
+			alert(settings.message);
+			return true;
+		case "launch":
+		case "file":
+			var args = (settings.type == "file" && Files.exists(settings.file)) ? [settings.file] : [];
+			if (Files.exists(settings.app)){
+				fw.launchApp(settings.app, args);
+				return true;
+			}
+	}
+	return false;
+}
+BatchCompleteAlert();

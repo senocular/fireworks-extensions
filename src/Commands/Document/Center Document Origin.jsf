@@ -1,2 +1,1 @@
-var dom = fw.getDocumentDOM();
-dom.setGridOrigin({x:dom.width/2, y:dom.height/2});
+fw.getDocumentDOM().setGridOrigin({x:dom.width/2, y:dom.height/2});

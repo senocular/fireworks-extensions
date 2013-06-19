@@ -1,0 +1,107 @@
+﻿
+p = new Object(); // properties
+f = new Object(); // functions
+
+p.mouse = smartShape.currentMousePos;
+p.cps = smartShape.elem.controlPoints;
+p.elm = smartShape.elem;
+
+// OPERATIONS
+f.InsertSmartShapeAt = function(){
+	f.ASInspectorSetup([
+		["width", 100],
+		["height", 100]
+	]);
+	
+	f.SetControlPoint(0, p.mouse);
+	p.elm.elements[0] = new Path();
+	p.elm.elements[0].contours[0] = new Contour();
+	p.elm.elements[0].contours[0].isClosed = true;
+	p.elm.elements[0].contours[0].nodes.length = 4;
+	f.Draw();
+}
+f.SmartShapeEdited = function(){
+	f.DetectInspectorEdit(f.InspectorEdit, f.NormalEdit);
+}
+
+
+// SMARTSHAPE FUNCTIONS
+f.InspectorEdit = function(){
+	f.Draw();
+}
+f.NormalEdit = function(){
+	alert("Please don't edit me!");
+	f.Draw();
+}
+f.Draw = function(){
+	var x = p.cps[0].x;
+	var y = p.cps[0].y;
+	var ns = p.elm.elements[0].contours[0].nodes;
+	var w = f.GetASInspectorData("width")/2;
+	var h = f.GetASInspectorData("height")/2;
+	
+	f.SetNodePosition(ns[0], {x:x+w, y:y-h});
+	f.SetNodePosition(ns[1], {x:x+w, y:y+h});
+	f.SetNodePosition(ns[2], {x:x-w, y:y+h});
+	f.SetNodePosition(ns[3], {x:x-w, y:y-h});
+}
+
+
+// NODE/CP POSITIONING
+f.SetNodePosition = function(n, pt){
+	f.SetBezierNodePosition(n, pt,pt,pt);
+}
+f.SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+f.SetControlPoint = function(index, pt){
+	if (index >= p.cps.length) p.cps.length = index+1;
+	p.cps[index].x = pt.x;	p.cps[index].y = pt.y;
+}
+
+
+// INSPECTOR METHODS
+f.ASInspectorSetup = function(props_array){
+	var data = smartShape.elem.customData;
+	data.ASInspectorData = new Object();
+	data.ASInspectorData.edited = false;
+	data.ASInspectorData.data = new Object();
+	if (props_array){
+		var i, len = props_array.length;
+		for (i=0; i<len; i++) f.SetASInspectorData(props_array[i][0], props_array[i][1]);
+	}
+}
+f.DetectInspectorEdit = function(InspectorEditFunc, NormalEditFunc){
+	if(smartShape.elem.customData.ASInspectorData.edited !== false){
+		f.ASInspectorEditCleanup();
+		InspectorEditFunc();
+	}else if (NormalEditFunc) NormalEditFunc();
+}
+f.ASInspectorEditCleanup = function(){
+	smartShape.elem.customData.ASInspectorData.edited = false;
+	var n = smartShape.elem.elements[0].contours[0].nodes[0];
+	n.x = n.x-1;
+}
+f.SetASInspectorData = function(prop, value){
+	var data = smartShape.elem.customData;
+	if (!data.ASInspectorData) data.ASInspectorData = new Object();
+	if (!data.ASInspectorData.data) data.ASInspectorData.data = new Object();
+	data.ASInspectorData.data[prop] = value;
+}
+f.GetASInspectorData = function(prop){
+	var data = smartShape.elem.customData;
+	if (data.ASInspectorData && data.ASInspectorData.data && data.ASInspectorData.data[prop] != undefined) return  data.ASInspectorData.data[prop];
+	return undefined;
+}
+
+
+// INVOKE OPERATION
+if (f[smartShape.operation]) f[smartShape.operation]();
+
+// Cleanup
+f = undefined;
+delete f;
+p = undefined;
+delete p;

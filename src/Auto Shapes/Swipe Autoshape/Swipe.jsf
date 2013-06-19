@@ -1,0 +1,373 @@
+﻿var MouseLoc = smartShape.currentMousePos;
+var MouseX = MouseLoc.x;
+var MouseY = MouseLoc.y;
+var rad90 = Math.PI/2;
+op = function(operation){
+	this.cp  = smartShape.elem.controlPoints;
+	this.elems = smartShape.elem.elements;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function(){
+	var center = MouseLoc;
+	var size = 100;
+	var halfsize = size/2;
+	var bounds = [{x:center.x-halfsize,y:center.y-halfsize}, {x:center.x+halfsize,y:center.y+halfsize}];
+	this.setControlPoint(0, "top", "defaultInverted", MouseX, bounds[0].y);
+	this.setControlPoint(1, "bottom", "defaultInverted", MouseX, bounds[1].y);
+	this.setControlPoint(2, "pos", "default", bounds[0].x, MouseY);
+	this.setControlPoint(3, "rot", "default", bounds[0].x, bounds[0].y);
+	this.setControlPoint(4, "pos", "default", bounds[1].x, MouseY);
+	this.setControlPoint(5, "rot", "default", bounds[1].x, bounds[0].y);
+	// preview layer
+	this.elems[0] = new Path();
+	this.elems[0].customData.event = "none";
+	this.elems[0].customData.selectedbar = -1
+	this.elems[0].customData.colors = new Array(); // don't use, always replace with a new array
+	// should redraw only the 2(*barcount) alerted segments instead of redrawing the entire swipe
+	this.DrawSwipes();
+}
+op.prototype.BeginDragControlPoint = function (){
+	var i = smartShape.currentControlPointIndex;
+	smartShape.getsDragEvents = true;
+	var params = smartShape.GetDefaultMoveParms();
+	var barcount = this.countBars();
+	var curri = i;
+	if (i<barcount){
+		if (!i) return false; // nothing for top
+		if (smartShape.altOptKeyDown){
+			// CREATE NEW
+			if (PointsAreEqualWithin(this.cp[0], this.cp[barcount-1],.5)) return false; // no where to go
+			this.insertControlPoints(i-1,1);
+			barcount++;
+			this.setControlPoint(curri, "bar", "defaultInverted", this.cp[i+1].x, this.cp[i+1].y);
+			this.elems[0].customData.event = "new";
+		}
+		if (smartShape.ctrlCmdKeyDown && smartShape.shiftKeyDown){
+			// DELETE
+			if (i && i != barcount-1){
+				this.deleteControlPoints(i,1); // redraw if not handled in enddrag - UPDATE CONTROL POINTS
+				this.elems[0].customData.event = "delete";
+			}
+			this.elems[0].customData.selectedbar = i;
+		}else if (curri && smartShape.ctrlCmdKeyDown ){
+			// COLOR
+			this.elems[0].customData.event = "color";
+		}else if (curri && curri != barcount-1){
+			// MOVE
+			var pad = 1;
+			if (PointsAreEqualWithin(this.cp[0], this.cp[curri], pad/2)){
+				var usePoint = {x:this.cp[barcount-1].x, y:this.cp[barcount-1].y};
+				params.maxLinear = DistanceBetween(this.cp[curri], this.cp[curri+1])-pad;
+				params.minLinear = pad;
+			}else{
+				var usePoint = {x:this.cp[0].x, y:this.cp[0].y};
+				params.maxLinear = DistanceBetween(this.cp[curri], this.cp[curri-1])-pad; // may need to not use pad if distance is less than pad
+				params.minLinear = -DistanceBetween(this.cp[curri], this.cp[curri+1])+pad;
+			}
+			this.elems[0].customData.selectedbar = curri;
+			this.cp[curri].RegisterLinearMove(usePoint, params);
+		}
+	}else{
+		// kneecaps
+		var isPos = (this.cp[i].name == "pos");
+		if (isPos && smartShape.altOptKeyDown){
+			this.insertControlPoints(i,2);
+			this.setControlPoint(i+2, "pos", "default", this.cp[i].x, this.cp[i].y);
+			this.setControlPoint(i+3, "rot", "default", this.cp[i+1].x, this.cp[i+1].y);
+			this.cp[i+2].RegisterMove(params);
+			this.cp[i+3].RegisterMove(params);
+			this.elems[0].customData.event = "newpos";
+			//~ this.elems[0].customData.selectedbar = i+2;
+		}else if (isPos && smartShape.ctrlCmdKeyDown && smartShape.shiftKeyDown){
+			if (this.cp.length> barcount+4) this.deleteControlPoints(i,2);
+		}else{
+			if (isPos) this.cp[i+1].RegisterMove(params);
+			this.cp[i].RegisterMove(params);
+		}
+	}
+}
+op.prototype.DragControlPoint = function(){
+	var i = smartShape.currentControlPointIndex;
+	var barcount = this.countBars();
+	var bari = this.elems[0].customData.selectedbar;
+	if (bari != -1) this.setBarNameToValue(bari, barcount);
+	if (i >= barcount && i < barcount+4) this.updateBarControlPoints(barcount); // for when sliding first two pos/rots
+	this.Preview(i, barcount);
+}
+op.prototype.EndDragControlPoint = function(){
+	this.elems[0].contours.length = 0;// terminate preview
+	// Do we need a full shape refresh?
+	// what areas changed and therefore need to be updated?
+	var i = smartShape.currentControlPointIndex;
+	var barcount = this.countBars();
+	var iniEvent = this.elems[0].customData.event;
+	switch(iniEvent){
+		case "color":
+			var col = fw.popupColorPickerOverMouse("#00000000",true,false);
+			var s=i; // selected bar
+			while(s<this.elems.length){
+				this.elems[s].pathAttributes.fillColor = col;
+				s+=barcount-1;
+			}
+			break;
+		case "new":
+			var bari = this.elems[0].customData.selectedbar;
+			if (bari != -1){
+				if (PointsAreEqualWithin(this.cp[bari-1], this.cp[bari],.5) || PointsAreEqualWithin(this.cp[bari], this.cp[bari+1],.5)){
+					this.deleteControlPoints(bari,1);
+					this.elems[0].customData.event = "cancelnew";
+					barcount--;
+				}else{
+					this.setBarNameToValue(bari, barcount);
+				}
+			}else if (i >= barcount && i < barcount+4) this.updateBarControlPoints(barcount); // first 2 pos/rot CPs
+			break;
+		case "newpos":
+			if (PointsAreEqualWithin(this.cp[i], this.cp[i+2],.5) || PointsAreEqualWithin(this.cp[i+1], this.cp[i+3],.5)){
+				this.deleteControlPoints(i+2,2);
+				this.elems[0].customData.event = "cancelnew";
+			}
+			if (i >= barcount && i < barcount+4) this.updateBarControlPoints(barcount); // first 2 pos/rot CPs
+			break;
+		case "delete":
+		// points already deleted - redraw here
+	
+			//~ var bari = this.elems[0].customData.selectedbar;
+			//~ if (i >= barcount && i < barcount+4) this.updateBarControlPoints(barcount); // first 2 pos/rot CPs
+			break;
+		default:
+			var bari = this.elems[0].customData.selectedbar;
+			if (bari != -1){
+				if (PointsAreEqualWithin(this.cp[bari-1], this.cp[bari],.5) || PointsAreEqualWithin(this.cp[bari], this.cp[bari+1],.5)){
+					this.deleteControlPoints(bari,1); // barcount++ <- but should be the end of it here
+				}else{
+					this.setBarNameToValue(bari, barcount);
+				}
+			}else if (i >= barcount && i < barcount+4) this.updateBarControlPoints(barcount); // first 2 pos/rot CPs
+	}
+	
+	//alert([this.elems[0].customData.event,this.elems[0].customData.selectedbar]);
+	this.DrawSwipes();
+	
+	this.elems[0].customData.selectedbar = -1;
+	this.elems[0].customData.event = "none";
+}
+op.prototype.DrawSwipes = function(){
+	var barcount = this.countBars();
+	var atts, cols = [];
+	if (this.elems.length > 1){
+		atts = this.elems[1].pathAttributes; // all atts other than fill
+		if (this.elems[0].customData.event == "new"){
+			for (var b=0; b<barcount-2; b++){
+				cols[b] = this.elems[b+1].pathAttributes.fillColor;
+			}
+			cols.splice(this.elems[0].customData.selectedbar-1,0,cols[this.elems[0].customData.selectedbar-1]);
+		}else{
+			if (this.elems[0].customData.event == "delete" && this.elems[0].customData.selectedbar != -1){
+				for (var b=0; b<barcount; b++){
+					cols[b] = this.elems[b+1].pathAttributes.fillColor;
+				}
+				cols.splice(this.elems[0].customData.selectedbar,1); 
+			}else{ // cancelnew or deleting kneecap
+				for (var b=0; b<barcount-1; b++){
+					cols[b] = this.elems[b+1].pathAttributes.fillColor;
+				}
+			}
+		}
+	}else{
+		atts = fw.getDocumentDOM().pathAttributes;
+		cols[0] = atts.fillColor;
+	}
+	this.elems.length = 2;
+	var bvals = this.barValues(barcount);
+	var els = 1;
+	var quad, tops, bots;
+	for (var i=barcount+2; i<this.cp.length; i+=2){ // for each collection of pos/rot following bars
+		quad = [
+			this.cp[i-1],
+			MirrorPoint(this.cp[i-2],this.cp[i-1]),
+			MirrorPoint(this.cp[i],this.cp[i+1]),
+			this.cp[i+1]
+		]; // tl -> bl -> br -> bt
+		tops = [quad[0],quad[3]];
+		for (b=0; b<barcount-1; b++){
+			this.elems[els] = new Path();
+			this.elems[els].pathAttributes = atts;
+			this.elems[els].pathAttributes.fillColor = cols[b];
+			bots = [PointBetweenByPercent(quad[0],quad[1],bvals[b]), PointBetweenByPercent(quad[3],quad[2],bvals[b])];
+			this.elems[els].contours[0] = newQuad( tops[0], bots[0], bots[1], tops[1]);
+			tops = bots;
+			els++;
+		}
+	}
+	this.updateBarControlPoints();
+	this.updateToolTips(barcount);
+}
+op.prototype.Preview = function(index, barcount){
+	var preve = this.elems[0];
+	preve.contours.length = barcount;
+	
+	var masterQuads = [];
+	for (var i=barcount; i<this.cp.length; i+=2){ // for each collection of pos/rot following bars
+		masterQuads[masterQuads.length] = [
+			this.cp[i+1],
+			MirrorPoint(this.cp[i],this.cp[i+1])
+		]; // tl -> bl
+	}
+	var bvals = this.barValues(barcount);
+	bvals[bvals.length] = 0;
+	var con = 0;
+	var i;
+	for (var b=0; b<bvals.length; b++){
+		preve.contours[con] = new Contour();
+		for (var i=0; i<masterQuads.length; i++){ // for each collection of pos/rot following bars
+			n = (!i) ? preve.contours[con].nodes[0] : SetNewNode(preve.contours[con].nodes);
+			SetNodePosition( n, PointBetweenByPercent(masterQuads[i][0],masterQuads[i][1],bvals[b]) );
+		}
+		con++;
+	}
+	for (var i=0; i<masterQuads.length; i++){ // for each collection of pos/rot following bars
+		preve.contours[con] = new Contour();
+		SetNodePosition(preve.contours[con].nodes[0], masterQuads[i][0]);
+		SetNodePosition(SetNewNode(preve.contours[con].nodes), masterQuads[i][1]);
+		con++;
+	}
+	this.updateToolTips(barcount);
+}
+op.prototype.setBarNameToValue = function(bari, barcount){
+	var d1 = DistanceBetween(this.cp[0], this.cp[barcount-1]);
+	var d2 = DistanceBetween(this.cp[0], this.cp[bari]);
+	this.cp[bari].name = d2/d1; // name by value representative of its relation to top and bottom
+}
+op.prototype.countBars = function(){
+	for (var i=0; i<this.cp.length; i++) if (this.cp[i].name == "pos") return i;
+	return 0;
+}
+op.prototype.barValues = function(count){
+	if (count == undefined) count = this.countBars();
+	count--;
+	var vals = []; // first @ 0% (top) // 0 for first value ignored (presumed)
+	for (var i=1; i<count; i++) vals[vals.length] = parseFloat(this.cp[i].name);
+	vals[vals.length] = 1; // last @ 100% (bottom)
+	return vals;
+}
+op.prototype.updateToolTips = function(barcount){
+	this.cp[0].toolTip = "Use other endpoint to stripe";
+	for (var i=1; i<barcount-1;i++) this.cp[i].toolTip = "Stripe at "+Math.round(parseFloat(this.cp[i].name)*100)+"%";
+	this.cp[barcount-1].toolTip = "Alt/Opt-drag to stripe";
+	var num = 0;
+	var rot, dis, ox, oy;
+	for (i=barcount; i<this.cp.length;i++) {
+		num = Math.floor((i-barcount)/2);
+		if (this.cp[i].name == "pos"){
+			if (i==barcount) this.cp[i].toolTip = "Segments Base";
+			else{
+				ox = this.cp[i].x - this.cp[i-2].x;
+				oy = this.cp[i].y - this.cp[i-2].y;
+				this.cp[i].toolTip = "Segment "+num+"; Offset ("+ox+","+oy+")";
+			}
+		}else{ // rot
+			rot = -Math.round(-180+AngleFrom(this.cp[i], this.cp[i-1])*180/Math.PI);
+			dis = Math.round(DistanceBetween(this.cp[i], this.cp[i-1])*2);
+			if (i==barcount+1) this.cp[i].toolTip = "Segments Base; Rotation: "+rot+"° Size: "+dis+"px";
+			else this.cp[i].toolTip = "Segment "+num + "; Rotation: "+rot+"° Size: "+dis+"px";
+		}
+	}
+}
+op.prototype.updateBarControlPoints = function(bars){
+	if (bars == undefined) bars = this.countBars();
+	var lastbar = bars-1;
+	var pos1 = this.cp[bars];
+	var rot1a = this.cp[bars+1];
+	var rot1b = MirrorPoint(pos1, rot1a);
+	var pos2 = this.cp[bars+2];
+	var rot2a = this.cp[bars+3];
+	var rot2b =  MirrorPoint(pos2, rot2a);
+	var p = PointBetween(rot1a, rot2a);
+	this.cp[0].x = p.x; this.cp[0].y = p.y;
+	for (var i=1; i<lastbar; i++){
+		p = PointBetweenByPercent(this.cp[0],this.cp[lastbar], parseFloat(this.cp[i].name));
+		this.cp[i].x = p.x; this.cp[i].y = p.y;
+	}
+	p = PointBetween(rot1b, rot2b);
+	this.cp[lastbar].x = p.x; this.cp[lastbar].y = p.y;
+}
+op.prototype.insertControlPoints = function(from, count){
+	this.cp.length += count;
+	var end = from+count;
+	for (var i=this.cp.length-1; i>=end; i--) MatchControlPointWith(this.cp[i], this.cp[i-count]);
+}
+op.prototype.deleteControlPoints = function(from, count){
+	var end = this.cp.length-count;
+	for (var i=from; i<end; i++) MatchControlPointWith(this.cp[i], this.cp[i+count]);
+	this.cp.length = end;
+}
+op.prototype.setControlPoint = function(index, name, type, x, y){
+	if (index >= this.cp.length) this.cp.length = index+1;
+	this.cp[index].name = name;
+	this.cp[index].type = type;
+	this.cp[index].x = x;
+	this.cp[index].y = y;
+	this.cp[index].toolTipTracksDrag = true;
+}
+MatchControlPointWith = function(cp1, cp2){
+	for (var i in cp2) cp1[i] = cp2[i];
+}
+PointBetween = function(p1, p2){
+	return {x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2}
+}
+PointsAreEqualWithin = function(p1,p2,val){
+	if (val == undefined) val = 0;
+	return (Math.abs(p2.x - p1.x) < val && Math.abs(p2.y - p1.y) < val);
+}
+PointBetweenByPercent = function(p1, p2, per){
+	return {x:p1.x+(p2.x-p1.x)*per, y:p1.y+(p2.y-p1.y)*per}
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x, dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+AngleFrom = function(p1, p2){
+	return Math.atan2(p2.y-p1.y, p2.x-p1.x);
+}
+MirrorPoint = function(center, end){
+	return {x:2*center.x-end.x,y:2*center.y-end.y}
+}
+newQuad = function(p1,p2,p3,p4){
+	var c = new Contour(); 
+	c.nodes.length = 4;
+	for (var i=0; i<4; i++) SetNodePosition(c.nodes[i],  arguments[i]); 
+	c.isClosed = true;
+	return c;
+}
+redrawQuad = function(c, p1,p2,p3,p4){
+	if (c.nodes.length != 4) c.nodes.length = 4;
+	for (var i=0; i<4; i++) SetNodePosition(c.nodes[i],  arguments[i+1]); 
+	c.isClosed = true;
+	return c;
+}
+SetNewNode = function(ns){
+	var i = ns.length;
+	ns.length++;
+	return ns[i];
+}
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX = ptp.x;	n.predY =ptp.y;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pts.x;	n.succY = pts.y;
+}
+
+// init
+new op(smartShape.operation);
+
+// todo:
+/*
+draw elements based on bar points instead of redrawing entire swipe
+only draw/alter elements where needed for performance store data in customData (do not depend in case of duplicates)
+
+only create new bars going up
+
+*/

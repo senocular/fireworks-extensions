@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Wave" version="0.9.1" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Wave<br>
+		by senocular<br><br>
+		
+		The Wave auto shape creates zig-zag or wavy lines.  You have control handles to adjust size, height, wavelength and curvature.]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Wave Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Wave.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Wave.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

@@ -1,0 +1,1 @@
+﻿fw.setPref("WriteThumbnailPreview", Number(fw.yesNoDialog("Include a preview when saving PNG files?")));

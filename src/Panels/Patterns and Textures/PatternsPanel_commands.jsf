@@ -1,0 +1,40 @@
+// Get first pattern name from selection
+function getPatternName(){
+	for(var elem in fw.selection){
+		if (fw.selection[elem].pathAttributes){
+			if (fw.selection[elem].pathAttributes.fill){
+				if (fw.selection[elem].pathAttributes.fill.pattern){
+					return fw.selection[elem].pathAttributes.fill.pattern.name;
+				}
+			}
+		}
+	}
+	return "";
+}
+
+// Get pattern files in Fireworks Patterns directory
+function getPatternFiles(){
+	var patternFiles = Files.enumFiles(fw.appPatternsDir);
+	patternFiles = new Array().concat(patternFiles);
+	return patternFiles.join(',');
+}
+
+// Get first fill object from selection; used by setPattern
+function getFillObject(){
+	for(var elem in fw.selection){
+		if (fw.selection[elem].pathAttributes){
+			if (fw.selection[elem].pathAttributes.fill){
+				return fw.selection[elem].pathAttributes.fill;
+			}
+		}
+	}
+	return false;
+}
+// Sets the pattern identified by pattern name to the current selection
+function setPattern(patternName){
+	var basefill = getFillObject();
+	if (basefill){
+		basefill.pattern = {name:patternName, image:null};
+		fw.getDocumentDOM().setFill(basefill);
+	}
+}

@@ -1,0 +1,303 @@
+var mouse = smartShape.currentMousePos;
+var cps = smartShape.elem.controlPoints;
+var elems = smartShape.elem.elements;
+var ccpi = smartShape.currentControlPointIndex;
+var data = smartShape.elem.customData;
+
+var operation = new Object();
+operation.InsertSmartShapeAt = function(){
+	data.points3D = {
+		p0: Point3D(-50, -50, 50),
+		p1: Point3D(50,  -50, 50),
+		p2: Point3D(50,  50,  50),
+		p3: Point3D(-50, 50,  50),
+		p4: Point3D(-50, -50, -50),
+		p5: Point3D(50,  -50, -50),
+		p6: Point3D(50,  50,  -50),
+		p7: Point3D(-50, 50,  -50)		
+	};
+	data.origPoints3D = new Object();
+	data.rotation = Point3D(0, 0, 0);
+	data.focalLength = 300;
+	
+	cps.length = 9;
+	SetControlPoint(0, mouse);
+	cps[0].type = "crossHair";
+	CreateFaces();
+	Render();
+	ResetToolTips();
+}
+operation.BeginDragControlPoint = function(){
+	//smartShape.getsDragEvents = true;
+	data.lastMouse = mouse;
+	data.pressMouse = mouse;
+	data.lastMouseAngle = AngleBetween(mouse, cps[0]);
+	data.origPoints3D = CopyObject(data.points3D); // for moving points
+	elems[6] = new Path(); // create ornaments element
+}
+operation.DragControlPoint = function(){
+	var currMouseAngle = AngleBetween(mouse, cps[0]);
+	if (ccpi){
+		var diff = SubtractPoints(mouse, data.pressMouse);
+		if (smartShape.ctrlCmdKeyDown) MoveSelected3DPointsBy(Point3D(0,0,-diff.x));
+		else{
+			if (smartShape.shiftKeyDown) diff = PointZeroOutLowest(diff);
+			MoveSelected3DPointsBy(Point3DFrom2D(diff));
+		}
+	}else{
+		var dist = DistanceBetween(mouse, cps[0]);
+		if (smartShape.shiftKeyDown){
+			var accel = data.focalLength/100;
+			data.focalLength = Clamp(100, (data.focalLength+(mouse.y-data.lastMouse.y)*accel), 1000);
+			var ttfoc = (data.focalLength == 1000) ? "(none)" : Math.round(data.focalLength);
+			cps[0].toolTip ="FocalLength: "+ ttfoc;
+		}else{
+			 if (smartShape.ctrlCmdKeyDown){
+				data.rotation._z += currMouseAngle-data.lastMouseAngle;
+			}else{
+				var diff = RotatePointAroundPoint(SubtractPoints(mouse, data.lastMouse), Point(0,0), -data.rotation._z);
+				data.rotation = AddPoints3D(data.rotation, Point3DFrom2D(MultiplyPoint(PointValueSwap(PointNegateX(diff)), .01)));
+			}
+			cps[0].toolTip ="Rotate: (X: "+Math.round(data.rotation._x*180/Math.PI)+", Y: "+Math.round(data.rotation._y*180/Math.PI)+", Z: "+Math.round(data.rotation._z*180/Math.PI)+")";
+		}
+		DrawOrnaments(elems[6]); // draw ornaments
+	}
+	Render();
+	data.lastMouse = mouse;
+	data.lastMouseAngle =	currMouseAngle;
+}
+operation.EndDragControlPoint = function(){
+	if (PointsEqual(mouse, data.pressMouse)){
+		if (ccpi){
+			if (!smartShape.shiftKeyDown){
+				if (cps[ccpi].type == "default"){
+					ClearSelectedControlPoints();
+					cps[ccpi].type = "defaultInverted";
+				}else ClearSelectedControlPoints();
+			}else{
+				if (cps[ccpi].type == "default") cps[ccpi].type = "defaultInverted";
+				else cps[ccpi].type = "default";
+			}
+		}
+	}
+	elems.length = 6; // remove ornaments element
+	ResetToolTips()
+}
+
+Render = function(){
+	var trans = Transform3DPointsTo2DPoints(data.points3D, data.rotation);
+	for (var i=0; i<trans.points.length; i++){
+		SetControlPoint((i+1), AddPoints(cps[0], trans.points[i]));
+	}
+	DrawFaces(trans);
+}
+DrawFaces = function(trans){
+	var n, faces = GetFacesArray();
+	for (var i=0; i<faces.length; i++){
+		faces[i].depth = AverageOf([
+						trans.depths[faces[i].points[0]],
+						trans.depths[faces[i].points[1]],
+						trans.depths[faces[i].points[2]],
+						trans.depths[faces[i].points[3]]
+					]);
+	} 
+	faces.sort(function(a,b){return (a.depth>b.depth) ? 1 : -1; });
+	for (var i=0; i<faces.length; i++){
+		n = elems[i].contours[0].nodes;
+		SetNodePosition(n[0], AddPoints(cps[0], trans.points[faces[i].points[0]])),
+		SetNodePosition(n[1], AddPoints(cps[0], trans.points[faces[i].points[1]])),
+		SetNodePosition(n[2], AddPoints(cps[0], trans.points[faces[i].points[2]])),
+		SetNodePosition(n[3], AddPoints(cps[0], trans.points[faces[i].points[3]]))
+	}
+}
+CreateFaces = function(){
+	for (var i=0; i<6; i++){
+		elems[i] = new Path();
+		elems[i].contours[0].isClosed = true;
+		elems[i].contours[0].nodes.length = 4;
+	}
+}
+DrawOrnaments = function(elem){
+	var n = elem.contours[0].nodes;
+	n.length = 2;
+	SetNodePosition(n[0], PointFromVector(cps[0], data.rotation._z, 175));
+	SetNodePosition(n[1], PointFromVector(cps[0], data.rotation._z+Math.PI, 175));
+	
+	elem.contours[1] = new Contour();
+	n = elem.contours[1].nodes;
+	n.length = 2;
+	SetNodePosition(n[0], PointFromVector(cps[0], data.rotation._z-Math.PI*.5, 175));
+	SetNodePosition(n[1], PointFromVector(cps[0], data.rotation._z+Math.PI*.5, 175));
+}
+
+
+ClearSelectedControlPoints = function(){
+	cps.length = 9;
+	for (var i=1; i<9;i++) cps[i].type = "default";
+}
+GetSelectedControlPoints = function(){
+	var ary = new Array();
+	for (var i=1; i<9;i++) if (cps[i].type == "defaultInverted") ary.push(i);
+	return ary;
+}
+MoveSelected3DPointsBy = function(pt){
+	var selcps = GetSelectedControlPoints();
+	if (!selcps.length) return (0);
+	for (var p, i=0; i<selcps.length; i++){
+		p = "p"+ (selcps[i]-1);
+		data.points3D[p] = AddPoints3D(data.origPoints3D[p], pt);
+	}
+	p = "p"+ (ccpi-1);
+	cps[ccpi].toolTip = "(X: "+Math.round(data.points3D[p]._x)+", Y: "+Math.round(data.points3D[p]._y)+", Z: "+Math.round(data.points3D[p]._z)+")";
+	if (pt._z){
+		var zsign = (pt._z >= 0) ? "+" : "";
+		cps[ccpi].toolTip += ": Z "+zsign+Math.round(pt._z);
+	}else{
+		var xsign = (pt._x >= 0) ? "+" : "";
+		var ysign = (pt._y >= 0) ? "+" : "";
+		cps[ccpi].toolTip += ": X "+xsign+Math.round(pt._x)+", Y "+ysign+Math.round(pt._y);
+	}
+}
+ResetToolTips = function(){
+	cps[0].toolTip = "Rotation/Perspective";
+	for (var p, i=1; i<cps.length; i++){
+		p = "p"+(i-1);
+		cps[i].toolTip = "(X: "+Math.round(data.points3D[p]._x)+", Y: "+Math.round(data.points3D[p]._y)+", Z: "+Math.round(data.points3D[p]._z)+")";
+	}
+}
+
+GetFacesArray = function(){
+	return [
+		{ points:[3,0,1,2], depth:0},
+		{ points:[2,1,5,6], depth:0},
+		{ points:[6,5,4,7], depth:0},
+		{ points:[7,4,0,3], depth:0},
+		{ points:[2,6,7,3], depth:0},
+		{ points:[5,1,0,4], depth:0}
+	];
+}
+
+ObjectToArray = function(obj, prefix, len){
+	var ary = new Array()
+	while (len--) ary[len] = obj[prefix+len];
+	return ary;
+}
+CopyObject = function(obj){
+	var o = {}
+	for (var p in obj) o[p] = obj[p];
+	return o;
+}
+
+Clamp = function(min, n, max){
+	if (n<min) return min;
+	if (n>max) return max;
+	return n;
+}
+Point = function(x,y){
+	return {x:x, y:y};
+}
+PointsEqual = function(p1, p2){
+	return (p1.x == p2.x && p1.y == p2.y) ? true : false;
+}
+Point3D = function(x,y,z){
+	return {_x:x, _y:y, _z:z};
+}
+PointBetween3D = function(p1, p2){
+	return {_x:(p1._x+p2._x)/2, _y:(p1._y+p2._y)/2, _z:(p1._z+p2._z)/2};
+}
+Point2DFrom3D = function(pt3D){
+	return {x:pt3D._x, y:pt3D._y};
+}
+Point3DFrom2D = function(pt2D){
+	return {_x:pt2D.x, _y:pt2D.y, _z:0};
+}
+AddPoints = function(p1, p2){
+	return {x:p1.x+p2.x, y:p1.y+p2.y};
+}
+AddPoints3D = function(p1, p2){
+	return {_x:p1._x+p2._x, _y:p1._y+p2._y, _z:p1._z+p2._z};
+}
+SubtractPoints = function(p1, p2){
+	return {x:p1.x-p2.x, y:p1.y-p2.y};
+}
+PointZeroOutLowest = function(pt){
+	if (Math.abs(pt.x) > Math.abs(pt.y)) return Point(pt.x, 0);
+	else return Point(0, pt.y);
+}
+MultiplyPoint = function(pt, n){
+	return {x:pt.x*n, y:pt.y*n};
+}
+DistanceBetween = function(p1, p2){
+	var dx = p2.x-p1.x, dy = p2.y-p1.y;
+	return Math.sqrt(dx*dx+dy*dy);
+}
+AngleBetween = function(p1, p2){
+	return Math.atan2(p2.y-p1.y, p2.x-p1.x);
+}
+PointFromVector = function(origin, angle, power){
+	return {
+		x: origin.x + Math.cos(angle)*power,
+		y: origin.y + Math.sin(angle)*power
+	}
+}
+PointValueSwap = function(pt){
+	return {x:pt.y, y:pt.x};
+}
+PointNegateX = function(pt){
+	return {x:-pt.x, y:pt.y};
+}
+AverageOf = function(ary){
+	var L = ary.length;
+	var tot = 0;
+	for (var i=0; i<L; i++) tot += ary[i];
+	return tot/L;
+}
+RotatePointAroundPoint = function(pt, origin, angle){
+	var ca=Math.cos(angle);
+	var sa=Math.sin(angle);
+	var x = pt.x-origin.x;
+	var y = pt.y-origin.y;
+	return {x: origin.x + x*ca-y*sa, y: origin.y + x*sa+y*ca};
+}
+Transform3DPointsTo2DPoints = function(pts, angles){
+	var tps = new Array();
+	var ds = new Array();
+	var sx = Math.sin(angles._x);
+	var cx = Math.cos(angles._x);
+	var sy = Math.sin(angles._y);
+	var cy = Math.cos(angles._y);
+	var sz = Math.sin(angles._z);
+	var cz = Math.cos(angles._z);
+	var p, xy,xz, yx,yz, zx,zy, scaleRatio;
+	var i = 8;
+	while (i--){
+		p = pts["p"+i];
+		xy = cx*p._y - sx*p._z;
+		xz = sx*p._y + cx*p._z;
+		yz = cy*xz - sy*p._x;
+		yx = sy*xz + cy*p._x;
+		zx = cz*yx - sz*xy;
+		zy = sz*yx + cz*xy;
+		scaleRatio = (data.focalLength == 1000) ? 1 : data.focalLength/(data.focalLength + yz);
+		tps[i] = Point(zx*scaleRatio, zy*scaleRatio);
+		ds[i] = yz;
+	}
+	return {points:tps, depths:ds};
+}
+
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+SetControlPoint = function(index, pt){
+	if (index >= cps.length) cps.length = index+1;
+	cps[index].x = pt.x;	cps[index].y = pt.y;
+	cps[index].toolTipTracksDrag = true;
+}
+
+if (operation[smartShape.operation])
+	operation[smartShape.operation]();

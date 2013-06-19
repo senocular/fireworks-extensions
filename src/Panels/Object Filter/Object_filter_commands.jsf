@@ -1,0 +1,80 @@
+function matchElementType(elem, type){
+	var str = String(elem);
+	switch(str){
+		case "[object Group]":
+			if (elem.isSmartShape){
+				if (type == "Auto Shapes") return true;
+			}else{
+				if (type == "Groups") return true;
+			}
+			break;
+		case "[object Image]":
+			if (type == "Bitmaps") return true;
+			break;
+		case "[object RectanglePrimitive]":
+		case "[object Path]":
+			if (type == "Paths") return true;
+			break;
+		case "[object Instance]":
+			if (type == "Symbols") return true;
+			break;
+		case "[object Text]":
+			if (type == "Text") return true;
+			break;
+	}
+	return false;
+}
+
+function getElements(type){
+	var dom = fw.getDocumentDOM();
+	var elems = new Array();
+	var layercount, elemcount;
+	var i, j;
+	var flint;
+	layercount = dom.layers.length;
+	for (i=0; i<layercount; i++){
+		if (dom.layers[i].layerType == "normal"){
+			flint = dom.layers[i].frames[dom.currentFrameNum];
+			elemcount = flint.elements.length;
+			for (j=0; j<elemcount; j++){
+				if (flint.elements[j].name && matchElementType(flint.elements[j], type)){
+					elems.push(flint.elements[j].name);
+				}
+			}
+		}
+	}
+	return elems.join("¬"); 
+}
+
+function setSelectionByName(name){
+	var dom = fw.getDocumentDOM();
+	var elems = new Array();
+	var layercount, elemcount;
+	var i, j;
+	var flint;
+	layercount = dom.layers.length;
+	for (i=0; i<layercount; i++){
+		if (dom.layers[i].layerType == "normal"){
+			flint = dom.layers[i].frames[dom.currentFrameNum];
+			elemcount = flint.elements.length;
+			for (j=0; j<elemcount; j++){
+				if (flint.elements[j].name == name){
+					elems.push(flint.elements[j]);
+				}
+			}
+		}
+	}
+	fw.selection = elems; 
+}
+
+function getSelectedNames(){
+	var names = new Array();
+	var i;
+	var elemcount = fw.selection.length;
+	for (i=0; i<elemcount; i++){
+		if (fw.selection[i].name){
+			names.push(fw.selection[i].name);
+		}
+	}
+	return names.join("¬"); 
+}

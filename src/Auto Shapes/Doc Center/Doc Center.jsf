@@ -1,0 +1,54 @@
+﻿var cps = smartShape.elem.controlPoints;
+
+operation = new Object();
+operation.InsertSmartShapeAt = function(){
+	operation.RedrawSmartShape();
+}
+operation.EndDragControlPoint = function(){
+	operation.RedrawSmartShape();
+}
+operation.RedrawSmartShape = function(){
+	var dom = fw.getDocumentDOM();
+	var center_v = (dom.top+dom.height)/2;
+	var center_h = (dom.left+dom.width)/2;
+	smartShape.elem.elements[0] = new Path;
+	elems = smartShape.elem.elements[0];
+	
+	elems.contours[0] = new Contour();
+	elems.contours[0].nodes.length = 2;
+	elems.contours[0].isClosed = false;
+	elems.contours[1] = new Contour();
+	elems.contours[1].nodes.length = 2;
+	elems.contours[1].isClosed = false;
+	elems.contours[2] = new Contour();
+	elems.contours[2].nodes.length = 2;
+	elems.contours[2].isClosed = false;
+	elems.contours[3] = new Contour();
+	elems.contours[3].nodes.length = 2;
+	elems.contours[3].isClosed = false;
+	
+	elems.pathAttributes.fill = null;
+	elems.pathAttributes.brush = { alphaRemap:"none", angle:0, antiAliased:false, aspect:100, blackness:0, category:"bc_Pencil", concentration:100, dashOffSize1:2, dashOffSize2:2, dashOffSize3:2, dashOnSize1:8, dashOnSize2:1, dashOnSize3:1, diameter:1, feedback:"none", flowRate:0, maxCount:15, minSize:1, name:"bn_1-Pixel", numDashes:0, shape:"circle", softenMode:"bell curve", softness:0, spacing:15, textureBlend:0, textureEdge:0, tipColoringMode:"random", tipCount:1, tipSpacing:0, tipSpacingMode:"random", type:"simple" };
+	elems.pathAttributes.brushColor = "#ff0000";
+
+	SetNodePosition(elems.contours[0].nodes[0], {x:center_h, y:dom.top});
+	SetNodePosition(elems.contours[0].nodes[1], {x:center_h, y:center_v});
+	SetNodePosition(elems.contours[1].nodes[0], {x:center_h, y:center_v});
+	SetNodePosition(elems.contours[1].nodes[1], {x:center_h, y:dom.top+dom.height});
+	SetNodePosition(elems.contours[2].nodes[0], {x:dom.left, y:center_v});
+	SetNodePosition(elems.contours[2].nodes[1], {x:center_h, y:center_v});
+	SetNodePosition(elems.contours[3].nodes[0], {x:center_h, y:center_v});
+	SetNodePosition(elems.contours[3].nodes[1], {x:dom.left+dom.width, y:center_v});
+	
+	cps.length = 1;
+	cps[0].toolTip = "Click: Obtain Center";
+	cps[0].x = center_h;
+	cps[0].y = center_v;
+}
+SetNodePosition = function(n, pt){
+	n.predX = pt.x;	n.predY =pt.y;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pt.x;	n.succY = pt.y;
+}
+if (operation[smartShape.operation])
+	operation[smartShape.operation]();

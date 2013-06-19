@@ -1,0 +1,1 @@
+﻿fw.setPref("LayersExpandedByDefault", Number(fw.yesNoDialog("Do you want a line break to be inserted into text when you hit ENTER?\n(Restart required)")));

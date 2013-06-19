@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Scale-3 and Scale-9 Components" version="0.9.7" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="8"  />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Scale-3 and Scale-9 Component Auto Shapes
+		www.senocular.com
+		<br>	
+		The Scale-3 and Scale-9 Component Auto Shapes allows you to use patterns as images or solid colors to create custom, scalable components for use in Fireworks.
+		This extension uses shape version 0.9.7<br>
+		<br>
+		Versions:
+		- 0.9.7: Updated dialogs to work on Mac.
+		Allowed for dialogs to be run through user app directory if installed manually
+		- 0.9.6: Fixed a pattern refresh bug and updated help.
+		- 0.9.5: Updated pattern selection to include all document-accessible patterns with option to specify the pattern preview file in the Define Slice dialog if using a pattern not installed in Fireworks's Patterns folder.
+		- 0.9.4: Initial public release.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Scale-3 and Scale-9 Component Auto Shapes from the Shapes panel.  The Shapes panel can be opened using Window > Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Scale-3 Component.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Scale-3 Component.gif" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Scale-9 Component.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Scale-9 Component.gif" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Copy Component Skin.jsf" destination="$fireworks/Configuration/Commands/Auto Shapes" />
+		<file source="Define Slice.swf" destination="$fireworks/Configuration/Shared/senocular/Scale Components" />
+		<file source="Options-3.swf" destination="$fireworks/Configuration/Shared/senocular/Scale Components" />
+		<file source="Options-9.swf" destination="$fireworks/Configuration/Shared/senocular/Scale Components" />
+		<file source="Help.html" destination="$fireworks/Configuration/Shared/senocular/Scale Components" />
+		<file source="changelog.txt" destination="$fireworks/Configuration/Shared/senocular/Scale Components" />
+		<file source="Help Files/examples.gif" destination="$fireworks/Configuration/Shared/senocular/Scale Components/Help Files" />
+		<file source="Help Files/options.gif" destination="$fireworks/Configuration/Shared/senocular/Scale Components/Help Files" />
+		<file source="Help Files/defineslice.gif" destination="$fireworks/Configuration/Shared/senocular/Scale Components/Help Files" />
+		<file source="Help Files/windialogpattern.gif" destination="$fireworks/Configuration/Shared/senocular/Scale Components/Help Files" />
+	</files>
+</macromedia-extension>

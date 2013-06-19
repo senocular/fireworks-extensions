@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="File Info" version="0.8.2" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[File Info<br>
+		www.senocular.com<br><br>
+		
+		File Info creates a bar at the bottom of your document with common information regarding your file.  The information is completely customizable and can be edited by clicking on the shape's control point.<br><br>
+		
+		Version History:
+		0.8.2: Added support for a quick update using CTRL when clicking on the control point
+		0.8.1: Fixed incompatibility with new line characters in prompt dialog
+		0.8.0: Initial public release]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Mirror Path Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="File Info.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="File Info.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

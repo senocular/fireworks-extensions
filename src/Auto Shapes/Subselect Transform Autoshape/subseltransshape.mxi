@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Subselect Transform *EXPERIMENTAL*" version="0.4.3" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Subselect Transform Autoshape *EXPERIMENTAL*<br>
+		www.senocular.com<br><br>
+		
+		This autoshape is a hacked tool that lets you transform path nodes in a subselection by moving, rotating or scaling them.<br>
+		Subselect Transform is EXPERIMENTAL and comes with the following caveats resulting from the deficiencies of the Fireworks authoring environement:<br><br>
+		
+		- There is *NO UNDO* when using this tool.  Edits are permanent<br>
+		- Fireworks does not refresh the screen after a path has been altered by this tool<br>
+		- A control point on the tool cannot be selected if it lies of one of the paths of the items being edited<br>
+		- If a control point is released over the path of an item being edited, the selection is lost<br><br>
+		
+		To use the Subselect Transform tool, drag a copy of the autoshape onto the screen.  Then, select points (nodes) along a path or multiple paths to be edited.  Using SHIFT, select the Subselect Transform tool in the layers menu.  You are now able to edit the points using the tool.  First, however, you should reset the tool to the points selected by pressing the central crosshair control point.  This can be done at any time durring the editing of a path.  It will reset the rotation of the Subselect Transform tool and set its bounds to be around the points selected.
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Subselect Transform Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Subselect Transform.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Subselect Transform.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

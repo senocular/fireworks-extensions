@@ -1,0 +1,318 @@
+﻿// shortening variables:
+// create a short variable name to represent the mouse position
+var mouse = smartShape.currentMousePos;
+
+// create a short variable name to represent the control points array
+var cps = smartShape.elem.controlPoints;
+
+// create a short variable name to represent the Auto Shape's
+// main elements array
+var elems = smartShape.elem.elements;
+
+// shape variables:
+// variable to specify what size the match area is when the shape is made
+var defaultSize = {x:50, y:50};
+
+// variable specifying border thickness
+var border = 5;
+
+// variable determining the height of the area containing the control points
+var drawerHeight = 30;
+
+// create a new generic object to contain event handler functions
+operation = new Object();
+
+// event handlers:
+// define an InsertSmartShapeAt event handler that will create the
+// shape for the InsertSmartShapeAt event
+operation.InsertSmartShapeAt = function(){
+
+	// in the shape's customData object, define a variable that will
+	// set it apart from other objects in the document.  This will be
+	// checked to know whether or not the element is to be removed from
+	// a selection for setting elements to match the shape's size
+	smartShape.elem.customData.isMatcherShape = true;
+	
+	// create a new text element as the first element in this Auto Shape
+	elems[0] = new Text();
+	
+	// assign text for this first text element (element 0) to be "Get Size"
+	AssignText(0, "Get Size");
+	
+	// create a new text element as the second element in this Auto Shape
+	elems[1] = new Text();
+	
+	// assign text for this second text element (element 1) to be "Get Size"
+	AssignText(1, "Set Size");
+	
+	// create a new path element as the third element of the shape 
+	elems[2] = new Path();
+	
+	// give the path shape two new contours
+	elems[2].contours.length = 2;
+	
+	// each contour in the shape gets 4 nodes (each is rectangular in shape)
+	// the first contour being the outline of the shape and the second
+	// providing the area which gets and sets size matching
+	elems[2].contours[0].nodes.length = 4;
+	elems[2].contours[1].nodes.length = 4;
+	
+	// set each of the contours to be closed
+	elems[2].contours[0].isClosed = true;
+	elems[2].contours[1].isClosed = true;
+	
+	// give the path some opacity (transparency) so other objects can 
+	// be seen beneath as not to be too obstructive
+	elems[2].opacity = 35;
+	
+	// remove any brush that might be applied to the path 
+	elems[2].pathAttributes.brush = null;
+	
+	// give the path a unique fill color
+	elems[2].pathAttributes.fillColor = "#CFBF80";
+	
+	// apply a solid fill type
+	elems[2].pathAttributes.fill = {
+		category:"fc_Solid",
+		ditherColors:[ "#000000", "#000000" ],
+		edgeType:"antialiased",
+		feather:0,
+		gradient:null,
+		name:"Solid",
+		pattern:null,
+		shape:"solid",
+		stampingMode:"blend opaque",
+		textureBlend:0,
+		webDitherTransparent:false
+	}
+	
+	// create 2 control points
+	cps.length = 2;
+	
+	// call target to target a position at the mouse location
+	// with a size of the defaultSize.  This will draw the shape
+	// as well as set the control points
+	Target(mouse, defaultSize);
+}
+
+// define an EndDragControlPoint event handler that will be called
+// as a result of releasing the mouse after clicking a control point
+operation.EndDragControlPoint = function(){
+
+	// either get or set has been clicked, in either case, remove
+	// the shape from the selection with RemoveFromSelection
+	RemoveFromSelection();
+	
+	// if there are no elements selection, exit the function and do nothing
+	if (!fw.selection.length) return;
+	
+	// assign a short variable to represent the currently clicked control point
+	var cp = smartShape.currentControlPoint;
+	
+	// assign the current document's DOM in a short variable dom
+	var dom = fw.getDocumentDOM();
+	
+	// if the control point clicked is the Get control point 
+	if (cp.name == "Get"){
+	
+		// group the current selection to contain them together as one element 
+		dom.group();
+		
+		// get the position of the current selection (now one group)
+		var position = {x:fw.selection[0].left, y:fw.selection[0].top};
+		
+		// get the size of the current selection
+		var size = {x:fw.selection[0].width, y:fw.selection[0].height};
+		
+		// ungroup the group to return them to normal
+		dom.ungroup();
+		
+		// call Target to draw the shape around the targeted selection
+		Target(position, size);
+		
+	// otherwise if the control point clicked is the Set control point 
+	}else if (cp.name == "Set"){
+	
+		// assign the current selection to a new array (copy)
+		var sel = fw.selection;
+		
+		// loop through all elements within the saved selection
+		for (var i=0; i<sel.length; i++){
+		
+			// assign a short variable to represent the nodes array
+			var nods = elems[2].contours[1].nodes;
+			
+			// set the current Fireworks selection to be the current element 
+			// in the selection copy
+			fw.selection = [ sel[i] ];
+			
+			// use DOM to call resizeSelection for the selection to fit it
+			// within the size of the shape 
+			dom.resizeSelection(nods[1].x - nods[0].x, nods[2].y - nods[1].y);		
+			
+			// use DOM to call moveSelectionTo to move the selection
+			// to the position set by the shape 
+			dom.moveSelectionTo(PointFromNode(nods[0]), false, false);		
+		}
+	}
+}
+// end event handlers
+
+// custom functions:
+// (shape specific functions)
+/**
+ * Target targets a position point and a size point and draws the shape 
+ * to match it
+ * Requires: AddPoints, SetNodePosition, SetControlPoint, SetTextPosition
+*/
+Target = function(position, size){
+
+	// set up an array to store the 4 corners of the passed selection
+	// position and size.  The shape is built around these locations
+	var corners = [
+		position,
+		AddPoints(position, {x:size.x, y:0}),
+		AddPoints(position, size),
+		AddPoints(position, {x:0, y:size.y})
+	];
+	
+	// assign a short variable to represent the inner nodes array
+	var nods = elems[2].contours[1].nodes;
+	
+	// set the position of the inner nodes around the corners making
+	// the gotten rectangular selection area
+	SetNodePosition(nods[0], corners[0]);
+	SetNodePosition(nods[1], corners[1]);
+	SetNodePosition(nods[2], corners[2]);
+	SetNodePosition(nods[3], corners[3]);
+	
+	// assign a short variable to represent the outer nodes array
+	nods = elems[2].contours[0].nodes;
+	
+	// set the position of the outer nodes around the inner nodes based on the 
+	// border variable.  Include more heaight based on drawerHeight at the 
+	// bottom of the shape (for the get and set buttons)
+	SetNodePosition(nods[0], AddPoints(corners[0], {x:-border, y:-border}));
+	SetNodePosition(nods[1], AddPoints(corners[1], {x:border, y:-border}));
+	SetNodePosition(nods[2], AddPoints(corners[2], {x:border, y:drawerHeight}));
+	SetNodePosition(nods[3], AddPoints(corners[3], {x:-border, y:drawerHeight}));
+	
+	// set the control points to be centered within the drawer area (centering both
+	// by setting them to positions in the drawer divided in thirds)
+	SetControlPoint(cps[0], AddPoints(corners[3], {x:0, y: drawerHeight/3}), "Get", "Target an object to match size");
+	SetControlPoint(cps[1], AddPoints(corners[3], {x:0, y: 2*drawerHeight/3}), "Set", "Set selected elements to the current size");
+	
+	// set the text position next to the control point positions in the drawer 
+	SetTextPosition(0, AddPoints(corners[3], {x:border, y: drawerHeight/3}));
+	SetTextPosition(1, AddPoints(corners[3], {x:border, y: 2*drawerHeight/3}));
+}
+
+/**
+ * AssignText assigns input text to the text element in the num position of
+ * the Auto Shape's elements array
+*/
+AssignText = function(num, input){
+
+	// set the autoExpand property of the text element to true so that the size of
+	// the text box will size to match the size of the text within it
+	elems[num].autoExpand = true;
+	
+	// temporarily store the text elements textRuns object in a runs variable (as copy)
+	var runs = elems[num].textRuns;
+	
+	// assign the textRuns array to the input text at a size of 10pt
+	runs.textRuns = [ {changedAttrs: {size:"10pt"}, characters: input} ];
+	
+	// re-assign runs back to the text elements textRuns property this time
+	// with the characters in the previously defined textRuns array
+	elems[num].textRuns = runs;
+}
+
+/**
+ * SetTextPosition sets text element num to the point pt (by center left of text)
+*/
+SetTextPosition = function(num, pt){
+	// set the text element left to be at the point pt's x position 
+	elems[num].rawLeft = pt.x;
+	
+	// set the text element's middle (top minus half height) to pt's y
+	elems[num].rawTop = pt.y - elems[num].rawHeight/2;
+}
+
+/**
+ * RemoveFromSelection removes the Element Matcher shape from the Fireworks's selection
+*/
+RemoveFromSelection = function(){
+
+	// create a new array to represent the new selection
+	var sel = new Array();
+	
+	// loop through all the elements of the curent selection
+	for (var i=0; i<fw.selection.length; i++){
+	
+		// if the current element in the loop does not have a valid
+		// customData property named isMatcherShape
+		if (!fw.selection[i].customData.isMatcherShape){
+		
+			// add the current selection element in the new selection array
+			sel.push(fw.selection[i]);
+		}
+	}
+	
+	// set the current Fireworks selection to be the new selection array
+	// - the array that no longer contains Element Matcher shapes (this shape)
+	fw.selection = sel;
+}
+
+// (common functions)
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+/**
+ * SetControlPoint positions the passed control point cp to the location
+ * specified by pt and assigns to it name and toolTip 
+*/
+SetControlPoint = function(cp, pt, name, toolTip){
+	cp.x = pt.x; // set x position from x of pt
+	cp.y = pt.y; // set y position from y of pt
+	cp.name = name; // set control point name to name passed
+	cp.toolTip = toolTip; // set control point toolTip to toolTip passed
+}
+
+/**
+ * PointFromNode creates a generic point object from a ContourNode object
+*/
+PointFromNode = function(node){
+	return {x: node.x, y:node.y}; // copy x and y properties in returned object
+}
+
+/**
+ * AddPoints adds two points pt1 and pt2 and returns the resulting point
+*/
+AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y}; // add x and y properties in returned object
+}
+// end custom functions
+
+// invoke event handler:
+// if the event specified by smartShape.operation exists
+// in the operation object, call that event as a function
+if (operation[smartShape.operation]) operation[smartShape.operation]();

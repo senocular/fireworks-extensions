@@ -1,0 +1,136 @@
+﻿
+p = new Object(); // properties
+f = new Object(); // functions
+
+p.mouse = smartShape.currentMousePos;
+p.cps = smartShape.elem.controlPoints;
+p.elm = smartShape.elem;
+
+// OPERATIONS
+f.InsertSmartShapeAt = function(){
+	f.ASInspectorSetup([
+		["radius", 50],
+		["centerX", p.mouse.x],
+		["centerY", p.mouse.y]
+	]);
+
+	p.elm.elements[0] = new Path();
+	f.Draw();
+}
+f.SmartShapeEdited = function(){
+	f.DetectInspectorEdit(f.InspectorEdit, f.NormalEdit);
+}
+
+
+// SMARTSHAPE FUNCTIONS
+f.InspectorEdit = function(){
+	f.Draw();
+}
+f.NormalEdit = function(){
+	alert("Please don't edit me!");
+	f.Draw();
+}
+f.Draw = function(){
+	var loc = {x:f.GetASInspectorData("centerX"), y:f.GetASInspectorData("centerY")}
+	f.SetControlPoint(0, loc);
+	f.CreateCircleContour(p.cps[0], f.GetASInspectorData("radius"));
+}
+
+
+// NODE/CP POSITIONING
+f.SetNodePosition = function(n, pt){
+	f.SetBezierNodePosition(n, pt,pt,pt);
+}
+f.SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX	= ptp.x;	n.predY	= ptp.y;
+	n.x		= pt.x;	n.y		= pt.y;
+	n.succX	= pts.x;	n.succY	= pts.y;
+}
+f.SetControlPoint = function(index, pt){
+	if (index >= p.cps.length) p.cps.length = index+1;
+	p.cps[index].x = pt.x;	p.cps[index].y = pt.y;
+}
+
+f.AddPoints = function(pt1, pt2){
+	return {x:pt1.x + pt2.x, y:pt1.y + pt2.y};
+}
+f.CreateCircleContour = function(origin, radius){
+	p.elm.elements[0].contours[0] = new Contour();
+	p.elm.elements[0].contours[0].isClosed = true;
+	var ns = p.elm.elements[0].contours[0].nodes;
+	ns.length = 4;
+	var cRadius = radius*fw.ellipseBCPConst;
+	f.SetBezierNodePosition(
+		ns[0],
+		f.AddPoints(origin, {x:-cRadius,	y:-radius}),
+		f.AddPoints(origin, {x:0,		y:-radius}),
+		f.AddPoints(origin, {x:cRadius, y:-radius})
+	);
+	f.SetBezierNodePosition(
+		ns[1],
+		f.AddPoints(origin, {x:radius,	y:-cRadius}),
+		f.AddPoints(origin, {x:radius,	y:0}),
+		f.AddPoints(origin, {x:radius,	y:cRadius})
+	);
+	f.SetBezierNodePosition(
+		ns[2],
+		f.AddPoints(origin, {x:cRadius,	y:radius}),
+		f.AddPoints(origin, {x:0,		y:radius}),
+		f.AddPoints(origin, {x:-cRadius,	y:radius})
+	);
+	f.SetBezierNodePosition(
+		ns[3],
+		f.AddPoints(origin, {x:-radius,	y:cRadius}),
+		f.AddPoints(origin, {x:-radius,	y:0}),
+		f.AddPoints(origin, {x:-radius,	y:-cRadius})
+	);
+}
+
+// INSPECTOR METHODS
+f.ASInspectorSetup = function(props_array){
+	var data = smartShape.elem.customData;
+	data.ASInspectorData = new Object();
+	data.ASInspectorData.edited = false;
+	data.ASInspectorData.data = new Object();
+	data = data.ASInspectorData.data;
+	var i, len = props_array.length;
+	for (i=0; i<len; i++) data[props_array[i][0]] = props_array[i][1];
+	f.SetASInspectorChangeMethods("elements[0].contours[0].nodes[0].x++;", "elements[0].contours[0].nodes[0].x--;");
+}
+f.SetASInspectorChangeMethods = function(edit, restore){
+	smartShape.elem.customData.ASInspectorData.invokeEdit = edit;
+	smartShape.elem.customData.ASInspectorData.restoreEdit = restore;
+}
+f.DetectASInspectorEdit = function(InspectorEditFunc, NormalEditFunc){
+	if(smartShape.elem.customData.ASInspectorData.edited !== false){
+		f.ASInspectorEditCleanup();
+		InspectorEditFunc();
+	}else if (NormalEditFunc) NormalEditFunc();
+}
+f.ASInspectorEditCleanup = function(){
+	smartShape.elem.customData.ASInspectorData.edited = false;
+	eval("smartShape.elem." + smartShape.elem.customData.ASInspectorData.restoreEdit);
+}
+f.SetASInspectorData = function(prop, value){
+	var data = smartShape.elem.customData;
+	if (data.ASInspectorData && data.ASInspectorData.data && data.ASInspectorData.data[prop] != undefined) {
+		data.ASInspectorData.data[prop] = value;
+		return true;
+	}
+	return false;
+}
+f.GetASInspectorData = function(prop){
+	var data = smartShape.elem.customData;
+	if (data.ASInspectorData && data.ASInspectorData.data && data.ASInspectorData.data[prop] != undefined) return data.ASInspectorData.data[prop];
+	return undefined;
+}
+
+
+// INVOKE OPERATION
+if (f[smartShape.operation]) f[smartShape.operation]();
+
+// Cleanup
+f = undefined;
+delete f;
+p = undefined;
+delete p;

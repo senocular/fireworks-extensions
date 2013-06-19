@@ -1,0 +1,211 @@
+﻿var MouseLoc = smartShape.currentMousePos;
+var MouseX = MouseLoc.x;
+var MouseY = MouseLoc.y;
+op = function(operation){
+	this.cp  = smartShape.elem.controlPoints;
+	this.elems  = smartShape.elem.elements;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function(){
+	this.elems[0] = new Path(); // preview & data container
+	this.elems[1] = new Path(); // image
+	this.elems[1].contours[0] = new Contour();
+	this.elems[1].contours[0].nodes.length = 2;
+	
+	var cd = this.elems[0].customData;
+	cd.mirror = 0; // 0-2; 0: hor, 1: ver, 2: both
+	
+	var origin = MouseLoc;
+	this.setControlPoint(0, "origin", "crossHair", origin);
+	this.setControlPoint(1, "pt", "default", AddPoints(origin, {x:-50,y:-50}));
+	SetNodePosition(this.elems[1].contours[0].nodes[0], this.cp[1]);
+	this.setControlPoint(2, "pt", "default", AddPoints(origin, {x:-50,y:50}));
+	SetNodePosition(this.elems[1].contours[0].nodes[1], this.cp[2]);
+	this.Render();
+	cd.lastEvent = "insert";
+}
+op.prototype.BeginDragControlPoint = function (){
+	var cd = this.elems[0].customData;
+	var index = smartShape.currentControlPointIndex;
+	var params = smartShape.GetDefaultMoveParms();
+	smartShape.getsDragEvents = true;
+	if (smartShape.altOptKeyDown){
+		if (index){
+			var nindex = this.insertNode(this.elems[1].contours[0].nodes, index-1, 1);
+			SetNodePosition(this.elems[1].contours[0].nodes[nindex], this.cp[index]);
+			this.Populatecps();
+			this.Render();
+			this.cp[nindex+1].RegisterMove(params);
+		}
+	}else this.cp[index].RegisterMove(params);
+	if (index) this.setDraggingNodes(index, params);
+	cd.lastEvent = "setdrag";
+}
+op.prototype.DragControlPoint = function(){
+	var cd = this.elems[0].customData;
+	this.updateToolTips();
+	cd.lastEvent = "drag";
+}
+op.prototype.EndDragControlPoint = function(){
+	var cd = this.elems[0].customData;
+	var index = smartShape.currentControlPointIndex;
+	if (cd.lastEvent == "setdrag"){
+		if (!index){
+			cd.mirror = (cd.mirror+1)%3;
+			this.Render();
+		}else if (smartShape.shiftKeyDown && smartShape.ctrlCmdKeyDown && this.cp.length > 3){
+			this.cp.length--;
+			this.elems[1].contours[0].nodes.length = this.cp.length;
+			this.deleteNode(this.elems[1].contours[0].nodes, index-1, 1);
+			this.Render();
+			this.Populatecps();
+		}
+	}else this.Render();
+	cd.lastEvent = "enddrag";
+}
+op.prototype.SmartShapeEdited = function(){
+	this.Populatecps();
+	this.Render();
+}
+op.prototype.Render = function(){
+	var cd = this.elems[0].customData;
+	var e = this.elems[1];
+	
+	var pts = this.cp.length-1;
+	var max = (pts*2);
+	e.contours[0].nodes.length = pts;
+	switch(cd.mirror){
+		case 0: 
+			for (var i=pts, m=pts-1; i<max; i++, m--) MatchNodePosition(SetNewNode(e.contours[0].nodes), MirrorPointH(this.cp[0], e.contours[0].nodes[m]));
+			break;
+		case 1:
+			for (var i=pts, m=pts-1; i<max; i++, m--) MatchNodePosition(SetNewNode(e.contours[0].nodes), MirrorPointV(this.cp[0], e.contours[0].nodes[m]));
+			break;
+		case 2:
+			for (var i=pts, m=pts-1; i<max; i++, m--) MatchNodePosition(SetNewNode(e.contours[0].nodes), MirrorPointH(this.cp[0], e.contours[0].nodes[m]));
+			pts *= 2; max *= 2;
+			for (var i=pts, m=pts-1; i<max; i++, m--) MatchNodePosition(SetNewNode(e.contours[0].nodes), MirrorPointV(this.cp[0], e.contours[0].nodes[m]));
+			break;
+	}
+	
+	e.contours[0].isClosed = true;
+	this.updateToolTips();
+ 
+}
+op.prototype.Populatecps = function(){
+	var cd = this.elems[0].customData;
+	this.cp.length = 1;
+	if (cd.mirror < 2)	var max = Math.ceil(this.elems[1].contours[0].nodes.length/2)+1;
+	else var max = Math.ceil(this.elems[1].contours[0].nodes.length/4)+1;
+	for (i=1; i<max; i++) this.setControlPoint(i, "pt", "default", this.elems[1].contours[0].nodes[i-1]);
+}
+op.prototype.setDraggingNodes = function(index, defParams){
+	var cd = this.elems[0].customData;
+	var count = this.cp.length-1;
+	var offset = (count-1)-(index-1);
+	var params = smartShape.GetDefaultMoveParms();
+	switch (cd.mirror) {
+		case 1:
+			params.deltaXtoX = 1;
+			params.deltaYtoY = -1;
+			break;
+		case 2:
+			var firsthalf = count*2;
+			var params2 = smartShape.GetDefaultMoveParms();
+			params2.deltaXtoX = -1;
+			params2.deltaYtoY = -1;
+			this.elems[1].contours[0].nodes[firsthalf+index-1].RegisterMove(params2);
+			var params3 = smartShape.GetDefaultMoveParms();
+			params3.deltaXtoX = 1;
+			params3.deltaYtoY = -1;
+			this.elems[1].contours[0].nodes[firsthalf+count+offset].RegisterMove(params3);	
+		case 0:
+			params.deltaXtoX = -1;
+			params.deltaYtoY = 1;
+			break;
+	}
+	this.elems[1].contours[0].nodes[index-1].RegisterMove(defParams);
+	this.elems[1].contours[0].nodes[count+offset].RegisterMove(params);
+}
+op.prototype.updateToolTips = function(){
+	var cd = this.elems[0].customData;
+	var cen = ["Vertical","Horizontal","Horizontal & Vertical"];
+	this.cp[0].toolTip = "Mirror "+cen[cd.mirror]+" (Click to Toggle)";
+	for (var i=1;i<this.cp.length;i++){
+		this.cp[i].toolTip ="Point "+i+": ("+Math.round(this.cp[i].x-this.cp[0].x)+","+Math.round(this.cp[i].y-this.cp[0].y)+")";
+	}
+}
+op.prototype.setControlPoint = function(index, name, type, pt){
+	if (index >= this.cp.length) this.cp.length = index+1;
+	this.cp[index].name = name;
+	this.cp[index].type = type;
+	this.cp[index].x = pt.x; this.cp[index].y = pt.y;
+	this.cp[index].toolTipTracksDrag = true;
+}
+op.prototype.insertControlPoints = function(from, count){
+	this.cp.length += count;
+	var end = from+count;
+	for (var i=this.cp.length-1; i>=end; i--) MatchObjToObj(this.cp[i], this.cp[i-count]);
+	return from+count; // old index's new index
+}
+op.prototype.insertNode = function(ns, from, count){
+	ns.length += count;
+	var end = from+count;
+	for (var i=ns.length-1; i>=end; i--) MatchObjToObj(ns[i], ns[i-count]);
+	return from; // old index's new index
+}
+op.prototype.deleteNode = function(ns, from, count){
+	var end = ns.length-count;
+	for (var i=from; i<end; i++) MatchObjToObj(ns[i], ns[i+count]);
+	ns.length = end;
+}
+Point = function(x,y){
+	return {x:x, y:y};
+}
+AddPoints = function(p1, p2){
+	return {x:p1.x+p2.x, y:p1.y+p2.y};
+}
+SetNewNode = function(ns){
+	var i = ns.length;
+	ns.length++;
+	var n = ns[i];
+	return n;
+}
+SetNodePosition = function(n, pt){
+	SetBezierNodePosition(n, pt,pt,pt);
+}
+SetBezierNodePosition = function(n, ptp, pt, pts){
+	n.predX = ptp.x;	n.predY =ptp.y;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pts.x;	n.succY = pts.y;
+}
+MatchObjToObj = function(o1, o2){
+	for (var i in o2) o1[i] = o2[i];
+}
+MirrorPointH = function(center, end){
+	var pdx = center.x-end.predX;
+	var dx = center.x-end.x;
+	var sdx = center.x-end.succX;
+	return {
+		predX:	center.x + sdx,	predY:	end.succY,
+		x:		center.x + dx,	y:		end.y,
+		succX:	center.x + pdx,	succY:	end.predY
+	}
+}
+MirrorPointV = function(center, end){
+	var pdy = center.y-end.predY;
+	var dy = center.y-end.y;
+	var sdy = center.y-end.succY;
+	return {
+		predX:	end.succX,	predY:	center.y + sdy,
+		x:		end.x,	y:		center.y + dy,
+		succX:	end.predX,	succY:	center.y + pdy
+	}
+}
+MatchNodePosition = function(n, pt){
+	n.predX = pt.predX;	n.predY = pt.predY;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pt.succX;	n.succY = pt.succY;
+}
+// init
+new op(smartShape.operation);

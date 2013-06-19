@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Text Commands" version="0.7" type="command" requires-restart="false">
+	<author name="senocular" />
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<description>
+		<![CDATA[Text Commands<br>
+		www.senocular.com<br><br>
+		
+		A collection of text commands for Fireworks.<br><br>
+		
+		- Case Lowercase/Uppercase: Changes all text in the selected textfield to be either uppercase or lowercase
+		- Case Uppercase First: Changes the first character of each word in the text to uppercase
+		- Render as Paths/Pixels: Changes the transformMode of the textfield to either 'paths' or 'pixels' changing how it is rendered in Fireworks
+		- Lorem ipsum: Creates a textfield in the center of the current Fireworks document with lorem ipsum filler text.
+		- Set Width: Sets the width of the selected textfield without distoring the text it contains (resizes the textfield, does not scale it)
+		- Toggle Fixed Width: Toggles between a textfield having a fixed width or autoexpanding to meet its contents
+		- Solidify: Converts the selected textfield to paths and removes any extra interior contours within the paths generated (removes 'holes' such as the centers of o's making them solid)<br><br>
+		
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run these commands from your Commands > Text menu.]]>
+	</ui-access>
+	<files>
+		<file source="Case Lowercase.jsf" destination="$fireworks/configuration/commands/Text" />
+		<file source="Case Uppercase.jsf" destination="$fireworks/configuration/commands/Text" />
+		<file source="Case Uppercase First.jsf" destination="$fireworks/configuration/commands/Text" />
+		<file source="Render as Paths.jsf" destination="$fireworks/configuration/commands/Text" />
+		<file source="Render as Pixels.jsf" destination="$fireworks/configuration/commands/Text" />
+		<file source="Lorem ipsum.jsf" destination="$fireworks/configuration/commands/Text" />
+		<file source="Set Width.jsf" destination="$fireworks/configuration/commands/Text" />
+		<file source="Solidify.jsf" destination="$fireworks/configuration/commands/Text" />
+		<file source="Toggle Fixed Width.jsf" destination="$fireworks/configuration/commands/Text" />
+	</files>
+</macromedia-extension>

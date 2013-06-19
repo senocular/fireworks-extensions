@@ -1,0 +1,39 @@
+﻿/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the point pt parameter. All node control points are
+ * set to this point as well
+ * Requires: SetBezierNodePosition
+*/
+SetNodePosition = function(node, pt){
+	SetBezierNodePosition(node, pt,pt,pt); // set point position for all nodes to pt
+}
+
+/**
+ * SetBezierNodePosition sets the position of the passed node to the
+ * position of the points ptp (node predecessor), pt (main point), and
+ * pts (node successor)
+*/
+SetBezierNodePosition = function(node, ptp, pt, pts){
+	node.predX	= ptp.x;	node.predY	= ptp.y; // Predecessor point
+	node.x		= pt.x;		node.y		= pt.y; // Main points
+	node.succX	= pts.x;	node.succY	= pts.y; // Successor points
+}
+
+// create new path as first element in elements array
+smartShape.elem.elements[0] = new Path();
+
+// create new contour as first contour in contours array
+smartShape.elem.elements[0].contours[0] = new Contour();
+
+// assign a short variable to represent the nodes array
+var nods = smartShape.elem.elements[0].contours[0].nodes;
+
+// create 2 nodes in the contour by altering the nodes array (nods) length
+nods.length = 2;
+
+// use the SetNodePosition function to set the first node and all its points to x:25, y:25
+SetNodePosition(nods[0], {x:25, y:25});
+
+// use the SetBezierNodePosition function to set the second node to have locations for its 
+// predecessor, main point, and successor to x:150, y:50; x:100, y:100; and x:50, y:150 respectively
+SetBezierNodePosition(nods[1], {x:150, y:50}, {x:100, y:100}, {x:50, y:150});

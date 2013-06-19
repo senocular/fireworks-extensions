@@ -1,0 +1,371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>3D Primitives Documentation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body text="#000000" link="#006699" vlink="#006699" alink="#0099FF">
+
+<table width="720" align="center" border="1" bordercolor="#000000" cellspacing="0" cellpadding="5">
+  <tr> 
+    <td> <table border="0" cellspacing="0" cellpadding="2">
+        <tr> 
+          <td width="350" align="left" valign="bottom" bgcolor="#999999"><font color="#FFFFFF" size="4" face="Verdana, Arial, Helvetica, sans-serif"><strong>&nbsp;<font size="5">3D 
+            Primitives</font> </strong></font><font color="#FFFFFF" size="2" face="Verdana, Arial, Helvetica, sans-serif"><em>for 
+            Fireworks</em></font></td>
+          <td width="350" align="right" valign="bottom" bgcolor="#999999"><font color="#FFFFFF" face="Courier New, Courier, mono"><strong>[ 
+            version 1.0.0 ]&nbsp;</strong></font></td>
+        </tr>
+      </table>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="contents"></a></strong><font size="4">Help 
+        and Documentation</font></font> </p>
+      <table width="700" height="39" border="0" cellpadding="0" cellspacing="0">
+        <tr> 
+          <td width="284" valign="top"> <p><font face="Verdana, Arial, Helvetica, sans-serif">Contents:</font></p>
+            <ul type="disc">
+              <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#introduction">Introduction</a></font></li>
+              <ul type="disc">
+                <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#what">What</a></font></li>
+                <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#why">Why</a></font></li>
+                <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#limitations">Limitations</a></font></li>
+              </ul>
+              <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#interface">Interface</a></font></li>
+              <ul type="disc">
+                <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#title">Title</a></font></li>
+                <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#viewport">3D 
+                  Viewport</a></font></li>
+                <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#timeline">Timeline</a></font></li>
+                <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#panels">Panels</a></font></li>
+                <ul type="disc">
+                  <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#shape">Shape</a></font></li>
+                  <ul type="disc">
+                    <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#profile">Profile</a></font></li>
+                  </ul>
+                  <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#transform">Transform</a></font></li>
+                  <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#view">View</a></font></li>
+                  <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#light">Light</a></font></li>
+                  <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#export">Export</a></font></li>
+                  <ul type="disc">
+                    <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#preview">Preview</a></font></li>
+                    <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#exportfw">Export</a></font></li>
+                  </ul>
+                </ul>
+              </ul>
+              <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#exporting">Exporting</a></font></li>
+              <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#versionhistory">Version 
+                History</a></font></li>
+              <li><font size="2" face="Verdana, Arial, Helvetica, sans-serif"><a href="#credits">Credits</a></font></li>
+            </ul></td>
+          <td width="416" align="right" valign="top"> <table border="0" cellspacing="0" cellpadding="4">
+              <tr> 
+                <td width="115"><font face="Verdana, Arial, Helvetica, sans-serif"><img src="example.png" width="408" height="381"></font></td>
+              </tr>
+              <tr> 
+                <td><div align="center"><font size="1" face="Verdana, Arial, Helvetica, sans-serif">[ 
+                    3D Primitives panel in action ]</font></div></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="introduction" id="introduction"></a></strong></font></p>
+      <table width="700" border="0" cellspacing="0" cellpadding="5">
+        <tr> 
+          <td bgcolor="#efefef"><font face="Verdana, Arial, Helvetica, sans-serif"><strong>Introduction</strong></font></td>
+        </tr>
+      </table>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">3D primitives is a 
+        Fireworks panel for Fireworks MX which allows you to create within your 
+        Fireworks document simple 3D objects or &quot;primitives&quot; as single 
+        shapes or short animations.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="what" id="what"></a>What</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">3D primitives, is 
+        a panel, much like other panels in Fireworks, and is available through 
+        Fireworks' <font face="Courier New, Courier, mono">Window</font> menu. 
+        It exists on the screen like any other panel and can be arranged in your 
+        panel layout as you please. For best performance , however, it would not 
+        be a good idea to make 3D Primitives part of your default layout and, 
+        instead, only opening it on demand - when you have a need for it.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">When using 3D Primitives, 
+        you are given an interface which allows you to create modify and animate 
+        a simple 3D object. Afterwards, you are then given the option to &quot;export&quot; 
+        that object into you current Fireworks MX document.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="why" id="why"></a>Why</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Have you ever needed 
+        simple 3D in your Fireworks creations? Ever have the need or desire for 
+        simple 3D animations? Maybe want some simple wire frame shapes for design? 
+        ... or even just for reference? That's what 3D Primitives provides. It's 
+        by no means an all-purpose 3D authoring environment, but does offer simple 
+        3D shapes which can altered and rotated and finally added into a Fireworks 
+        document.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="limitations" id="limitations"></a>Limitations</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">As it exists as a 
+        Fireworks panel, 3D Primitives is not very powerful in terms of creating 
+        3D objects. Rendering is not hardware accelerated and slow on the whole. 
+        On top of this, exporting 3D objects from 3D Primitives can be processor 
+        intensive, especially for objects of great or maximum complexity. Fireworks 
+        may seem to lock up in the export process when exporting complex objects, 
+        though, given enough time, it will eventually come through finally exporting 
+        the shape.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Animations are limited 
+        to a total of 25 frames, no more. If you desire more, you can export more 
+        than once to create more frames as needed.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">When animating, only 
+        view rotation and light rotation are able to be animated. Everything else 
+        is set once and remains so for every frame within the timeline.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Each frame exported 
+        makes for one addition to the history panel. If you have a full animation 
+        of 25 frames and have 25 or less undo steps, exporting your animation 
+        will completely take over all history steps and may not even let you completely 
+        undo the animation should you need or desire to.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="interface" id="interface"></a></strong></font></p>
+      <table width="700" border="0" cellspacing="0" cellpadding="5">
+        <tr> 
+          <td bgcolor="#efefef"><font face="Verdana, Arial, Helvetica, sans-serif"><strong>Interface</strong></font></td>
+        </tr>
+      </table>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The interface of 3D 
+        Primitives is primarily divided into 4 portions, the Title (or title bar), 
+        the 3D viewport, the Timeline and the side panels.</font></p>
+      <p align="center">&nbsp;</p>
+      <table border="0" align="center" cellpadding="4" cellspacing="0">
+        <tr> 
+          <td width="115"><img src="interface.png" width="408" height="379"></td>
+        </tr>
+        <tr> 
+          <td><div align="center"><font size="1" face="Verdana, Arial, Helvetica, sans-serif">[ 
+              3D Primitives Interface ]</font></div></td>
+        </tr>
+      </table>
+      <p align="center">&nbsp;</p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="title" id="title"></a>Title</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The title along the 
+        top of the panel shows the name of your primitive on the left and has 
+        a button (i) for accessing this document on the right. The name defaults 
+        to Untitled Document. Double-clicking the title name will allow you to 
+        edit it. Layers created when the object is exported into a Fireworks document 
+        will be named based off of the title name.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="viewport" id="viewport"></a>3D 
+        Viewport</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The 3D viewport is 
+        the visual three dimensional representation of the object as it appears 
+        in the currently selected frame in the timeline. It not only shows a basic 
+        preview of the object, but also provides you means for interacting with 
+        the object letting you changing its view or, when visible, the light's 
+        rotation around that view.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Clicking and dragging 
+        anywhere within the large inner circle area defined behind 3D object will 
+        let you rotate the view of that object in x any y. This movement just 
+        like rotating the scene in perspective view in many higher-end 3D applications 
+        like Maya.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The thin outer dark 
+        gray circle allows you to rotate in z, which, in the current order of 
+        rotation handles much like a 2D rotation.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">When the light is 
+        visible, it can be rotated in x and y by clicking on its light source 
+        circle and can be rotated in z using a second outer circle that appears 
+        when the light is visible (its color matches the light's).</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="timeline" id="timeline"></a>Timeline</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The timeline in the 
+        3D Primitives panel lives below the 3D viewport and provides a way to 
+        animate or make consecutive variations of a single object at one export. 
+        It provides 25 frames total (each white rectangle represents a frame). 
+        A frame highlighted red represents the current frame. You can click and 
+        drag the highlighted frame to change frames or just click on any one frame 
+        to make it current.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Key frames are represented 
+        by black circles in a frame. Key frames are 'saved' changes in the rotation 
+        of the view and light. A key frame is set whenever the light or view is 
+        rotated for that frame and is automatically set for each the view and 
+        the light. There is no way to key frame either one or the other. If you 
+        wish your light not to change within your animation, be sure to position 
+        it before you begin key framing the view.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The following keys 
+        will allow you to delete a key frame on the selected frame:</font></p>
+      <ul>
+        <li><font face="Verdana, Arial, Helvetica, sans-serif">&quot;D&quot; key</font></li>
+        <li><font face="Verdana, Arial, Helvetica, sans-serif">&quot;Backspace&quot; 
+          key</font></li>
+        <li><font face="Verdana, Arial, Helvetica, sans-serif">&quot;Delete&quot; 
+          key </font></li>
+      </ul>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Note: the first key 
+        frame cannot be deleted.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Above the frames of 
+        the timeline are 2 handles allowing you to make a selection of the timeline. 
+        This selection will determine which frames of the timeline are exported 
+        if a range of frames (an animation) is being exported.</font></p>
+      <p><strong><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="panels" id="panels"></a></strong>Panels</font></strong></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Panels are 3D Primitives 
+        own internal panels for controlling settings for the 3D object being created. 
+        There are 6 panels total, all of which are accessible from the pull-down 
+        located at the top of each panel save for the Profile panel which is only 
+        accessible from the shape panel.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="shape" id="shape"></a>Shape 
+        Panel</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The shape panel provides 
+        the main interface for 'constructing' your 3D primitive, defining the 
+        main characteristics of how it looks. Your options are:</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"> <img src="linecolor.gif" width="47" height="24" align="absbottom">Line 
+        Color: allows you to specify the color of the polygonal outlines of the 
+        object. It can be set to none giving no lines.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><img src="fillcolor.gif" width="47" height="24" align="absbottom">Fill 
+        Color: allows you to specify the color of the polygons that make up the 
+        object. If</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Line Thickness: how 
+        thick polygon outlines are</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Radial Segments: How 
+        many times the primitive object is divided along its radius as though 
+        looking straight down on the object (like longitude lines on a globe).</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Axial Segments: How 
+        many times the primitive object is divided going down along its side (like 
+        latitude lines on a globe).</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Profile: defines the 
+        shape of the radial lines. The profile button opens the Profile panel.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="profile" id="profile"></a>Profile</strong><strong> 
+        Panel</strong> </font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The profile gives 
+        a means for altering the 'profile' of the primitive object. The profile 
+        represents the shape taken by the radial lines that go down the shape 
+        and is controlled through 3 points. In shaping these points, you can shape 
+        the shape of your shape. As a reference, your axial segment lines are 
+        previewed in this panel. The following profiles represent 1) a rectangle 
+        2) a cone and 3) a sphere</font></p>
+      <p align="center"><font face="Verdana, Arial, Helvetica, sans-serif"><img src="profiles.gif" width="396" height="223"></font></p>
+      <p></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="view" id="view"></a>View 
+        Panel</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The view panel provides 
+        controls for the view of your object. These are the x, y and z rotations 
+        around the object which are also (and probably more accurately) editable 
+        by rotating in the 3D viewport.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">In addition to the 
+        rotation of the view, a perspective slider is also included allowing you 
+        to adjust the perspective of the view. The lower the perspective, the 
+        more distorted the view.</font></p>
+      
+      <font face="Verdana, Arial, Helvetica, sans-serif"> 
+      <p><strong><a name="transform" id="transform"></a>Transform Panel</strong> 
+      </p>
+      <p>The transform panel is kind of an extension of the shape panel as it 
+        allows you to control the shape of your 3D object. The transform panel, 
+        however, only controls scaling of the shape, scaling the shape relative 
+        to any of its base x, y or z axes.</p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="light" id="light"></a>Light 
+        Panel</strong></font></p>
+      <p>The light panel provides control for the light.</p>
+      <p><img src="lightcolor.gif" width="48" height="26">Light Color: the color 
+        of the light.</p>
+      <p><img src="check.gif" width="17" height="18"> On: determines whether or 
+        not the light is on. If on, its color will affect the color of the 3D 
+        object. If not, the light will not affect the color of the object.</p>
+      <p><img src="check.gif" width="17" height="18"> Show: determines whether 
+        or not the light is seen in the 3D viewport. Note: though visible in the 
+        viewport, the light will not be included in export.</p>
+      <p>Spread: determines how concentrated the light is on any one spot of the 
+        3D object. With a low spread, the light is concentrated on a very small 
+        part of the object. Higher spreads light up more of the object and is 
+        less concentrated.</p>
+      <p>x,y and z rotations are included control how the light is rotated.</p>
+      <p><strong><a name="export" id="export"></a>Export </strong><font face="Verdana, Arial, Helvetica, sans-serif"><strong> 
+        </strong><font face="Verdana, Arial, Helvetica, sans-serif"><strong>Panel</strong></font></font></p>
+      </font> 
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The export panel has 
+        settings controlling the export of the 3D object from the 3D Primitives 
+        panel into your Fireworks document.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Export Frames: determines 
+        whether or not a single frame is exported or a range of frames are exported. 
+        Ranges of frames are dictated by the selection in the timeline. When a 
+        range is selected, you are also given the option to export the animation 
+        as frames or layers.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><img src="check.gif" width="17" height="18"> 
+        Flatten: determines whether or not the exported object is in individual 
+        vector shapes (one for each polygonal face) or as one single flattened 
+        bitmap. </font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Scale: allows you 
+        to alter the size of the final export. By default the export scale is 
+        1:1 as seen on the screen in the panel (the same size) unless scaled otherwise 
+        using this option.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="preview" id="preview"></a>Preview</strong></font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The preview button 
+        allows a simple internal preview of an animation (or still) being exported. 
+        Clicking 'Done' from the preview screen will return you to the main interface.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="exportfw" id="exportfw"></a>Export</strong> 
+        </font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">The export button 
+        exports your final object/animation to Fireworks based on your export 
+        settings. A new screen will appear with a progress bar showing the progress 
+        of the export. When finished, you are given the option to return to the 
+        main interface.</font></p>
+      <font face="Verdana, Arial, Helvetica, sans-serif"><p><strong><a name="exporting" id="exporting"></a></strong> </p>
+      </font>
+      <table width="700" border="0" cellspacing="0" cellpadding="5">
+        <tr> 
+          <td bgcolor="#efefef"><p><font face="Verdana, Arial, Helvetica, sans-serif"><strong>Exporting</strong></font></p></td>
+        </tr>
+      </table>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Exporting from 3D 
+        Primitives can be a processor intensive process, especially for older 
+        machines and for complex 3D objects in long animations. Be patient, even 
+        if Fireworks seems to lock up. The export process will eventually complete. 
+        It's good not too push the limits of shape definition though. If you can 
+        keep it simple do so.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">If something is selected 
+        in Fireworks on export, the export will be centered on that selection 
+        and not its default position which is in the upper left of the document. 
+        This gives you better control in positioning 3D objects, especially for 
+        animations which would be harder to move after export.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Exporting creates 
+        a new layer in your Fireworks document with the name given to the 3D object 
+        in the panel title. This layer is created above the current layer and 
+        if exporting as multiple layers, each consecutive layer is added above 
+        the next. When exporting as frames, the current frame will serve as frame 
+        1 for the animation and new frames will be added (if not present) for 
+        those needed in the animation.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">For exports with no 
+        line color, you may want to consider using edge set to hard in Fireworks. 
+        Using soft edge settings can allow small faded gaps in polygons as they 
+        are seen on the screen. Many of your current brush and fill settings are 
+        retained on export other than those specified in the 3D Primitives panel.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="versionhistory" id="versionhistory"></a></strong></font></p>
+      <table width="700" border="0" cellspacing="0" cellpadding="5">
+        <tr> 
+          <td bgcolor="#efefef"><p><font face="Verdana, Arial, Helvetica, sans-serif"><strong>Version 
+              History</strong></font></p></td>
+        </tr>
+      </table>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">1.0.0</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">- Added documentation.<br>
+        - Enhanced editing of title. Allows specific selections.<br>
+        - Bug Fixed. No longer does delete, backspace or the D key remove the 
+        current key frame when editing the title.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">0.8.9</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">- Bug Fixed. Resolved 
+        issues concerning brush settings in wire frame export (export with no 
+        fill).</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">0.8.0</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">- Bug Fixed. Progress 
+        bar on export went beyond bounds.<br>
+        - Bug Fixed. If the fill color in Fireworks isn't set on solid on export, 
+        the colors retained those settings and not as they appear in the panel.<br>
+        - Bug Fixed. Line thickness wasn't working.<br>
+        - Bug Fixed. Retracting Fireworks layers after export wasn't working.</font></p>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif"><strong><a name="credits" id="credits"></a></strong></font></p>
+      <table width="700" border="0" cellspacing="0" cellpadding="5">
+        <tr> 
+          <td bgcolor="#efefef"><p><font face="Verdana, Arial, Helvetica, sans-serif"><strong>Credits</strong></font></p></td>
+        </tr>
+      </table>
+      <p><font face="Verdana, Arial, Helvetica, sans-serif">Created by senocular 
+        &copy; 2003</font></p>
+      <p>&nbsp;</p></td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</body>
+</html>

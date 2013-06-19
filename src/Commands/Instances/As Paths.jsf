@@ -1,0 +1,1 @@
+for (var i=0; i<fw.selection.length; i++) if (fw.selection[i].instanceType) fw.selection[i].transformMode = "paths";

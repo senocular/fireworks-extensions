@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Talking 2" version="2.0.1" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="Macromedia (edit: senocular)" />
+	<description>
+		<![CDATA[Talking 2<br>
+		slightly modified version of default talking auto shape
+		2.0 - added 2 control points for curving the stem
+		2.0.1 - removed shadow effect.  If desired, can be added manually (idea being it's easier to add than remove).]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Talking 2 from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Talking 2.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Talking 2.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

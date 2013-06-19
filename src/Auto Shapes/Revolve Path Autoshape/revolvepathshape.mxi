@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Revolve Path" version="0.9.5" type="autoshape" requires-restart="false">
+	<products>
+		<product name="Fireworks" version="7" required="true"/>
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Revolve Path<br>
+		by senocular<br><br>
+		
+		The Revolve Path Auto Shape lets you create a point-to-point linear path which is dynamically duplicated and revolved around a central point.<br><br>
+
+		Any any given point in time there are atleast 2  shape defining handles present in the Revolve Path auto shape.  The first point is a blue control point which is followed by one or more yellow control points.  These create a repeating, revolving path around a final crosshair control point. Yellow control points can be moved freely to define your shape.  The blue control point only moves in or out from the central crosshair point or by rotating around the central point since its position around the central crosshair defines number of repetitions. To change repetitions, use Ctrl+drag and move the blue control point around the central crosshair. Using Alt or Option (Mac) when dragging on any of the shape defining points (including the blue control point) add another point to the shape. Ctrl + Shift  or Command + Shift when clicking on a yellow control point, providing its not the only one remaining, will delete it.<br><br>
+		
+		You can add curves to your path by altering points within the shape using the subselect tool in Fireworks.  You can only effect points that are represented with control points in this manner.  Other alterations will be ignored.<br><br>
+		
+		Version History:
+		0.9.5: Added support for curves.
+		0.9.0: Initial public release.]]>
+	</description>
+	<ui-access>
+		<![CDATA[Access the Revolve Path Auto Shape from the Shapes panel.  The Shapes panel can be opened using Window > Auto Shapes.]]>
+	</ui-access>
+	<files>
+		<file source="Revolve Path.jsf" destination="$fireworks/Configuration/Auto Shapes" />
+		<file source="Revolve Path.gif" destination="$fireworks/Configuration/Auto Shapes" />
+	</files>
+</macromedia-extension>

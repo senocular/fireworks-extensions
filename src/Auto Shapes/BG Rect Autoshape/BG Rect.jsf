@@ -1,0 +1,39 @@
+﻿op = function(operation){
+	this.cp  = smartShape.elem.controlPoints;
+	this.elems  = smartShape.elem.elements;
+	if (this[operation]) this[operation]();
+}
+op.prototype.InsertSmartShapeAt = function(){
+	this.Render();
+}
+op.prototype.EndDragControlPoint = function(){
+	if (smartShape.mouseDownPos.x == smartShape.currentMousePos.x && smartShape.mouseDownPos.y == smartShape.currentMousePos.y){
+		
+		if (!smartShape.ctrlCmdKeyDown){
+			var p = this.elems[0].pathAttributes;
+			this.Render();
+			this.elems[0].pathAttributes = p;
+		}else this.Render();
+	}
+}
+op.prototype.Render = function(){
+	var dom = fw.getDocumentDOM();
+	this.elems[0] = new Path();
+	this.elems[0].contours[0] = new Contour();
+	this.elems[0].contours[0].nodes.length = 4;
+	SetNodePosition(this.elems[0].contours[0].nodes[0], {x:dom.left, y:dom.top});
+	SetNodePosition(this.elems[0].contours[0].nodes[1], {x:dom.left+dom.width, y:dom.top});
+	SetNodePosition(this.elems[0].contours[0].nodes[2], {x:dom.left+dom.width, y:dom.top+dom.height});
+	SetNodePosition(this.elems[0].contours[0].nodes[3], {x:dom.left, y:dom.top+dom.height});
+	this.elems[0].contours[0].isClosed = true;
+	this.cp.length = 1;
+	this.cp[0].toolTip = "Reset Background";
+	this.cp[0].x = (dom.left+dom.width)/2;
+	this.cp[0].y = (dom.top+dom.height)/2;
+}
+SetNodePosition = function(n, pt){
+	n.predX = pt.x;	n.predY =pt.y;
+	n.x = pt.x;		n.y = pt.y;
+	n.succX = pt.x;	n.succY = pt.y;
+}
+new op(smartShape.operation); // init

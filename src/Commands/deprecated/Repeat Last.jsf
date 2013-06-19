@@ -1,0 +1,6 @@
+var i = fw.historyPalette.getStepCount()-1;
+while (i >= 0){
+	if (fw.historyPalette.getStepsAsJavaScript([i]).indexOf("Repeat Last") == -1) break;
+	i--;
+}
+if (i >= 0) fw.historyPalette.replaySteps([i]);

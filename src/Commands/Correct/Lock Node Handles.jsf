@@ -1,0 +1,8 @@
+for (var i=0; i<fw.selection.length; i++){
+  for (var j=0; j<fw.selection[i].contours.length; j++){
+    for (var k=0; k<fw.selection[i].contours[j].length; k++){
+      var nod = fw.selection[i].contours[j].nodes[k];
+      if (nod.isSelectedPoint) nod.isCurvePoint = true;
+    }
+  }
+}

@@ -1,0 +1,87 @@
+/*
+size
+ - keep aspect ratio
+ - lock size type (px, cm, in)
+resolution
+units (px, cm, in)
+save file path
+ - save name (warn saving will automatically save to this name - dialog on create document warning if file with name already exists)
+bg color, brush color, fill color
+layers count
+frames count
+ - (loop settings?)
+export options (by saved settings; filename)
+ - export dir (if possible) - force export then delete file?
+ 
+save preset list box (w/ delete & edit & reorder)
+
+ 
+[separate screen: Grid and Guides]
+grid
+ - origin
+ - size
+ - color
+ - visible
+ - snap
+guides?
+*/
+
+var res = {units: "inch", pixelsPerUnit: 72};
+var size ={x: 220, y: 220};
+var bgcolor = "#0033FF"
+var dom = fw.createFireworksDocument(size, res, bgcolor);
+
+dom.pathAttributes.fill = { category:"fc_Linear", ditherColors:[ "#000000", "#000000" ], edgeType:"antialiased", feather:0, gradient:{ name:"cn_Custom", nodes:[ { color:"#000000", isOpacityNode:false, position:0 }, { color:"#0000ff", isOpacityNode:false, position:1 } ], opacityNodes:[ { color:"#000000", isOpacityNode:true, position:0 }, { color:"#000000", isOpacityNode:true, position:1 } ] }, name:"fn_Linear", pattern:null, shape:"linear", stampingMode:"blend opaque", textureBlend:0, webDitherTransparent:false };
+dom.pathAttributes.fillColor = "#0000ff";
+
+var eoFiles = Files.enumFiles(fw.appExportSettingsDir);
+var eoNames = [];
+for (i=0; i<eoFiles.length; i++){
+	if (!Files.isDirectory(eoFiles[i])){
+		eoNames.push(Files.getFilename(eoFiles[i]));
+	}
+}
+var selection = 0; // user selection
+var eoptions = Document.findExportFormatOptionsByName(eoNames[selection]);
+"GIF Web 216"
+dom.setExportOptions({ animAutoCrop:true, animAutoDifference:true, applyScale:false, colorMode:"indexed", crop:false, cropBottom:0, cropLeft:0, cropRight:0, cropTop:0, ditherMode:"diffusion", ditherPercent:100, exportFormat:"GIF", frameInfo:[ { delayTime:7, frameHidden:false, frameName:null, gifDisposalMethod:"unspecified" } ], interlacedGIF:false, jpegQuality:80, jpegSelPreserveButtons:false, jpegSelPreserveText:true, jpegSelQuality:90, jpegSelQualityEnabled:false, jpegSmoothness:0, jpegSubsampling:0, localAdaptive:true, lossyGifAmount:0, macCreator:"", macFileType:"", name:"GIF Web 216", numCustomEntries:216, numEntriesRequested:216, numGridEntries:6, optimized:true, paletteEntries:[ "#ffffff", "#ffffcc", "#ffff99", "#ffff66", "#ffff33", "#ffff00", "#ffccff", "#ffcccc", "#ffcc99", "#ffcc66", "#ffcc33", "#ffcc00", "#ff99ff", "#ff99cc", "#ff9999", "#ff9966", "#ff9933", "#ff9900", "#ff66ff", "#ff66cc", "#ff6699", "#ff6666", "#ff6633", "#ff6600", "#ff33ff", "#ff33cc", "#ff3399", "#ff3366", "#ff3333", "#ff3300", "#ff00ff", "#ff00cc", "#ff0099", "#ff0066", "#ff0033", "#ff0000", "#ccffff", "#ccffcc", "#ccff99", "#ccff66", "#ccff33", "#ccff00", "#ccccff", "#cccccc", "#cccc99", "#cccc66", "#cccc33", "#cccc00", "#cc99ff", "#cc99cc", "#cc9999", "#cc9966", "#cc9933", "#cc9900", "#cc66ff", "#cc66cc", "#cc6699", "#cc6666", "#cc6633", "#cc6600", "#cc33ff", "#cc33cc", "#cc3399", "#cc3366", "#cc3333", "#cc3300", "#cc00ff", "#cc00cc", "#cc0099", "#cc0066", "#cc0033", "#cc0000", "#99ffff", "#99ffcc", "#99ff99", "#99ff66", "#99ff33", "#99ff00", "#99ccff", "#99cccc", "#99cc99", "#99cc66", "#99cc33", "#99cc00", "#9999ff", "#9999cc", "#999999", "#999966", "#999933", "#999900", "#9966ff", "#9966cc", "#996699", "#996666", "#996633", "#996600", "#9933ff", "#9933cc", "#993399", "#993366", "#993333", "#993300", "#9900ff", "#9900cc", "#990099", "#990066", "#990033", "#990000", "#66ffff", "#66ffcc", "#66ff99", "#66ff66", "#66ff33", "#66ff00", "#66ccff", "#66cccc", "#66cc99", "#66cc66", "#66cc33", "#66cc00", "#6699ff", "#6699cc", "#669999", "#669966", "#669933", "#669900", "#6666ff", "#6666cc", "#666699", "#666666", "#666633", "#666600", "#6633ff", "#6633cc", "#663399", "#663366", "#663333", "#663300", "#6600ff", "#6600cc", "#660099", "#660066", "#660033", "#660000", "#33ffff", "#33ffcc", "#33ff99", "#33ff66", "#33ff33", "#33ff00", "#33ccff", "#33cccc", "#33cc99", "#33cc66", "#33cc33", "#33cc00", "#3399ff", "#3399cc", "#339999", "#339966", "#339933", "#339900", "#3366ff", "#3366cc", "#336699", "#336666", "#336633", "#336600", "#3333ff", "#3333cc", "#333399", "#333366", "#333333", "#333300", "#3300ff", "#3300cc", "#330099", "#330066", "#330033", "#330000", "#00ffff", "#00ffcc", "#00ff99", "#00ff66", "#00ff33", "#00ff00", "#00ccff", "#00cccc", "#00cc99", "#00cc66", "#00cc33", "#00cc00", "#0099ff", "#0099cc", "#009999", "#009966", "#009933", "#009900", "#0066ff", "#0066cc", "#006699", "#006666", "#006633", "#006600", "#0033ff", "#0033cc", "#003399", "#003366", "#003333", "#003300", "#0000ff", "#0000cc", "#000099", "#000066", "#000033", "#000000" ], paletteInfo:null, paletteMode:"Web 216", paletteTransparency:"none", percentScale:100, progressiveJPEG:false, savedAnimationRepeat:0, sorting:"none", useScale:true, webSnapAdaptive:true, webSnapTolerance:14, xSize:0, ySize:0 });
+"GIF Websnap 256"
+dom.setExportOptions({ animAutoCrop:true, animAutoDifference:true, applyScale:false, colorMode:"indexed", crop:false, cropBottom:0, cropLeft:0, cropRight:0, cropTop:0, ditherMode:"none", ditherPercent:100, exportFormat:"GIF", frameInfo:[ { delayTime:7, frameHidden:false, frameName:null, gifDisposalMethod:"unspecified" } ], interlacedGIF:false, jpegQuality:80, jpegSelPreserveButtons:false, jpegSelPreserveText:true, jpegSelQuality:90, jpegSelQualityEnabled:false, jpegSmoothness:0, jpegSubsampling:0, localAdaptive:true, lossyGifAmount:0, macCreator:"", macFileType:"", name:"GIF WebSnap 256", numCustomEntries:0, numEntriesRequested:256, numGridEntries:6, optimized:true, paletteEntries:null, paletteInfo:null, paletteMode:"adaptive", paletteTransparency:"none", percentScale:100, progressiveJPEG:false, savedAnimationRepeat:0, sorting:"none", useScale:true, webSnapAdaptive:true, webSnapTolerance:14, xSize:0, ySize:0 });
+"GIF Websnap 128"
+dom.setExportOptions({ animAutoCrop:true, animAutoDifference:true, applyScale:false, colorMode:"indexed", crop:false, cropBottom:0, cropLeft:0, cropRight:0, cropTop:0, ditherMode:"none", ditherPercent:100, exportFormat:"GIF", frameInfo:[ { delayTime:7, frameHidden:false, frameName:null, gifDisposalMethod:"unspecified" } ], interlacedGIF:false, jpegQuality:80, jpegSelPreserveButtons:false, jpegSelPreserveText:true, jpegSelQuality:90, jpegSelQualityEnabled:false, jpegSmoothness:0, jpegSubsampling:0, localAdaptive:true, lossyGifAmount:0, macCreator:"", macFileType:"", name:"GIF WebSnap 128", numCustomEntries:0, numEntriesRequested:128, numGridEntries:6, optimized:true, paletteEntries:null, paletteInfo:null, paletteMode:"adaptive", paletteTransparency:"none", percentScale:100, progressiveJPEG:false, savedAnimationRepeat:0, sorting:"none", useScale:true, webSnapAdaptive:true, webSnapTolerance:14, xSize:0, ySize:0 });
+"GIF Adaptive 256"
+dom.setExportOptions({ animAutoCrop:true, animAutoDifference:true, applyScale:false, colorMode:"indexed", crop:false, cropBottom:0, cropLeft:0, cropRight:0, cropTop:0, ditherMode:"none", ditherPercent:100, exportFormat:"GIF", frameInfo:[ { delayTime:7, frameHidden:false, frameName:null, gifDisposalMethod:"unspecified" } ], interlacedGIF:false, jpegQuality:80, jpegSelPreserveButtons:false, jpegSelPreserveText:true, jpegSelQuality:90, jpegSelQualityEnabled:false, jpegSmoothness:0, jpegSubsampling:0, localAdaptive:true, lossyGifAmount:0, macCreator:"", macFileType:"", name:"GIF Adaptive 256", numCustomEntries:0, numEntriesRequested:256, numGridEntries:6, optimized:true, paletteEntries:null, paletteInfo:null, paletteMode:"adaptive", paletteTransparency:"none", percentScale:100, progressiveJPEG:false, savedAnimationRepeat:0, sorting:"none", useScale:true, webSnapAdaptive:false, webSnapTolerance:14, xSize:0, ySize:0 });
+"JPEG - Better Quality"
+dom.setExportOptions({ animAutoCrop:true, animAutoDifference:true, applyScale:false, colorMode:"24 bit", crop:false, cropBottom:0, cropLeft:0, cropRight:0, cropTop:0, ditherMode:"none", ditherPercent:100, exportFormat:"JPEG", frameInfo:[ { delayTime:7, frameHidden:false, frameName:null, gifDisposalMethod:"unspecified" } ], interlacedGIF:false, jpegQuality:80, jpegSelPreserveButtons:false, jpegSelPreserveText:true, jpegSelQuality:90, jpegSelQualityEnabled:false, jpegSmoothness:0, jpegSubsampling:0, localAdaptive:true, lossyGifAmount:0, macCreator:"", macFileType:"", name:"JPEG - Better Quality", numCustomEntries:0, numEntriesRequested:0, numGridEntries:6, optimized:true, paletteEntries:null, paletteInfo:null, paletteMode:"adaptive", paletteTransparency:"none", percentScale:100, progressiveJPEG:false, savedAnimationRepeat:0, sorting:"none", useScale:true, webSnapAdaptive:true, webSnapTolerance:14, xSize:0, ySize:0 });
+"JPEG - Smaller File"
+dom.setExportOptions({ animAutoCrop:true, animAutoDifference:true, applyScale:false, colorMode:"24 bit", crop:false, cropBottom:0, cropLeft:0, cropRight:0, cropTop:0, ditherMode:"none", ditherPercent:100, exportFormat:"JPEG", frameInfo:[ { delayTime:7, frameHidden:false, frameName:null, gifDisposalMethod:"unspecified" } ], interlacedGIF:false, jpegQuality:60, jpegSelPreserveButtons:false, jpegSelPreserveText:true, jpegSelQuality:90, jpegSelQualityEnabled:false, jpegSmoothness:2, jpegSubsampling:1, localAdaptive:true, lossyGifAmount:0, macCreator:"", macFileType:"", name:"JPEG - Smaller File", numCustomEntries:0, numEntriesRequested:0, numGridEntries:6, optimized:true, paletteEntries:null, paletteInfo:null, paletteMode:"adaptive", paletteTransparency:"none", percentScale:100, progressiveJPEG:false, savedAnimationRepeat:0, sorting:"none", useScale:true, webSnapAdaptive:true, webSnapTolerance:14, xSize:0, ySize:0 });
+"Animated GIF Websnap 128"
+dom.setExportOptions({ animAutoCrop:true, animAutoDifference:true, applyScale:false, colorMode:"indexed", crop:false, cropBottom:0, cropLeft:0, cropRight:0, cropTop:0, ditherMode:"none", ditherPercent:100, exportFormat:"GIF animation", frameInfo:null, interlacedGIF:false, jpegQuality:80, jpegSelPreserveButtons:false, jpegSelPreserveText:true, jpegSelQuality:90, jpegSelQualityEnabled:false, jpegSmoothness:0, jpegSubsampling:0, localAdaptive:true, lossyGifAmount:0, macCreator:"", macFileType:"", name:"Animated GIF Websnap 128", numCustomEntries:0, numEntriesRequested:128, numGridEntries:6, optimized:true, paletteEntries:null, paletteInfo:null, paletteMode:"adaptive", paletteTransparency:"none", percentScale:100, progressiveJPEG:false, savedAnimationRepeat:0, sorting:"none", useScale:true, webSnapAdaptive:true, webSnapTolerance:14, xSize:0, ySize:0 });
+
+
+
+dom.setExportOptions(eoptions);
+fw.exportDocumentAs(dom, fileURL, exportOptions)
+
+dom.setGridSize({x:23, y:25});
+dom.setGridColor("#101010");
+dom.setShowGrid(true);
+dom.setSnapToGrid(true);
+dom.setGridOrigin({x:38, y:42});
+
+
+dom.addGuide(100, "vertical");
+dom.addGuide(100, "horizontal");
+dom.frameLoopingCount (–1 — don’t repeat; 0 — repeat forever; > 0 — repeat this number of times)
+dom.addFrames(5, "end", false);
+dom.addNewLayer(null, false);
+
+fw.setActiveViewScale(1.0, {x:0,y:0});
+
+fw.browseForFolderURL("Select a Save Directory", fw.appDir);
+if (Files.exists(dom.filePathForSave) && !Files.isDirectory(dom.filePathForSave)){
+	alert("Warning: A file under this name already exists.  Saving will automatically overwrite it!");
+}
+
+// end with
+fw.historyPalette.clearSteps();

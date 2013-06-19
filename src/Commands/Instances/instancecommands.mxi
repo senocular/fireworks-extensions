@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<macromedia-extension name="Instance Commands" version="0.7.1" type="command" requires-restart ="false">
+	<products>
+		<product name="Fireworks" />
+	</products>
+	<author name="senocular" />
+	<description>
+		<![CDATA[Instance Commands<br>
+		www.senocular.com<br><br>
+		
+		- As Paths: Changes TransformMode of selected instance to paths
+		- As Pixels: Changes TransformMode of selected instance to pixels
+		- Toggle TransformMode: Changes TransformMode of selected instance to pixels if paths and vice versa
+		]]>
+	</description>
+	<ui-access>
+		<![CDATA[Run Instance Commands from your Commands > Instances menu.]]>
+	</ui-access>
+	<files>
+		<file source="As Paths.jsf" destination="$fireworks/Configuration/Commands/Instances" />
+		<file source="As Pixels.jsf" destination="$fireworks/Configuration/Commands/Instances" />
+		<file source="Toggle TransformMode.jsf" destination="$fireworks/Configuration/Commands/Instances" />
+	</files>
+</macromedia-extension>
