@@ -1,6 +1,22 @@
-FireworksExtensions
+Fireworks Extensions
 ===================
 
-I'm going to attempt to locate and add the source files used to my Fireworks extensions from http://www.senocular.com/fireworks/extensions/ to this repo for anyone who wants to use/update/manipulate/etc.
+A fairly comprehensive dump of source files for all [Fireworks extensions](http://www.senocular.com/fireworks/extensions/) available at [senocular.com](http://senocular.com).
 
-Some source files may be older than the posted extensions, or may be incomplete, and I'm not sure if all extension source files will be found, but I'll try to get up as much as I can.
+Caveats
+-------
+
+* Some source files may be older than the posted extensions
+* A complete set of source files may not be available for every extension (particularly when it comes to graphics used within some panels)
+* There may be some extensions whose source files have been forever lost :sob:
+
+
+File Types
+----------
+
+Information on some of the file types you'll see in this repo:
+
+* **.MXI**: *Macromedia Extension Information*, metadata used to generate installers for the Adobe (was Macromedia) Extension manager.  These files are useful to know what files pertain to a certain extension as more than one may be referenced. Paths referenced within these files may not match the file paths within this repo.
+* **.JSF**: *JavaScript for Fireworks*, containing JavaScript code that calls Fireworks APIs to perform the actions of the extension. Note that some extension code may be contained within a FLA file rather than be accessible as a separate JSF.
+* **.FLA (.SWF)** *Flash source (fla) and executables (swf)*, used for panel and dialog UI for Fireworks extensions.
+
