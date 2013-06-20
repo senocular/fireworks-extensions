@@ -9,6 +9,7 @@ Caveats
 * Some source files may be older than the posted extensions
 * A complete set of source files may not be available for every extension (particularly when it comes to graphics used within some panels)
 * There may be some extensions whose source files have been forever lost :sob:
+* The code was not written to be released so it could be quite messy
 
 
 File Types
