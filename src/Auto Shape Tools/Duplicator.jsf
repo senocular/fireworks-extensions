@@ -1,0 +1,379 @@
+var elem = smartShape.elem;
+var elems = elem.elements;
+var data = elem.customData;
+var cps = elem.controlPoints;
+var clicked = smartShape.mouseDownPos;
+var mouse = smartShape.currentMousePos;
+var dom = fw.getDocumentDOM();
+var dataKey = "Duplicator_jsf_data";
+var selectedData = null;
+var TYPE_PATH = 1;
+var TYPE_GROUP = 2;
+
+var ops = {
+	InsertSmartShapeAt: function(){
+		if (selectedData){
+			DrawSelection(false, false);
+		}else{
+			RequireSelection();
+		}
+	},
+	BeginDragInsert: function(){
+		smartShape.getsDragEvents = true;
+	},
+	DragInsert: function(){
+		if (!selectedData || smartShape.altOptKeyDown){
+			DrawSelectPathLine();
+			// selection
+			var over = dom.elementsAt(GetMouseRect());
+			if (over.length){
+				data.currentSelection = over[0];
+				DrawSelectOutline(data.currentSelection.pixelRect);
+			}else{
+				data.currentSelection = null;
+			}
+			cps[0] = new ControlPoint();
+			cps[0].type = "crossHair";
+			cps[0].x = mouse.x;
+			cps[0].y = mouse.y;
+		}else{
+			// duplication
+			data.currentSelection = null;
+			DrawSelection(true, true);
+			cps.length = 0;
+		}
+	},
+	EndDragInsert: function(){
+		// check for selection first
+		if (data.currentSelection){
+			if (UpdateSelection()){
+				PreventShapeCreation();
+			}else{
+				PreventShapeCreation("Error: Source path must be a vector Path object."
+					+" Please select a different source.");
+			}
+			return;
+		}
+		// no selection, check to see if can 
+		// duplicate previous selection
+		if (!selectedData){
+			RequireSelection();
+			return;
+		}
+		// draw selection
+		DrawSelection(true, false);
+		cps.length = 0;
+	}
+};
+
+InitDuplicator = function(){
+	if (dom.pngText[dataKey] !== undefined){
+		try {
+			// I know, sketchy...
+			eval("selectedData = " + dom.pngText[dataKey]);
+		}catch(err){
+			selectedData = null
+		}
+	}
+	elems.length = 0;
+};
+
+GetMouseRect = function(){
+	return {left:mouse.x, right:mouse.x, top:mouse.y, bottom:mouse.y};
+};
+
+DrawSelectPathLine = function(){
+	var c = new Contour();
+	c.nodes.length = 2;
+	SetNodePosition(c.nodes[0], clicked);
+	SetNodePosition(c.nodes[1], mouse);
+	elems[0] = new Path();
+	elems[0].contours[0] = c;
+};
+
+DrawSelectOutline = function(rect){
+	var c = new Contour();
+	c.isClosed = true;
+	c.nodes.length = 4;
+	SetNodePosition(c.nodes[0], {x:rect.left, y:rect.top});
+	SetNodePosition(c.nodes[1], {x:rect.right, y:rect.top});
+	SetNodePosition(c.nodes[2], {x:rect.right, y:rect.bottom});
+	SetNodePosition(c.nodes[3], {x:rect.left, y:rect.bottom});
+	elems[1] = new Path();
+	elems[1].contours[0] = c;
+	if (!IsValidSelection()){
+		DrawCrossLine(elems[1], 1, {x:rect.left, y:rect.top}, {x:rect.right, y:rect.bottom});
+		DrawCrossLine(elems[1], 2, {x:rect.right, y:rect.top}, {x:rect.left, y:rect.bottom});
+	}
+};
+
+DrawCrossLine = function(elem, index, pt1, pt2){
+	var c = new Contour();
+	c.nodes.length = 2;
+	SetNodePosition(c.nodes[0], pt1);
+	SetNodePosition(c.nodes[1], pt2);
+	elem.contours[index] = c;
+};
+
+DrawSelection = function(allowTransform, includePathLine){
+	if (!selectedData){
+		return;
+	}
+	if (includePathLine){
+		DrawSelectPathLine();
+	}
+	var d = selectedData;
+
+	var mat = new Matrix(1,0,0,1,0,0);
+	mat.translate(-d.start.x, -d.start.y);
+	if (allowTransform){
+		var currVector = {x:mouse.x - clicked.x, y:mouse.y - clicked.y};
+		var sourceVector = {x:d.end.x - d.start.x, y:d.end.y - d.start.y};
+		var scale = VectorPercentOf(currVector, sourceVector);
+		var angle = AngleBetween(currVector, sourceVector);
+		mat.rotate(angle);
+		mat.scale(scale, scale);
+	}
+	mat.translate(clicked.x, clicked.y);
+	
+	if (d.selection.type === TYPE_GROUP){
+		DrawDataGroup(elems, elems.length, d.selection, mat);
+	}else{
+		DrawDataPath(elems, elems.length, d.selection, mat);
+	}
+};
+
+DrawDataGroup = function(elems, index, data, mat){
+	for (var i=0, n=data.elements.length; i<n; i++){
+		var elemData = data.elements[i];
+		if (elemData.type === TYPE_GROUP){
+			var group = new Group();
+			elems[index+i] = group;
+			DrawDataGroup(group.elements, 0, elemData, mat);
+		}else{
+			DrawDataPath(elems, index+i, elemData, mat);
+		}
+	}
+};
+
+DrawDataPath = function(elems, index, data, mat){
+	var p = new Path();
+	elems[index] = p;
+	var n = data.contours.length;
+	p.contours.length = n;
+	for (var i=0; i<n; i++){
+		var ctrData = data.contours[i];
+		var c = new Contour();
+		c.isClosed = ctrData.isClosed;
+		DrawDataNodes(c, ctrData, mat);
+		p.contours[i] = c;
+	}
+};
+
+DrawDataNodes = function(ctr, ctrData, mat){
+	var pt = {x:0, y:0};
+	var n = ctrData.nodes.length;
+	ctr.nodes.length = n;
+	for (var i=0; i<n; i++){
+		var nodData = CloneObject(ctrData.nodes[i]);
+		mat.transformPoint(nodData);
+		CopyObjectInto(nodData, ctr.nodes[i]);
+	}
+};
+
+UpdateSelection = function(){
+	if (!IsValidSelection()){
+		return false;
+	}
+	// object cloning required to prevent
+	// Fireworks from freaking out
+	var saveData = {
+		start:		CloneObject(clicked),
+		end:		CloneObject(mouse),
+		rect:		CloneObject(data.currentSelection.pixelRect),
+		selection:	GetSelectionData(data.currentSelection)
+	};
+	dom.pngText[dataKey] = saveData.toSource();
+	return true;
+};
+
+IsValidSelection = function(){
+	return ContainsPathObject(data.currentSelection);
+};
+
+ContainsPathObject = function(elem){
+	if (elem == null){
+		return false;
+	}
+	var type = String(elem);
+	if (type === "[object Path]"){
+		return true;
+	}
+	if (type === "[object Group]"){
+		for (var i=0, n=elem.elements.length; i<n; i++){
+			var child = elem.elements[i];
+			if (ContainsPathObject(child)){
+				return true;
+			}
+		}
+	}
+	return false;
+};
+
+RequireSelection = function(){
+	PreventShapeCreation("Error: Source path required. First use ALT/OPT when dragging to select a source"
+		+" vector Path object to duplicate, then use the tool again to create a copy of that path.");
+};
+
+PreventShapeCreation = function(msg){
+	elems.length = 0;
+	dom.ungroup();
+	if (msg){
+		alert(msg);
+	}
+};
+
+GetSelectionData = function(elem){
+	var type = String(elem);
+	if (type === "[object Group]"){
+		return GetGroupSelectionData(elem);
+	}
+	if (type === "[object Path]"){
+		return GetPathSelectionData(elem);
+	}
+	return null;
+};
+
+GetGroupSelectionData = function(group){
+	var data = [];
+	var es = group.elements;
+	for (var i=0, n=es.length; i<n; i++){
+		var elem = es[i];
+		var elemData = GetSelectionData(elem);
+		if (elemData){
+			data.push(elemData);
+		}
+	}
+	return data.length ? {type:TYPE_GROUP, elements:data} : null;
+};
+
+GetPathSelectionData = function(path){
+	var data = [];
+	var cs = path.contours;
+	for (var i=0, n=cs.length; i<n; i++){
+		var ctr = cs[i];
+		data.push({
+			isClosed:ctr.isClosed,
+			nodes:GetSelectionNodeData(ctr)
+		});
+	}
+	return {type:TYPE_PATH, contours:data};
+};
+
+GetSelectionNodeData = function(contour){
+	var nodeData = [];
+	var ns = contour.nodes;
+	for (var i=0, n=ns.length; i<n; i++){
+		var nod = ns[i];
+		nodeData.push({
+			predX:nod.predX, predY:nod.predY,
+			x:nod.x, y:nod.y,
+			succX:nod.succX, succY:nod.succY,
+		});
+	}
+	return nodeData;
+};
+
+SetNodePosition = function(nod, pt){
+	SetBezierNodePosition(nod, pt,pt,pt);
+};
+
+SetBezierNodePosition = function(nod, ptp, pt, pts){
+	nod.predX	= ptp.x;	nod.predY	= ptp.y;
+	nod.x		= pt.x;		nod.y		= pt.y; 
+	nod.succX	= pts.x;	nod.succY	= pts.y;
+};
+
+AngleBetween = function(pt1, pt2){
+	return Math.atan2(pt1.y, pt1.x) - Math.atan2(pt2.y, pt2.x); // use arc tangent 2 to get angle
+};
+
+VectorPercentOf = function(v1, v2){
+	return Math.max(3,VectorPower(v1))/Math.max(3,VectorPower(v2));
+};
+
+VectorPower = function(v){
+	return Math.sqrt(v.x*v.x + v.y*v.y);
+};
+
+CloneObject = function(obj){
+	var copy = {};
+	for (var key in obj){
+		copy[key] = obj[key];
+	}
+	return copy;
+};
+
+CopyObjectInto = function(source, dest){
+	for (var key in source){
+		dest[key] = source[key];
+	}
+};
+
+function Matrix(a,b,c,d,x,y){
+	this.a = (a != null) ? a : 1;
+	this.b = b || 0;
+	this.c = c || 0;
+	this.d = (d != null) ? d : 1;
+	this.x = x || 0;
+	this.y = y || 0;
+}
+Matrix.prototype.scale = function(x, y) {
+	this.a *= x;
+	this.b *= y;
+	this.c *= x;
+	this.d *= y;
+	this.x *= x;
+	this.y *= y;
+};
+Matrix.prototype.rotate = function(angle){
+	var u = (angle === 0) ? 1 : Math.cos(angle); // android bug may give bad 0 values
+	var v = (angle === 0) ? 0 : Math.sin(angle);
+	var temp = this.a;
+	this.a = u * temp - v * this.b;
+	this.b = v * temp + u * this.b;
+	temp = this.c;
+	this.c = u * temp - v * this.d;
+	this.d = v * temp + u * this.d;
+	temp = this.x;
+	this.x = u * temp - v * this.y;
+	this.y = v * temp + u * this.y;
+};
+Matrix.prototype.transformPoint = function(pt){
+	var temp = pt.predX;
+	pt.predX = temp * this.a + pt.predY * this.c + this.x;
+	pt.predY = temp * this.b + pt.predY * this.d + this.y;
+	temp = pt.x;
+	pt.x = temp * this.a + pt.y * this.c + this.x;
+	pt.y = temp * this.b + pt.y * this.d + this.y;
+	temp = pt.succX;
+	pt.succX = temp * this.a + pt.succY * this.c + this.x;
+	pt.succY = temp * this.b + pt.succY * this.d + this.y;
+};
+Matrix.prototype.translate = function(x, y){
+	this.x += x;
+	this.y += y;
+};
+
+Execute = function(){
+	try {
+		if (smartShape.operation in ops) {
+			InitDuplicator();
+			ops[smartShape.operation]();
+		}
+	}catch(err){
+		alert(err);
+	}
+};
+
+Execute();

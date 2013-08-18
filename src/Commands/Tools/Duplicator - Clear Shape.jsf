@@ -1,0 +1,4 @@
+var dom = fw.getDocumentDOM();
+var dataKey = "Duplicator_jsf_data";
+
+dom.pngText[dataKey] = "";
